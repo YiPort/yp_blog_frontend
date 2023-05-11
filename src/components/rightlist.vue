@@ -20,7 +20,7 @@
         <div class="catch-me">
           <div class="">
             <el-tooltip class="item" content="Github" placement="top">
-              <a :href="catchMeObj.git" target="_blank"
+              <a :href="catchMeObj.github" target="_blank"
                 ><i class="fa fa-fw fa-github"></i
               ></a>
             </el-tooltip>
@@ -32,11 +32,11 @@
             <el-tooltip
               class="item"
               effect="dark"
-              content="微博"
+              content="gitee"
               placement="top"
             >
-              <a :href="catchMeObj.sina" target="_blank"
-                ><i class="fa fa-fw fa-weibo"></i
+              <a :href="catchMeObj.gitee" target="_blank"
+                ><i class="fa fa-fw fa-git"></i
               ></a>
             </el-tooltip>
           </div>
@@ -51,14 +51,7 @@
                 ><i class="fa fa-fw fa-wechat"></i
               ></a>
             </el-tooltip>
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="CSDN"
-              placement="top"
-            >
-              <a :href="catchMeObj.csdn" target="_blank"><i class="">C</i></a>
-            </el-tooltip>
+           
           </div>
         </div>
       </div>
@@ -121,12 +114,10 @@ export default {
       artCommentList: "", //最新评论
       catchMeObj: {
         //个人信息
-        git: "https://github.com/YiPort",
+        github: "https://github.com/YiPort",
+        gitee: "https://gitee.com/yiport",
         qq: "/static/img/qq.png",
-        sina: "https://weibo.com",
         wechat: "/static/img/qq.jpg",
-        csdn: "http://www.csdn.cn",
-        job: "https://www.baidu.com",
       },
     };
   },
