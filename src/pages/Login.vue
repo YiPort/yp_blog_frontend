@@ -5,9 +5,9 @@
             <h1 class="loginTitle">
                 
             </h1>
-            <!-- 登录注册 -->
+            <!-- 登录 -->
             <div v-show="!err2005" class="">
-                <div v-if="login==1" class="loginBox">
+                <div v-if="login==1" class="registerBox">
                     <div class="lr-title">
                         <h1>登录</h1>
                         <!--<p>
@@ -25,6 +25,12 @@
                         placeholder="用户名"
                         v-model="username">
                     </el-input>
+                    <el-alert
+                        v-show="usernameErr"
+                        title="账号为4~9位的字母或数字"
+                        type="error"
+                        show-icon  :closable="false">
+                    </el-alert>
 
                     <el-input
                             type="password"
@@ -32,6 +38,26 @@
                            @keyup.enter.native="loginEnterFun"
                           v-model="password">
                     </el-input>
+                    <el-alert
+                        v-show="passwordErr"
+                        title="密码为8~16位,且不能含有空字符"
+                        type="error"
+                        show-icon  :closable="false">
+                    </el-alert>
+                    <el-input
+                        type="text"
+                        style="width:200px"
+                        placeholder="验证码"
+                        v-model="captcha">
+                    </el-input>
+                    <img slot="append" style="float:right" :src="changeImage" @click="handleClickImge" title="看不清？点击刷新" />
+                    <el-alert
+                        v-show="captchaErr"
+                        title="验证码为1~4位"
+                        type="error"
+                        show-icon  :closable="false">
+                    </el-alert>
+
                     <div class="lr-title"> 
                     <p>
                         没有账号？<a href="#/Login?login=0" class="tcolors" >用户中心注册</a>
@@ -39,9 +65,6 @@
                     </div>
                     <div class="lr-btn tcolors-bg" @click="gotoHome">登录</div>
                     <div class="otherLogin" >
-                        <a href="javascript:void(0)"><i class="fa fa-fw fa-wechat"></i></a>
-                        <a href="javascript:void(0)"><i class="fa fa-fw fa-qq"></i></a>
-                        <a href="javascript:void(0)"><i class="fa fa-fw fa-weibo"></i></a>
                     </div>
                 </div>
                 <div v-else class="registerBox">
@@ -108,7 +131,7 @@
                         show-icon  :closable="false">
                     </el-alert>
                     <div class="lr-btn tcolors-bg" @click="newRegister" v-loading.fullscreen.lock="fullscreenLoading"  element-loading-text="提交中">注册</div>
-                </div>
+                </div>-->
             </div>
 
         </div>
@@ -116,7 +139,7 @@
 </template>
 
 <script>
-import {userLogin,userRegister} from '../api/user.js'
+import {userLogin,userRegister,getCaptchaImage} from '../api/user.js'
 import {setToken} from '../utils/auth.js'
     export default {
         name: 'Login',
@@ -125,11 +148,17 @@ import {setToken} from '../utils/auth.js'
                 username: '',//用户名
                 email: '',//邮箱
                 password: '',//密码
+                captcha: '',//验证码
+                changeImage: '',//图片验证码
+                uuid: '',//全局唯一id
                 nusername: '',//新用户注册名
                 nemail: '',//新用户注册邮箱
                 npassword: '',//新用户注册密码
                 npassword2: '',//新用户注册重复密码
                 login: 0,//是否已经登录
+                usernameErr:false,//账号错误
+                passwordErr:false,//密码错误
+                captchaErr:false,//验证码错误
                 loginErr: false,//登录错误
                 loginTitle:'用户名或密码错误',
                 nusernameErr:false,//新用户注册用户名错误
@@ -143,6 +172,9 @@ import {setToken} from '../utils/auth.js'
                 urlstate: 0,//重新注册
             }
         },
+        mounted() {
+            this.handleClickImge();  //加载刷新验证码
+        },
         methods: { //事件处理器
             routeChange:function(){
                 var that = this;
@@ -150,6 +182,13 @@ import {setToken} from '../utils/auth.js'
                 that.urlstate = that.$route.query.urlstate==undefined?0:that.$route.query.urlstate;//获取传参的usrlstate状态码
                 // console.log(that.login,that.urlstate);
 
+            },
+            // 点击获取验证码
+            handleClickImge: function(){
+                getCaptchaImage().then((response) =>{
+                    this.changeImage = "data:image/jpg;base64," + response.captcha;
+                    this.uuid = response.uuid;
+                })
             },
             loginEnterFun: function(e){
                 var keyCode = window.event? e.keyCode:e.which;
@@ -159,17 +198,25 @@ import {setToken} from '../utils/auth.js'
                 }
             },
             gotoHome:function(){//用户登录
-                userLogin(this.username,this.password).then((response)=>{
-                    // 登录成功记录token和用户信息，登录失败给对应提示
-                    setToken(response.token);
-                    // 存储用户信息
-                    localStorage.setItem("userInfo",JSON.stringify(response.userInfo));
-                    if(localStorage.getItem('logUrl')){
-                        this.$router.push({path:localStorage.getItem('logUrl')});
-                    }else{
-                        this.$router.push({path:'/'});
-                    }
-                })
+                this.checkLogin();
+                if (this.usernameErr === false && this.passwordErr === false){
+                    userLogin(this.username,this.password,this.captcha,this.uuid).then((response)=>{
+                        // 登录成功记录token和用户信息，登录失败给对应提示
+                        setToken(response.token);
+                        // 存储用户信息
+                        localStorage.setItem("userInfo",JSON.stringify(response.userInfo));
+                        // 登录成功提示
+						this.$message({
+							type: 'success',
+							message: '登录成功!'
+						});
+                        if(localStorage.getItem('logUrl')){
+                            this.$router.push({path:localStorage.getItem('logUrl')});
+                        }else{
+                            this.$router.push({path:'/'});
+                        }
+                    })
+                }
                 
             },
             registerEnterFun: function(e){
@@ -177,6 +224,29 @@ import {setToken} from '../utils/auth.js'
                 // console.log('回车注册',keyCode,e);
                 if(keyCode == 13 ){
                     this.newRegister();
+                }
+            },
+            checkLogin:function(){ // 登录提交
+                var that = this;
+                var name = /^.{4,9}$/;
+                var name1 = /[\s`!@#$%^&*_\-~()+=|{}':;,\[\].<>/\\?！￥…（）—【】‘；：”“’。，、？]/;
+                var pas = /^.{8,16}$/;
+                var pas1 = /[\s]/;
+                var cap = /^.{1,4}$/;
+                if(!name.test(that.username) || name1.test(that.username)){
+                    that.usernameErr = true;
+                }else {
+                    that.usernameErr = false;
+                }
+                if(!pas.test(that.password) || pas1.test(that.password)){
+                    that.passwordErr = true;
+                }else{
+                    that.passwordErr = false;
+                }
+                if(!cap.test(that.captcha)){
+                    that.captchaErr = true;
+                }else{
+                    that.captchaErr = false;
                 }
             },
             newRegister:function(){//注册提交
@@ -231,7 +301,7 @@ import {setToken} from '../utils/auth.js'
         created() { //生命周期函数
             var that = this;
             that.routeChange();
-        }
+        },
     }
 </script>
 
@@ -361,5 +431,11 @@ import {setToken} from '../utils/auth.js'
 }
 .registerSuc .sucContent  .el-icon-close{
     fong-size: 13px;
+}
+//图片校验码
+.codeImage {
+width: 110px;
+height: 34px;
+border: 1px solid #007ACC;
 }
 </style>

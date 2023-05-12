@@ -1,17 +1,29 @@
-import request from '@/utils/request'
+import request from '@/utils/request2'
 
 // 登录
-export function userLogin(username,password) {
-    return request({
-        url: '/login',
-        method: 'post',
-        headers: {
-            isToken: false
-          },
-        data: {'username':username,'password':password}
-    })
+export function userLogin(username,password,captcha,uuid) {
+  return request({
+    url: '/login',
+    method: 'post',
+    headers: {
+      isToken: false
+    },
+    data: {"username":username,'password':password,'captcha':captcha,'uuid':uuid}
+  })
 }
 
+// 获取图片验证码
+export function getCaptchaImage() {
+  return request({
+    url: '/user/captchaImage',
+    method: 'get',
+    headers: {
+      isToken: false
+    }
+  })
+}
+
+ // 用户注册
 export function userRegister(username,nickName,email,password) {
     return request({
         url: '/user/register',
@@ -23,27 +35,27 @@ export function userRegister(username,nickName,email,password) {
     })
 }
 
-
+// 用户登出
 export function logout() {
-    return request({
-        url: '/logout',
-        method: 'post'
-    })
+  return request({
+    url: '/logout',
+    method: 'post'
+  })
 }
 
-export function getUserInfo(userId) {
-    return request ({
-        url: '/user/userInfo',
-        method: 'get',
-        params: {"userId":userId}
-    })
+//  获取用户信息
+export function getUserInfo() {
+  return request ({
+    url: '/user/userInfo',
+    method: 'get',
+  })
 }
 
-
+// 保存用户信息
 export function savaUserInfo(userinfo) {
-    return request({
-        url: '/user/userInfo',
-        method: 'put',
-        data: userinfo
-    })
+  return request({
+    url: '/user/userInfo',
+    method: 'put',
+    data: userinfo
+  })
 }
