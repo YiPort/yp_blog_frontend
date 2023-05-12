@@ -10,9 +10,9 @@
                 <div v-if="login==1" class="loginBox">
                     <div class="lr-title">
                         <h1>登录</h1>
-                        <p>
+                        <!--<p>
                             新用户<a href="#/Login?login=0" class="tcolors">注册</a>
-                        </p>
+                        </p>-->
                     </div>
                     <el-alert
                         v-show="loginErr"
@@ -32,8 +32,11 @@
                            @keyup.enter.native="loginEnterFun"
                           v-model="password">
                     </el-input>
-
-                    <h3><a href="">忘记密码？</a></h3>
+                    <div class="lr-title"> 
+                    <p>
+                        没有账号？<a href="#/Login?login=0" class="tcolors" >用户中心注册</a>
+                    </p>
+                    </div>
                     <div class="lr-btn tcolors-bg" @click="gotoHome">登录</div>
                     <div class="otherLogin" >
                         <a href="javascript:void(0)"><i class="fa fa-fw fa-wechat"></i></a>
@@ -158,16 +161,16 @@ import {setToken} from '../utils/auth.js'
             gotoHome:function(){//用户登录
                 userLogin(this.username,this.password).then((response)=>{
                     // 登录成功记录token和用户信息，登录失败给对应提示
-                    setToken(response.token)
+                    setToken(response.token);
                     // 存储用户信息
-                    localStorage.setItem("userInfo",JSON.stringify(response.userInfo))
+                    localStorage.setItem("userInfo",JSON.stringify(response.userInfo));
                     if(localStorage.getItem('logUrl')){
                         this.$router.push({path:localStorage.getItem('logUrl')});
                     }else{
                         this.$router.push({path:'/'});
                     }
                 })
-      
+                
             },
             registerEnterFun: function(e){
                 var keyCode = window.event? e.keyCode:e.which;
@@ -262,7 +265,7 @@ import {setToken} from '../utils/auth.js'
     /*width:50%;*/
 }
 .lr-title p{
-    font-size: 12px;
+    font-size: 14px;
     color:#999;
     position: absolute;
     right:0;
