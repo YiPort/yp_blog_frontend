@@ -8,7 +8,8 @@
                   type="textarea"
                   :rows="2"
                   placeholder="说点什么呢``"
-                  v-model="textarea">
+                  v-model="textarea"
+                  @focus="focus">
                 </el-input>
                 <div :class="pBody?'OwO':'OwO OwO-open'">
                     <div class="OwO-logo" @click="pBody=!pBody">
@@ -93,6 +94,10 @@
 <script>
     import {sendComment,getArticleComment,getLinkComment} from '../api/comment.js'
     import { getToken } from '../utils/auth.js'
+    import { MessageBox } from 'element-ui'
+    import router from '@/router'
+    import { getUserInfo } from '../api/user.js'
+
     export default {
         data() { //选项 / 数据
             return {
@@ -206,7 +211,7 @@
                     //加载更多
                     this.commentList = this.commentList.concat(msg);
                 }
-                
+
                 this.hasMore = result.total>this.commentList.length
               },
           //选择表情包
@@ -228,28 +233,45 @@
                         }
                         str = str.replace(pattern2,'<img src="static/img/emot/image/'+src+'"/>');
                     }
-                    // console.log(str);
                 }
                 return str;
+          },
+          // 发送留言前先登录
+          focus:function(){
+            if(!getToken()){
+              MessageBox.confirm('未登录！请先登录', '系统提示', {
+                confirmButtonText: '登录',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                localStorage.setItem('logUrl', router.currentRoute.fullPath);
+                router.push({
+                  path: '/Login?login=1'
+                });
+              }).catch(() => { })
+              return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+            }
           },
           //发送留言
           sendMsg:function(){//留言
               var that = this;
               if(that.textarea){
-                  that.sendTip = '咻~~';
-                    sendComment(that.type,that.aid,that.rootId,that.toCommentId,that.toCommentUserId,that.textarea).then((response)=>{
-                        that.textarea = '';
-                        that.rootId = -1;
-                        that.toCommentId = -1;
-                        that.toCommentUserId=-1;
+                that.sendTip = '咻~~';
+                var info = JSON.parse(localStorage.getItem('userInfo'));
+                var createBy = info.id?info.id:-1;
+                sendComment(that.type,that.aid,that.rootId,that.toCommentId,that.toCommentUserId,createBy,that.textarea).then((response)=>{
+                  that.textarea = '';
+                  that.rootId = -1;
+                  that.toCommentId = -1;
+                  that.toCommentUserId=-1;
 
-                        that.routeChange();
-                        that.removeRespond();
-                        var timer02 = setTimeout(function(){
-                            that.sendTip = '发送~';
-                            clearTimeout(timer02);
-                        },1000)
-                    })
+                  that.routeChange();
+                  that.removeRespond();
+                  var timer02 = setTimeout(function(){
+                    that.sendTip = '发送~';
+                    clearTimeout(timer02);
+                  },1000)
+                })
               }else{
                   that.sendTip = '内容不能为空~'
                   var timer = setTimeout(function(){
@@ -304,7 +326,7 @@
               }
 
               //公用设置数据方法
-              
+
               if(that.$route.name=='DetailArticle'){//文章列表的评论
                   that.type = 0;
                   getArticleComment(that.queryParams).then((response)=>{
