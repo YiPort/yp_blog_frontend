@@ -1,12 +1,12 @@
 ﻿import request from '@/utils/request'
 
 // 发送文章评论
-export function sendComment(type,articleId,rootId,toCommentId,toCommentUserId,content) {
-    return request({
-        url: '/comment',
-        method: 'post',
-        data: {"articleId":articleId,"type":type,"rootId":rootId,"toCommentId":toCommentId,"toCommentUserId":toCommentUserId,"content":content}
-    })
+export function sendComment(type,articleId,rootId,toCommentId,toCommentUserId,createBy,content) {
+  return request({
+    url: '/comment/',
+    method: 'post',
+    data: {"articleId":articleId,"type":type,"rootId":rootId,"toCommentId":toCommentId,"toCommentUserId":toCommentUserId,"createBy":createBy,"content":content}
+  })
 }
 
 
