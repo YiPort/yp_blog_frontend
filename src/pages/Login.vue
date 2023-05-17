@@ -131,7 +131,7 @@
                         show-icon  :closable="false">
                     </el-alert>
                     <div class="lr-btn tcolors-bg" @click="newRegister" v-loading.fullscreen.lock="fullscreenLoading"  element-loading-text="提交中">注册</div>
-                </div>-->
+                </div>
             </div>
 
         </div>
@@ -432,7 +432,7 @@ import {setToken} from '../utils/auth.js'
 .registerSuc .sucContent  .el-icon-close{
     fong-size: 13px;
 }
-//图片校验码
+/* 图片校验码 */
 .codeImage {
 width: 110px;
 height: 34px;
