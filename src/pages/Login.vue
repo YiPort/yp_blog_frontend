@@ -3,7 +3,7 @@
     <div>
         <div class="container">
             <h1 class="loginTitle">
-                
+
             </h1>
             <!-- 登录 -->
             <div v-show="!err2005" class="">
@@ -50,7 +50,7 @@
                         placeholder="验证码"
                         v-model="captcha">
                     </el-input>
-                    <img slot="append" style="float:right" :src="changeImage" @click="handleClickImge" title="看不清？点击刷新" />
+                    <img slot="append" style="float:right;cursor:pointer;" :src="changeImage" @click="handleClickImge" title="看不清？点击刷新" />
                     <el-alert
                         v-show="captchaErr"
                         title="验证码为1~4位"
@@ -58,9 +58,9 @@
                         show-icon  :closable="false">
                     </el-alert>
 
-                    <div class="lr-title"> 
+                    <div class="lr-title">
                     <p>
-                        没有账号？<a href="#/Login?login=0" class="tcolors" >用户中心注册</a>
+                        没有账号？<a href="http://localhost:8080/#/Login?login=0" class="tcolors" >用户中心注册</a>
                     </p>
                     </div>
                     <div class="lr-btn tcolors-bg" @click="gotoHome">登录</div>
@@ -71,7 +71,7 @@
                     <div class="lr-title">
                         <h1>注册</h1>
                         <p>
-                            已有账号<a href="#/Login?login=1" class="tcolors">登录</a>
+                            已有账号<a href="http://localhost:8080/#/Login?login=1" class="tcolors">登录</a>
                         </p>
                     </div>
                     <el-alert
@@ -217,7 +217,7 @@ import {setToken} from '../utils/auth.js'
                         }
                     })
                 }
-                
+
             },
             registerEnterFun: function(e){
                 var keyCode = window.event? e.keyCode:e.which;
