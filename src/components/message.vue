@@ -12,7 +12,7 @@
                   @focus="focus">
                 </el-input>
                 <div :class="pBody?'OwO':'OwO OwO-open'">
-                    <div class="OwO-logo" @click="pBody=!pBody">
+                  <div class="OwO-logo" @click="pBody=!pBody;focus()">
                         <span>OwO表情</span>
                     </div>
                     <div class="OwO-body">
@@ -256,22 +256,36 @@
           sendMsg:function(){//留言
               var that = this;
               if(that.textarea){
-                that.sendTip = '咻~~';
-                var info = JSON.parse(localStorage.getItem('userInfo'));
-                var createBy = info.id?info.id:-1;
-                sendComment(that.type,that.aid,that.rootId,that.toCommentId,that.toCommentUserId,createBy,that.textarea).then((response)=>{
-                  that.textarea = '';
-                  that.rootId = -1;
-                  that.toCommentId = -1;
-                  that.toCommentUserId=-1;
+                if(getToken()){
+                  that.sendTip = '咻~~';
+                  var info = JSON.parse(localStorage.getItem('userInfo'));
+                  var createBy = info.id?info.id:-1;
+                  sendComment(that.type,that.aid,that.rootId,that.toCommentId,that.toCommentUserId,createBy,that.textarea).then((response)=>{
+                    that.textarea = '';
+                    that.rootId = -1;
+                    that.toCommentId = -1;
+                    that.toCommentUserId=-1;
 
-                  that.routeChange();
-                  that.removeRespond();
-                  var timer02 = setTimeout(function(){
-                    that.sendTip = '发送~';
-                    clearTimeout(timer02);
-                  },1000)
-                })
+                    that.routeChange();
+                    that.removeRespond();
+                    var timer02 = setTimeout(function(){
+                      that.sendTip = '发送~';
+                      clearTimeout(timer02);
+                    },1000)
+                  })
+                }else{
+                  MessageBox.confirm('未登录！请先登录', '系统提示', {
+                    confirmButtonText: '登录',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                  }).then(() => {
+                    localStorage.setItem('logUrl', router.currentRoute.fullPath);
+                    router.push({
+                      path: '/Login?login=1'
+                    });
+                  }).catch(() => { })
+                  return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+                }
               }else{
                   that.sendTip = '内容不能为空~'
                   var timer = setTimeout(function(){
