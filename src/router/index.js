@@ -51,14 +51,14 @@ export default new Router({
 			},
 			name: 'DetailArticle'
 		}, //分享详情
-		{
-			path: '/Reward',
-			component: resolve => require(['../pages/Reward.vue'], resolve),
-			meta: {
-				auth: true
-			},
-			name: 'Reward'
-		}, //赞赏
+		// {
+		// 	path: '/Reward',
+		// 	component: resolve => require(['../pages/Reward.vue'], resolve),
+		// 	meta: {
+		// 		auth: true
+		// 	},
+		// 	name: 'Reward'
+		// }, //赞赏
 		{
 			path: '/FriendsLink',
 			component: resolve => require(['../pages/FriendsLink.vue'], resolve),
@@ -85,6 +85,19 @@ export default new Router({
 			},
 			name: 'UserInfo'
 		}, //用户个人中心
+    {
+      path: '/404',
+      component: resolve => require(['../pages/NotFound.vue'], resolve),
+      meta: {
+        auth: true
+      },
+      name: 'NotFound'
+    }, //404
+    // 所有未定义路由，全部重定向到404页
+    {
+      path: '*',
+      redirect: '/404'
+    }
 
 	]
 })
