@@ -10,7 +10,7 @@ axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // 创建 axios实例
 const service = axios.create({
   // axios中请求配置有baseURL选项，表示请求URL公共部分
-  baseURL: /* window.location.href === 'http://localhost:8080/#/Login?login=1' ? store.state.SSOLogin :  */store.state.baseURL,
+  baseURL: store.state.baseURL,
   // 超时
   timeout: 5000
 })
@@ -65,12 +65,12 @@ service.interceptors.response.use(res => {
       type: 'warning'
     }
     ).then(() => {
-      
+
       localStorage.setItem('logUrl', router.currentRoute.fullPath);
       router.push({
         path: '/Login?login=1'
       });
-      
+
     }).catch(() => { })
     return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
   } else if (code === 500) {

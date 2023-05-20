@@ -8,6 +8,8 @@ import 'element-ui/lib/theme-default/index.css'
 import './assets/css/style.less'
 import store from './store'
 import MavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
+
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)

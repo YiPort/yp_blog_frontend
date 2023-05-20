@@ -48,6 +48,7 @@
                         type="text"
                         style="width:200px"
                         placeholder="验证码"
+                        @keyup.enter.native="loginEnterFun"
                         v-model="captcha">
                     </el-input>
                     <img slot="append" style="float:right;cursor:pointer;" :src="changeImage" @click="handleClickImge" title="看不清？点击刷新" />
@@ -430,7 +431,7 @@ import {setToken} from '../utils/auth.js'
     cursor: pointer;
 }
 .registerSuc .sucContent  .el-icon-close{
-    fong-size: 13px;
+    font-size: 13px;
 }
 /* 图片校验码 */
 .codeImage {
