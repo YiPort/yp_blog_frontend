@@ -42,5 +42,29 @@ export function updateViewCount(articleId) {
         },
         method: 'put'
     })
-    
+
+}
+
+
+
+// 提交文章
+export function postArticle(userId,title,content,summary,status,isComment,id,thumbnail) {
+  return request({
+    url: '/article/postArticle/',
+    method: 'post',
+    headers: {
+      isToken: true
+    },
+    data: {
+      'createBy':userId,
+      'title':title,
+      'content':content,
+      'summary':summary,
+      'status':status,
+      'isComment':isComment,
+      'categoryId':id,
+      'thumbnail':thumbnail
+    }
+  })
+
 }
