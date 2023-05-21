@@ -86,6 +86,14 @@ export default new Router({
 			name: 'UserInfo'
 		}, //用户个人中心
     {
+      path: '/Write',
+      component: resolve => require(['../pages/Write.vue'], resolve),
+      meta: {
+        auth: true
+      },
+      name: 'Write'
+    }, //写博客文章
+    {
       path: '/404',
       component: resolve => require(['../pages/NotFound.vue'], resolve),
       meta: {
