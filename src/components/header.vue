@@ -12,24 +12,27 @@
 								<template slot="title"><i class="fa fa-wa fa-archive"></i> 分类</template>
 								<el-menu-item v-for="(item,index) in classListObj" :key="'class1'+index" :index="'/Share?classId='+item.id">{{item.name}}</el-menu-item>
 							</el-submenu>
-							<el-menu-item index="/Reward"><i class="fa fa-wa fa-cny"></i> 赞赏</el-menu-item>
+<!--							<el-menu-item index="/Reward"><i class="fa fa-wa fa-cny"></i> 赞赏</el-menu-item>-->
 							<el-menu-item index="/Friendslink"><i class="fa fa-wa fa-users"></i>友链</el-menu-item>
-	
-							<div class="userInfo">
+              <el-menu-item index="/Write"><i class="fa fa-wa fa-users"></i>写博客</el-menu-item>
+
+              <div class="userInfo">
 								<div v-show="!haslogin" class="nologin">
 									<a href="javascript:void(0);" @click="logoinFun(1)">登录&nbsp;</a><!--|<a href="javascript:void(0);" @click="logoinFun(0)">&nbsp;注册</a>-->
 								</div>
 								<div v-show="haslogin" class="haslogin">
-									<a href="#/UserInfo">个人中心</a>&nbsp&nbsp|&nbsp&nbsp<a href="javascript:void(0);" @click="userlogout">退出登录</a>
-									<!--<i class="fa fa-fw fa-user-circle userImg"></i>
-									<ul class="haslogin-info">
-										<li>
-											<a href="#/UserInfo">个人中心</a>
-										</li>
-										<li>
-											<a href="javascript:void(0);" @click="userlogout">退出登录</a>
-										</li>
-									</ul>-->
+                  <a href="#/UserInfo">个人中心</a>
+                  <el-divider direction="vertical"></el-divider>
+                  <a href="javascript:void(0);" @click="userlogout">退出登录</a>
+                  <!--<i class="fa fa-fw fa-user-circle userImg"></i>
+                      <ul class="haslogin-info">
+                        <li>
+                          <a href="#/UserInfo">个人中心</a>
+                        </li>
+                        <li>
+                          <a href="javascript:void(0);" @click="userlogout">退出登录</a>
+                        </li>
+                      </ul>-->
 								</div>
 							</div>
 						</el-menu>
@@ -42,13 +45,13 @@
 				<div><span id="luke"></span></div>
 			</div>
 			<div class="h-information">
-	
+
 						<img :src="this.$store.state.themeObj.head_portrait?this.$store.state.themeObj.head_portrait:'static/img/tou.png'" alt="">
-	
+
 				<h2 class="h-description">
-	
+
 							{{this.$store.state.themeObj.autograph?this.$store.state.themeObj.autograph:"三更灯火五更鸡，正是男儿读书时"}}
-	
+
 					</h2>
 			</div>
 		</div>
@@ -78,7 +81,7 @@
 			}
 		},
 		watch: {
-	
+
 		},
 		methods: { //事件处理器
 			handleOpen(key, keyPath) { //分组菜单打开
@@ -97,7 +100,9 @@
 			getCategoryList(){
 				getCategoryList().then((response)=>{
 					this.classListObj = response
-				})
+          this.$store.commit('getCategoryList',this.classListObj)
+
+        })
 			},
 			handleSelect(key, keyPath) { //pc菜单选择
 				//    console.log(key, keyPath);
@@ -125,7 +130,7 @@
 					type: 'warning'
 				}).then(() => {
 					console.log(that.$route.path);
-	
+
 					logout().then((response)=>{
 						// 清除 Token
 						removeToken()
@@ -146,7 +151,7 @@
 				}).catch(() => {
 					//
 				});
-	
+
 			},
 			routeChange: function() {
 				var that = this;
@@ -160,8 +165,8 @@
 					that.haslogin = false;
 				}
 				//获取分类
-				this.getCategoryList()
-	
+				// this.getCategoryList()
+
 				if ((this.$route.name == "Share" || this.$route.name == "Home") && this.$store.state.keywords) {
 					this.input = this.$store.state.keywords;
 				} else {
@@ -171,7 +176,7 @@
 			}
 		},
 		components: { //定义组件
-	
+
 		},
 		watch: {
 			// 如果路由有变化，会再次执行该方法
@@ -199,24 +204,25 @@
 			document.addEventListener(visibilityChangeEvent, onVisibilityChange);
 			// console.log();
 			this.routeChange();
-	
-	
+
+
 		},
 		mounted() { //页面元素加载完成
 			var that = this;
-			var timer = setTimeout(function() {
+      this.getCategoryList()
+      var timer = setTimeout(function() {
 				Typeit(that.$store.state.themeObj.user_start, "#luke"); //打字机效果
 				clearTimeout(timer);
 			}, 500);
 		}
 	}
 	</script>
-	
+
 	<style>
 	/*********头部导航栏********/
-	
+
 	/*头部导航栏盒子*/
-	
+
 	.headBack {
 		width: 100%;
 		background: rgba(40, 42, 44, 0.6);
@@ -228,38 +234,38 @@
 		right: 0;
 		z-index: 100;
 	}
-	
+
 	.headBox li.is-active {
 		/*background: #48456C;*/
 		background: rgba(73, 69, 107, 0.7);
 	}
-	
+
 	.el-menu--horizontal>.el-submenu.is-active .el-submenu__title {
 		border-bottom: none!important;
 	}
-	
+
 	.headBox .el-menu {
 		background: transparent;
 		border-bottom: none!important;
 	}
-	
+
 	.headBox .el-menu-demo li.el-menu-item,
 	.headBox .el-menu--horizontal .el-submenu .el-submenu__title {
 		height: 38px;
 		line-height: 38px;
 		border-bottom: none!important;
-	
+
 	}
-	
+
 	.headBox .el-submenu li.el-menu-item {
 		height: 38px;
 		line-height: 38px;
 	}
-	
+
 	.headBox li .fa-wa {
 		vertical-align: baseline;
 	}
-	
+
 	.headBox ul li.el-menu-item,
 	.headBox ul li.el-menu-item.is-active,
 	.headBox ul li.el-menu-item:hover,
@@ -267,34 +273,34 @@
 	.headBox .el-submenu__title i.el-submenu__icon-arrow {
 		color: #fff;
 	}
-	
+
 	.headBox .el-menu--horizontal .el-submenu>.el-menu {
 		top: 38px;
 		border: none;
 		padding: 0;
 	}
-	
+
 	.headBox>ul li.el-menu-item:hover,
 	.headBox>ul li.el-submenu:hover .el-submenu__title {
 		background: #48456C;
 		border-bottom: none;
 	}
-	
+
 	.headBox>ul .el-submenu .el-menu,
 	.headBox>ul .el-submenu .el-menu .el-menu-item {
 		background: #48456C;
 	}
-	
+
 	.headBox>ul .el-submenu .el-menu .el-menu-item {
 		min-width: 0;
 	}
-	
+
 	.headBox>ul .el-submenu .el-menu .el-menu-item:hover {
 		background: #64609E;
 	}
-	
+
 	/*pc搜索框*/
-	
+
 	.headBox .pcsearchbox {
 		padding: 0;
 		max-width: 170px;
@@ -306,18 +312,18 @@
 		right: 0;
 		cursor: pointer;
 	}
-	
+
 	.headBox .pcsearchbox:hover .pcsearchinput {
 		opacity: 1;
 		/*transform: scaleX(1);*/
 		visibility: visible;
 	}
-	
+
 	.headBox .pcsearchbox i.pcsearchicon {
 		color: #fff;
 		padding-left: 10px;
 	}
-	
+
 	.headBox .pcsearchbox .pcsearchinput {
 		width: 180px;
 		padding: 10px 20px 10px 20px;
@@ -332,17 +338,17 @@
 		transform-origin: right;
 		transition: all 0.3s ease-out;
 	}
-	
+
 	.headBox .pcsearchbox .hasSearched {
 		opacity: 1;
 		/*transform: scaleX(1);*/
 		visibility: visible;
 	}
-	
+
 	.headBox .pcsearchbox .el-input {
 		width: 100%;
 	}
-	
+
 	.headBox .el-input__inner {
 		height: 30px;
 		border: none;
@@ -351,7 +357,7 @@
 		border-radius: 2px;
 		padding-right: 10px;
 	}
-	
+
 	.headBox .userInfo {
 		height: 100%;
 		line-height: 38px;
@@ -360,33 +366,33 @@
 		top: 0;
 		color: #fff;
 	}
-	
+
 	.headBox .userInfo a {
 		color: #fff;
 		font-size: 13px;
 		transition: all 0.2s ease-out;
 	}
-	
+
 	.headBox .userInfo a:hover {
 		color: #48456C;
 	}
-	
+
 	.headBox .nologin {
 		text-align: right;
 	}
-	
+
 	.headBox .haslogin {
 		text-align: right;
 		position: relative;
 		min-width: 80px;
 		cursor: pointer;
 	}
-	
+
 	.headBox .haslogin:hover ul {
 		visibility: visible;
 		opacity: 1;
 	}
-	
+
 	.headBox .haslogin ul {
 		background: rgba(40, 42, 44, 0.6);
 		padding: 5px 10px;
@@ -396,31 +402,31 @@
 		opacity: 0;
 		transition: all 0.3s ease-out;
 	}
-	
+
 	.headBox .haslogin ul li {
 		border-bottom: 1px solid #48456C;
 	}
-	
+
 	.headBox .haslogin ul li:last-child {
 		border-bottom: 1px solid transparent;
 	}
-	
+
 	/*******移动端*******/
-	
+
 	.mobileBox {
 		position: relative;
 		height: 38px;
 		line-height: 38px;
 		color: #fff;
 	}
-	
+
 	.hideMenu {
 		position: relative;
 		width: 100%;
 		height: 100%;
 		line-height: 38px;
 	}
-	
+
 	.hideMenu ul.mlistmenu {
 		width: 100%;
 		position: absolute;
@@ -433,16 +439,16 @@
 		color: #fff;
 		border-right: none;
 	}
-	
+
 	.hideMenu .el-submenu .el-menu {
 		background: #64609E;
 	}
-	
+
 	.hideMenu .el-menu-item,
 	.hideMenu .el-submenu__title {
 		color: #fff;
 	}
-	
+
 	.hideMenu>i {
 		position: absolute;
 		left: 10px;
@@ -453,44 +459,44 @@
 		color: #fff;
 		cursor: pointer;
 	}
-	
+
 	.hideMenu .el-menu-item,
 	.el-submenu__title {
 		height: 40px;
 		line-height: 40px;
 	}
-	
+
 	.mobileBox .searchBox {
 		padding-left: 40px;
 		width: 100%;
 		box-sizing: border-box;
 	}
-	
+
 	.mobileBox .searchBox .el-input__inner {
 		display: block;
 		border-radius: 2px;
 		border: none;
 		height: 25px;
 	}
-	
+
 	.hideMenu ul.mlistmenu.pshow {
 		display: block;
 	}
-	
+
 	.hideMenu ul.mlistmenu .el-submenu__icon-arrow,
 	.mobileBox li.el-menu-item a {
 		color: #fff;
 	}
-	
+
 	.hideMenu>ul li.el-menu-item:hover,
 	.hideMenu>ul li.el-menu-item.is-active {
 		background: #48576a;
 	}
-	
-	
-	
+
+
+
 	/*头部背景图*/
-	
+
 	.headImgBox {
 		height: 650px;
 		position: relative;
@@ -500,7 +506,7 @@
 		background-repeat: no-repeat;
 		margin-bottom: 90px;
 	}
-	
+
 	.h-information {
 		text-align: center;
 		width: 70%;
@@ -516,7 +522,7 @@
 		animation: b 1s ease-out;
 		-webkit-animation: b 1s ease-out;
 	}
-	
+
 	@-webkit-keyframes b {
 		0% {
 			-webkit-transform: translateY(90px);
@@ -535,7 +541,7 @@
 			transform: translateY(0)
 		}
 	}
-	
+
 	@keyframes b {
 		0% {
 			-webkit-transform: translateY(90px);
@@ -554,7 +560,7 @@
 			transform: translateY(0)
 		}
 	}
-	
+
 	.h-information img {
 		width: 100px;
 		height: 100px;
@@ -563,12 +569,12 @@
 		-webkit-transition: all .4s ease-in-out;
 		object-fit: cover;
 	}
-	
+
 	.h-information img:hover {
 		transform: rotate(360deg);
 		-webkit-transform: rotate(360deg);
 	}
-	
+
 	.h-information h2 {
 		margin-top: 20px;
 		font-size: 18px;
@@ -592,15 +598,15 @@
 		top: 160px;
 		font-family: 'Sigmar One', Arial;
 		text-shadow: 0 2px 2px #47456d;
-	
+
 	}
-	
+
 	.headImgBox .scene span {
 		transform: matrix(1, 0, 0, 1, 0, 0);
 		-webkit-transform: matrix(1, 0, 0, 1, 0, 0);
 		text-shadow: 1px 1px 0 #ff3f1a, -1px -1px 0 #00a7e0;
 	}
-	
+
 	.saying:after {
 		content: "|";
 		font-family: Arial, sans-serif;
@@ -612,7 +618,7 @@
 		text-shadow: 1px 1px 0 #ff3f1a, -1px -1px 0 #00a7e0;
 		animation: caret 500ms infinite;
 	}
-	
+
 	@keyframes caret {
 		0%,
 		100% {
