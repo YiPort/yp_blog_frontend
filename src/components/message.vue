@@ -261,6 +261,10 @@
                   var info = JSON.parse(localStorage.getItem('userInfo'));
                   var createBy = info.id?info.id:-1;
                   sendComment(that.type,that.aid,that.rootId,that.toCommentId,that.toCommentUserId,createBy,that.textarea).then((response)=>{
+                    this.$message({
+                      type:'success',
+                      message:'评论成功'
+                    })
                     that.textarea = '';
                     that.rootId = -1;
                     that.toCommentId = -1;
