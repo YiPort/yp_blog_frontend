@@ -33,7 +33,9 @@
         <el-switch
           v-model="isComment"
           active-text="允许评论"
-          inactive-text="禁止评论">
+          inactive-text="禁止评论"
+          active-value="1"
+          inactive-value="0">
         </el-switch>
         <el-divider direction="vertical"></el-divider>
         <el-tooltip class="item" effect="dark" content="请选择文章所属分类" placement="top">
@@ -109,17 +111,17 @@ export default {
       title:'',//文章标题
       summary:'',//文章摘要
       status:'1',//是否发布
-      isComment:false,//是否允许评论
-      classListObj:null,//分类
+      isComment:'0',//是否允许评论
       id:'',//分类id
       thumbnail:'',//缩略图
       articleObj:{
+        userId:'',
         content:'',
         title:'',
         summary:'',
         status:'1',
         isComment:false,
-        id:'',
+        categoryId:'',
         thumbnail:'',
       },
       drawer:false,
@@ -129,6 +131,11 @@ export default {
       userInfoObj:'',//用户的信息
       haslogin:false,//是否登录
     }
+  },
+  computed: {
+    classListObj() {  //分类列表
+      return this.$store.state.classListObj;
+    },
   },
   methods: { //事件处理器
     routeChange() {//展示页面信息
@@ -191,14 +198,14 @@ export default {
       this.summary = articleObj.summary;
       this.status = articleObj.status;
       this.isComment = articleObj.isComment;
-      this.id = articleObj.id;
+      this.id = articleObj.categoryId;
       this.thumbnail = articleObj.thumbnail;
     },
     getArticleObj() {   //获取未提交编辑
       const articleObj = JSON.parse(localStorage.getItem('articleObj'));
       this.reloadArticle(articleObj);
     },
-    refreshAll() {
+    refreshAll() {  //重新编辑
       MessageBox.confirm('确认重新编辑文章，确认后文章和配置将不能找回', '系统提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
@@ -208,7 +215,7 @@ export default {
         this.title = '';//文章标题
         this.summary = '';//文章摘要
         this.status = '1';//是否发布
-        this.isComment = false;//是否允许评论
+        this.isComment = '0';//是否允许评论
         this.classListObj = null;//分类
         this.id = '';//分类id
         this.thumbnail = '';//缩略图
@@ -236,12 +243,8 @@ export default {
       this.drawer = true;
     },
     loadDraft(index) { //加载草稿
-      console.log(this.draftList[index])
       const articleObj = this.draftList[index];
       this.reloadArticle(articleObj);
-    },
-    getCategory() { //获取分类列表
-      this.classListObj = this.$store.state.classListObj
     },
   },
   components: { //定义组件
@@ -272,7 +275,7 @@ export default {
     },
     //侦听分类id
     id(newValue){
-      this.articleObj.id = newValue;
+      this.articleObj.categoryId = newValue;
     },
     //侦听缩略图
     thumbnail(newValue){
