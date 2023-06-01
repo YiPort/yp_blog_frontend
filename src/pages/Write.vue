@@ -36,15 +36,21 @@
           inactive-text="禁止评论">
         </el-switch>
         <el-divider direction="vertical"></el-divider>
-        <el-select v-model="id" placeholder="请选择文章所属分类">
-          <el-option
-            v-for="item in classListObj"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
+        <el-tooltip class="item" effect="dark" content="请选择文章所属分类" placement="top">
+          <el-select ref="select" @focus="getCategory" v-model="id" placeholder="请选择文章所属分类">
+            <el-option
+              v-for="item in classListObj"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-tooltip>
 
+        <el-divider direction="vertical"></el-divider>
+        <el-tooltip class="item" effect="dark" content="重置" placement="top">
+          <el-button type="primary" icon="el-icon-refresh" circle @click="refreshAll"></el-button>
+        </el-tooltip>
         <el-divider direction="vertical"></el-divider>
         <el-button type="primary" @click="saveDraft">保存为草稿
           <i class="el-icon-folder-opened el-icon--right"></i>
@@ -53,6 +59,30 @@
         <el-button type="primary" @click="saveCommit">提交
           <i class="el-icon-check el-icon--right"></i>
         </el-button>
+
+        <el-tooltip class="item" effect="dark" content="我的草稿" placement="top" hide-after=1000>
+          <el-button
+            type="warning"
+            icon="el-icon-folder-opened"
+            circle class="draft button1"
+            @click="getDraft">
+          </el-button>
+        </el-tooltip>
+
+        <el-drawer
+          title="我的草稿"
+          :visible.sync="drawer"
+          direction="ltr"
+          size=50%>
+          <el-divider></el-divider>
+          <ul class="infinite-list" style="overflow:auto">
+            <li v-for="(item,index) in draftList" :key="index" class="list">
+              {{item.title}}/{{item.summary}}
+              <button class="btn btn-danger" @click="deleteDraft(item.id)">删除</button>
+              <button class="btn btn-edit" @click="loadDraft(index)">编辑</button>
+            </li>
+          </ul>
+        </el-drawer>
       </div>
       <div class="tcommonBox">
         <div id="main">
@@ -66,9 +96,10 @@
 <script>
 import header from '../components/header.vue'
 import store from '../store'
-import { postArticle } from '../api/article'
+import { postArticle,getDraft } from '../api/article'
 import { MessageBox } from 'element-ui'
 import router from '@/router'
+import { getUserInfo } from '../api/user'
 
 export default {
   name: 'Write',
@@ -77,7 +108,7 @@ export default {
       content:'',//Markdown文本内容
       title:'',//文章标题
       summary:'',//文章摘要
-      status:1,//是否发布
+      status:'1',//是否发布
       isComment:false,//是否允许评论
       classListObj:null,//分类
       id:'',//分类id
@@ -86,11 +117,13 @@ export default {
         content:'',
         title:'',
         summary:'',
-        status:1,
+        status:'1',
         isComment:false,
         id:'',
         thumbnail:'',
       },
+      drawer:false,
+      draftList:[],//草稿列表
       uploadURL:'',
       userInfo:{},//本地存储的用户信
       userInfoObj:'',//用户的信息
@@ -113,6 +146,14 @@ export default {
       }
     },
     postArticle() { //文章提交
+      if(!this.id) {
+        this.$message({
+          type:'info',
+          message:'请选择文章分类'
+        })
+        this.$refs.select.toggleMenu();
+        return
+      }
       const userInfo = localStorage.getItem('userInfo');
       if(!userInfo) {
         MessageBox.confirm('未登录！请先登录', '系统提示', {
@@ -130,19 +171,21 @@ export default {
       const userId = JSON.parse(userInfo).id;
       postArticle(userId,this.title,this.content,this.summary,this.status,this.isComment,this.id,this.thumbnail)
         .then((response) => {
-          console.log(response)
+          this.$message({
+            type:'success',
+            message:'保存成功'
+          })
         })
     },
     saveDraft() {  //保存为草稿
-      this.status = 1;
+      this.status = '1';
       this.postArticle();
     },
     saveCommit() {  //提交
-      this.status = 0;
+      this.status = '0';
       this.postArticle();
     },
-    getArticleObj() {   //获取未提交编辑
-      const articleObj = JSON.parse(localStorage.getItem('articleObj'));
+    reloadArticle(articleObj) {
       this.title = articleObj.title;
       this.content = articleObj.content;
       this.summary = articleObj.summary;
@@ -150,7 +193,56 @@ export default {
       this.isComment = articleObj.isComment;
       this.id = articleObj.id;
       this.thumbnail = articleObj.thumbnail;
-    }
+    },
+    getArticleObj() {   //获取未提交编辑
+      const articleObj = JSON.parse(localStorage.getItem('articleObj'));
+      this.reloadArticle(articleObj);
+    },
+    refreshAll() {
+      MessageBox.confirm('确认重新编辑文章，确认后文章和配置将不能找回', '系统提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.content = '';//Markdown文本内容
+        this.title = '';//文章标题
+        this.summary = '';//文章摘要
+        this.status = '1';//是否发布
+        this.isComment = false;//是否允许评论
+        this.classListObj = null;//分类
+        this.id = '';//分类id
+        this.thumbnail = '';//缩略图
+        localStorage.removeItem('articleObj');
+      })
+    },
+    getDraft() { //获取草稿列表
+      const id = this.userInfo.id;
+      if(!id) {
+        MessageBox.confirm('未登录！请先登录', '系统提示', {
+          confirmButtonText: '登录',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          localStorage.setItem('logUrl', router.currentRoute.fullPath);
+          router.push({
+            path: '/Login?login=1'
+          });
+        }).catch(() => { })
+        return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+      }
+      getDraft(id).then((response) =>{
+        this.draftList = response;
+      })
+      this.drawer = true;
+    },
+    loadDraft(index) { //加载草稿
+      console.log(this.draftList[index])
+      const articleObj = this.draftList[index];
+      this.reloadArticle(articleObj);
+    },
+    getCategory() { //获取分类列表
+      this.classListObj = this.$store.state.classListObj
+    },
   },
   components: { //定义组件
     'wbc-nav':header,
@@ -192,14 +284,9 @@ export default {
     this.uploadURL = store.state.baseURL+'upload'
   },
   mounted() { //生命周期函数
-    setTimeout(() => {
-      // 获取分类列表
-      this.classListObj = this.$store.state.classListObj
-    }, 500);
-
+    // 加载编辑数据
     const articleObj = JSON.parse(localStorage.getItem('articleObj'))
     if (articleObj) {
-      console.log(articleObj)
       this.getArticleObj()
     }
   },
@@ -211,10 +298,63 @@ export default {
 </script>
 
 <style>
+.el-drawer {
+  overflow: scroll
+}
+.list {
+  list-style: none;
+  height: 36px;
+  line-height: 36px;
+  padding: 5px 5px;
+  border-bottom: 1px solid #ddd;
+}
+li button{
+  float: right;
+  display: none;
+  margin-top: 3px;
+}
+.list:before {
+  content: initial;
+}
+.list:last-child {
+  border-bottom: none;
+}
+.list:hover{
+  background-color: #ddd;
+}
+li:hover button{display: block;}
+.btn {display: inline-block;padding: 4px 12px;margin-bottom: 0;font-size: 14px;
+  line-height: 20px;text-align: center;vertical-align: middle;cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;}
+.btn-edit {color: #fff;background: #409eff;border: 1px solid #409eff;margin-right: 5px;}
+.btn-edit:hover{color: #fff;background: #0577e9}
+.btn-danger {color: #fff;background-color: #da4f49;border: 1px solid #bd362f;}
+.btn-danger:hover {color: #fff;background-color: #bd362f;}
+/* li{
+    margin: 10px 10px 0 10px;
+
+}
+li:hover{
+    cursor: pointer;
+    padding: 10px 0 10px 0;
+    background: rgb(243, 240, 240);
+} */
+.draft{
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  box-shadow: #333;
+}
+.button1 {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+.button2:hover {
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
 .userInfoBox .avatarlist{
   position: relative;
 }
-
 .avatar-uploader {
   display: inline-block;
   vertical-align: top;

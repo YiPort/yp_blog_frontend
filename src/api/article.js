@@ -1,6 +1,6 @@
 ﻿import request from '@/utils/request'
 
-// 查询文章列表
+// 分页查询文章列表
 export function articleList(query) {
     return request({
         url: '/article/articleList',
@@ -34,6 +34,7 @@ export function getArticle(articleId) {
     })
 }
 
+// 更新文章浏览次数
 export function updateViewCount(articleId) {
     return request({
         url: '/article/updateViewCount/' + articleId,
@@ -45,12 +46,10 @@ export function updateViewCount(articleId) {
 
 }
 
-
-
 // 提交文章
 export function postArticle(userId,title,content,summary,status,isComment,id,thumbnail) {
   return request({
-    url: '/article/postArticle/',
+    url: '/article/postArticle',
     method: 'post',
     headers: {
       isToken: true
@@ -67,4 +66,15 @@ export function postArticle(userId,title,content,summary,status,isComment,id,thu
     }
   })
 
+}
+
+// 获取草稿
+export function getDraft(createBy) {
+  return request({
+    url: '/article/getDraft/' + createBy,
+    headers: {
+      isToken: true
+    },
+    method: 'get'
+  })
 }
