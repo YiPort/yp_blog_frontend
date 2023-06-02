@@ -69,7 +69,6 @@
 			return {
 				userInfo: '', //用户信息
 				haslogin: false, //是否已登录
-				classListObj: '', //分类
 				activeIndex: '/', //当前选择的路由模块
 				state: '', //icon点击状态
 				pMenu: true, //手机端菜单打开
@@ -80,6 +79,11 @@
 				projectList: '' //项目列表
 			}
 		},
+    computed: {
+      classListObj() { //分类
+        return this.$store.state.classListObj;
+      },
+    },
 		watch: {
 
 		},
@@ -99,9 +103,7 @@
 			},
 			getCategoryList(){
 				getCategoryList().then((response)=>{
-					this.classListObj = response
-          this.$store.commit('getCategoryList',this.classListObj)
-
+          this.$store.commit('getCategoryList',response)
         })
 			},
 			handleSelect(key, keyPath) { //pc菜单选择
