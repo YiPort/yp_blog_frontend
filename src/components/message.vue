@@ -5,11 +5,12 @@
             <h3>发表评论 <small v-show="isRespond" class="tcolorm" @click="removeRespond">取消回复</small></h3>
             <form class=""  >
                 <el-input
+                  ref="input"
                   type="textarea"
                   :rows="2"
                   placeholder="说点什么呢``"
                   v-model="textarea"
-                  @focus="focus">
+                  @focus="checkLogin">>
                 </el-input>
                 <div :class="pBody?'OwO':'OwO OwO-open'">
                   <div class="OwO-logo" @click="pBody=!pBody;focus()">
@@ -237,8 +238,10 @@
                 return str;
           },
           // 发送留言前先登录
-          focus:function(){
+          checkLogin:function(){
             if(!getToken()){
+              // 失去焦点
+              this.$refs.input.blur()
               MessageBox.confirm('未登录！请先登录', '系统提示', {
                 confirmButtonText: '登录',
                 cancelButtonText: '取消',
