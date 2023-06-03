@@ -39,7 +39,7 @@
         </el-switch>
         <el-divider direction="vertical"></el-divider>
         <el-tooltip class="item" effect="dark" content="请选择文章所属分类" placement="top">
-          <el-select ref="select" @focus="getCategory" v-model="id" placeholder="请选择文章所属分类">
+          <el-select ref="select" v-model="id" placeholder="请选择文章所属分类">
             <el-option
               v-for="item in classListObj"
               :key="item.id"
@@ -48,6 +48,30 @@
             </el-option>
           </el-select>
         </el-tooltip>
+
+        <el-tooltip class="item" effect="dark" content="新建分类" placement="left" hide-after=1000>
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            circle class="add-category button1"
+            @click="addCategory">
+          </el-button>
+        </el-tooltip>
+
+        <el-dialog title="新建分类" :visible.sync="dialogFormVisible">
+          <el-form :model="form">
+            <el-form-item label="分类名称" :label-width="formLabelWidth">
+              <el-input v-model="form.name" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="分类描述" :label-width="formLabelWidth">
+              <el-input v-model="form.description" autocomplete="off"></el-input>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="submitCategory">确 定</el-button>
+          </div>
+        </el-dialog>
 
         <el-divider direction="vertical"></el-divider>
         <el-tooltip class="item" effect="dark" content="重置" placement="top">
@@ -62,7 +86,7 @@
           <i class="el-icon-check el-icon--right"></i>
         </el-button>
 
-        <el-tooltip class="item" effect="dark" content="我的草稿" placement="top" hide-after=1000>
+        <el-tooltip class="item" effect="dark" content="我的草稿" placement="left" hide-after=1000>
           <el-button
             type="warning"
             icon="el-icon-folder-opened"
@@ -102,6 +126,7 @@ import { postArticle,getDraft } from '../api/article'
 import { MessageBox } from 'element-ui'
 import router from '@/router'
 import { getUserInfo } from '../api/user'
+import { addCategory,getCategoryList } from '../api/category'
 
 export default {
   name: 'Write',
@@ -124,10 +149,15 @@ export default {
         categoryId:'',
         thumbnail:'',
       },
-      drawer:false,
+      form:{//新建分类表单
+        name:'',
+        description:'',
+      },
+      drawer:false,//是否显示侧边抽屉
+      dialogFormVisible:false,//是否新建分类表单
       draftList:[],//草稿列表
       uploadURL:'',
-      userInfo:{},//本地存储的用户信
+      userInfo:{},//本地存储的用户信息
       userInfoObj:'',//用户的信息
       haslogin:false,//是否登录
     }
@@ -152,6 +182,19 @@ export default {
         that.haslogin = false;
       }
     },
+    loginMessage() {  //未登录消息提示
+      MessageBox.confirm('未登录！请先登录', '系统提示', {
+        confirmButtonText: '登录',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        localStorage.setItem('logUrl', router.currentRoute.fullPath);
+        router.push({
+          path: '/Login?login=1'
+        });
+      }).catch(() => { })
+      return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+    },
     postArticle() { //文章提交
       if(!this.id) {
         this.$message({
@@ -163,17 +206,7 @@ export default {
       }
       const userInfo = localStorage.getItem('userInfo');
       if(!userInfo) {
-        MessageBox.confirm('未登录！请先登录', '系统提示', {
-          confirmButtonText: '登录',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          localStorage.setItem('logUrl', router.currentRoute.fullPath);
-          router.push({
-            path: '/Login?login=1'
-          });
-        }).catch(() => { })
-        return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+        this.loginMessage();
       }
       const userId = JSON.parse(userInfo).id;
       postArticle(userId,this.title,this.content,this.summary,this.status,this.isComment,this.id,this.thumbnail)
@@ -225,17 +258,7 @@ export default {
     getDraft() { //获取草稿列表
       const id = this.userInfo.id;
       if(!id) {
-        MessageBox.confirm('未登录！请先登录', '系统提示', {
-          confirmButtonText: '登录',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          localStorage.setItem('logUrl', router.currentRoute.fullPath);
-          router.push({
-            path: '/Login?login=1'
-          });
-        }).catch(() => { })
-        return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+        this.loginMessage();
       }
       getDraft(id).then((response) =>{
         this.draftList = response;
@@ -245,6 +268,28 @@ export default {
     loadDraft(index) { //加载草稿
       const articleObj = this.draftList[index];
       this.reloadArticle(articleObj);
+    },
+    addCategory() { //新建分类
+      if(!this.userInfo) {
+        this.loginMessage();
+      }
+      this.dialogFormVisible = true;
+    },
+    submitCategory() {  //提交新建分类
+      var that = this;
+      const createBy = this.userInfo.id;
+      const name = this.form.name;
+      const description = this.form.description;
+      addCategory(name,description,createBy).then((response) =>{
+        this.dialogFormVisible = false;
+        this.$message({
+          type:'success',
+          message:'新建成功'
+        })
+        getCategoryList().then((response)=>{
+          that.$store.commit('getCategoryList',response)
+        })
+      })
     },
   },
   components: { //定义组件
@@ -343,6 +388,12 @@ li:hover{
     padding: 10px 0 10px 0;
     background: rgb(243, 240, 240);
 } */
+.add-category{
+  position: fixed;
+  bottom: 87px;
+  right: 40px;
+  box-shadow: #333;
+}
 .draft{
   position: fixed;
   bottom: 40px;

@@ -10,3 +10,15 @@ export function getCategoryList() {
         method: 'get'
     })
 }
+
+// 新建分类
+export function addCategory(categoryName,description,createBy) {
+    return request({
+        url: '/category/addCategory',
+        headers: {
+            isToken: true
+        },
+        method: 'post',
+       data: {'name':categoryName,'description':description,'createBy':createBy}
+    })
+}
