@@ -82,7 +82,7 @@
           <i class="el-icon-folder-opened el-icon--right"></i>
         </el-button>
         <el-divider direction="vertical"></el-divider>
-        <el-button type="primary" @click="saveCommit">提交
+        <el-button type="primary" @click="saveCommit">发布
           <i class="el-icon-check el-icon--right"></i>
         </el-button>
 
@@ -259,21 +259,23 @@ export default {
       const id = this.userInfo.id;
       if(!id) {
         this.loginMessage();
+      }else {
+        getDraft(id).then((response) =>{
+          this.draftList = response;
+        })
+        this.drawer = true;
       }
-      getDraft(id).then((response) =>{
-        this.draftList = response;
-      })
-      this.drawer = true;
     },
     loadDraft(index) { //加载草稿
       const articleObj = this.draftList[index];
       this.reloadArticle(articleObj);
     },
     addCategory() { //新建分类
-      if(!this.userInfo) {
+      if(!this.userInfoObj) {
         this.loginMessage();
+      }else {
+        this.dialogFormVisible = true;
       }
-      this.dialogFormVisible = true;
     },
     submitCategory() {  //提交新建分类
       var that = this;
