@@ -69,6 +69,12 @@ import {articleList} from '../api/article'
             },
             getList(){
                 articleList(this.queryParams).then((response)=>{
+                  if(response.total == 0) {
+                    this.$message({
+                      type:'info',
+                      message:'该分类暂时没有文章'
+                    })
+                  }
                     this.articleList = this.articleList.concat(response.rows)
                     if(response.total<=this.articleList.length){
                         this.hasMore=false
