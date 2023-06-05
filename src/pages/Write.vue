@@ -54,7 +54,8 @@
             type="primary"
             icon="el-icon-plus"
             circle class="add-category button1"
-            @click="addCategory">
+            @click="addCategory"
+            :disabled="userRole">
           </el-button>
         </el-tooltip>
 
@@ -82,7 +83,7 @@
           <i class="el-icon-folder-opened el-icon--right"></i>
         </el-button>
         <el-divider direction="vertical"></el-divider>
-        <el-button type="primary" @click="saveCommit">发布
+        <el-button type="primary" @click="saveCommit" :disabled="userRole">发布
           <i class="el-icon-check el-icon--right"></i>
         </el-button>
 
@@ -165,6 +166,15 @@ export default {
   computed: {
     classListObj() {  //分类列表
       return this.$store.state.classListObj;
+    },
+    userRole() {  //用户角色
+      const role = this.userInfoObj.userRole;
+      console.log(role)
+      if(role === 1) {
+        return false;
+      }else {
+        return true;
+      }
     },
   },
   methods: { //事件处理器
