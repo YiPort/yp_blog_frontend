@@ -45,7 +45,7 @@
                             <header>
                                 <img  :src="$store.state.errorImg"  :onerror="$store.state.errorImg">
                                 <div class="i-name">
-                                    {{item.username}}
+                                    {{item.createNick}}
                                 </div>
                                 <!-- <div class="i-class">
                                     {{item.label}}
@@ -67,7 +67,7 @@
                                     <header>
                                             <img :src="$store.state.errorImg"  :onerror="$store.state.errorImg">
                                             <div class="i-name">
-                                                {{citem.username}} <span>回复</span> {{citem.toCommentUserName}}
+                                                {{citem.createNick}}
                                             </div>
                                             <div class="i-time">
                                                 <time>{{citem.createTime}}</time>
