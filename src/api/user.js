@@ -3,7 +3,7 @@ import request from '@/utils/request2'
 // 登录
 export function userLogin(username,password,captcha,uuid) {
   return request({
-    url: '/login',
+    url: '/user/login',
     method: 'post',
     headers: {
       isToken: false
@@ -38,7 +38,7 @@ export function userRegister(username,nickName,email,password) {
 // 用户登出
 export function logout() {
   return request({
-    url: '/logout',
+    url: '/user/logout',
     method: 'post'
   })
 }

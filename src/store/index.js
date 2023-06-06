@@ -23,7 +23,7 @@ export const state = {
   keywords:'',//关键词
   classListObj:null,//分类数组
   errorImg: 'this.onerror=null;this.src="' + require('../../static/img/tou.jpg') + '"',
-  baseURL:'http://127.0.0.1:7777/',
+  baseURL:'http://127.0.0.1:10086/',
   SSOLogin:'http://127.0.0.1:8001/'
 }
 
