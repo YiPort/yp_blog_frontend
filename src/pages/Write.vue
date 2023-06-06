@@ -167,10 +167,10 @@ export default {
     classListObj() {  //分类列表
       return this.$store.state.classListObj;
     },
-    userRole() {  //用户角色
-      const role = this.userInfoObj.userRole;
+    userRole() {  //用户角色（是否启用）
+      const role = this.userInfoObj.status;
       console.log(role)
-      if(role === 1) {
+      if(role === "0") {
         return false;
       }else {
         return true;
