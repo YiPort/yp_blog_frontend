@@ -49,6 +49,41 @@
           </el-select>
         </el-tooltip>
 
+        <el-tooltip class="item" effect="dark" content="查看编辑记录" placement="left" hide-after=1000>
+          <el-button
+            type="primary"
+            icon="el-icon-s-order"
+            circle class="get-edithistory button1"
+            @click="getEditHistory">
+          </el-button>
+        </el-tooltip>
+
+        <el-drawer
+          title="编辑记录"
+          :visible.sync="historyDrawer"
+          direction="ltr"
+          size=50%>
+          <div style="margin:20px">
+            排序：
+            <el-radio-group v-model="reverse">
+              <el-radio :label="true">倒序</el-radio>
+              <el-radio :label="false">正序</el-radio>
+            </el-radio-group>
+          </div>
+          <el-timeline style="margin-left:20px" :reverse="reverse">
+            <el-timeline-item
+              v-for="(activity, index) in activities"
+              :key="index"
+              :icon="activity.icon"
+              :type="activity.type"
+              :color="activity.color"
+              :size="activity.size"
+              :timestamp="activity.timestamp">
+              {{activity.content}}
+            </el-timeline-item>
+          </el-timeline>
+        </el-drawer>
+
         <el-tooltip class="item" effect="dark" content="新建分类" placement="left" hide-after=1000>
           <el-button
             type="primary"
@@ -123,7 +158,7 @@
 <script>
 import header from '../components/header.vue'
 import store from '../store'
-import { postArticle,getDraft } from '../api/article'
+import { postArticle,getDraft,getEditHistory } from '../api/article'
 import { MessageBox } from 'element-ui'
 import router from '@/router'
 import { getUserInfo } from '../api/user'
@@ -155,8 +190,11 @@ export default {
         description:'',
       },
       drawer:false,//是否显示侧边抽屉
+      historyDrawer:false,//是否显示编辑历史侧边抽屉
       dialogFormVisible:false,//是否新建分类表单
       draftList:[],//草稿列表
+      activities:[],//编辑记录
+      reverse:true,
       uploadURL:'',
       userInfo:{},//本地存储的用户信息
       userInfoObj:'',//用户的信息
@@ -167,10 +205,10 @@ export default {
     classListObj() {  //分类列表
       return this.$store.state.classListObj;
     },
-    userRole() {  //用户角色（是否启用）
-      const role = this.userInfoObj.status;
+    userRole() {  //用户角色
+      const role = this.userInfoObj.userRole;
       console.log(role)
-      if(role === "0") {
+      if(role === "1") {
         return false;
       }else {
         return true;
@@ -303,6 +341,18 @@ export default {
         })
       })
     },
+    getEditHistory() {  //获取编辑记录
+      const id = this.userInfo.id;
+      if(!id) {
+        this.loginMessage();
+      }else {
+        getEditHistory(id).then((response) =>{
+          console.log(response)
+          this.activities = response;
+        })
+        this.historyDrawer = true;
+      }
+    },
   },
   components: { //定义组件
     'wbc-nav':header,
@@ -400,17 +450,26 @@ li:hover{
     padding: 10px 0 10px 0;
     background: rgb(243, 240, 240);
 } */
+.get-edithistory{
+  position: fixed;
+  bottom: 135px;
+  right: 40px;
+  box-shadow: #333;
+  z-index:9999;
+}
 .add-category{
   position: fixed;
   bottom: 87px;
   right: 40px;
   box-shadow: #333;
+  z-index:9999;
 }
 .draft{
   position: fixed;
   bottom: 40px;
   right: 40px;
   box-shadow: #333;
+  z-index:9999;
 }
 .button1 {
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);

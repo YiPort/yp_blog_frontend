@@ -78,3 +78,16 @@ export function getDraft(createBy) {
     method: 'get'
   })
 }
+
+
+// 获取编辑记录
+export function getEditHistory(createBy) {
+  return request({
+    url: '/article/getEditHistory/' + createBy,
+    headers: {
+      isToken: true
+    },
+    method: 'get'
+  })
+}
+
