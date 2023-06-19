@@ -175,15 +175,17 @@ export default {
       isComment:'0',//是否允许评论
       id:'',//分类id
       thumbnail:'',//缩略图
-      articleObj:{
-        userId:'',
-        content:'',
-        title:'',
-        summary:'',
-        status:'1',
-        isComment:false,
-        categoryId:'',
-        thumbnail:'',
+      articleId:'',//文章id
+      articleObj:{   //用于本地保存未提交的草稿
+        id:'',//文章id
+        userId:'',//用户id
+        content:'',//Markdown文本内容
+        title:'',//文章标题
+        summary:'',//文章摘要
+        status:'1',//是否发布
+        isComment:'0',//是否允许评论
+        categoryId:'',//分类id
+        thumbnail:'',//缩略图
       },
       form:{//新建分类表单
         name:'',
@@ -194,7 +196,7 @@ export default {
       dialogFormVisible:false,//是否新建分类表单
       draftList:[],//草稿列表
       activities:[],//编辑记录
-      reverse:true,
+      reverse:true,//时间线反转
       uploadURL:'',
       userInfo:{},//本地存储的用户信息
       userInfoObj:'',//用户的信息
@@ -257,7 +259,7 @@ export default {
         this.loginMessage();
       }
       const userId = JSON.parse(userInfo).id;
-      postArticle(userId,this.title,this.content,this.summary,this.status,this.isComment,this.id,this.thumbnail)
+      postArticle(this.articleId,userId,this.title,this.content,this.summary,this.status,this.isComment,this.id,this.thumbnail)
         .then((response) => {
           this.$message({
             type:'success',
@@ -274,6 +276,7 @@ export default {
       this.postArticle();
     },
     reloadArticle(articleObj) {
+      this.articleId = articleObj.id;
       this.title = articleObj.title;
       this.content = articleObj.content;
       this.summary = articleObj.summary;
@@ -300,6 +303,7 @@ export default {
         this.classListObj = null;//分类
         this.id = '';//分类id
         this.thumbnail = '';//缩略图
+        this.articleId = '';//文章id
         localStorage.removeItem('articleObj');
       })
     },
@@ -387,6 +391,10 @@ export default {
     //侦听缩略图
     thumbnail(newValue){
       this.articleObj.thumbnail = newValue;
+    },
+    //侦听文章id
+    articleId(newValue){
+      this.articleObj.id = newValue;
     },
   },
   created() { //生命周期函数
