@@ -90,3 +90,14 @@ export function getEditHistory(createBy) {
     method: 'get'
   })
 }
+
+// 删除草稿
+export function deleteDraft(createBy,articleId) {
+  return request({
+    url: '/article/deleteDraft/' + createBy + '/' + articleId,
+    headers: {
+      isToken: true
+    },
+    method: 'delete'
+  })
+}

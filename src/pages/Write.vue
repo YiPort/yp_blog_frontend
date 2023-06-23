@@ -158,7 +158,7 @@
 <script>
 import header from '../components/header.vue'
 import store from '../store'
-import { postArticle,getDraft,getEditHistory } from '../api/article'
+import { postArticle,getDraft,getEditHistory,deleteDraft } from '../api/article'
 import { MessageBox } from 'element-ui'
 import router from '@/router'
 import { getUserInfo } from '../api/user'
@@ -355,6 +355,25 @@ export default {
           this.activities = response;
         })
         this.historyDrawer = true;
+      }
+    },
+    deleteDraft(articleId) {    // 删除草稿
+      const id = this.userInfo.id;
+      if(!id) {
+        this.loginMessage();
+      }else {
+        deleteDraft(id,articleId).then((response) => {
+          if(this.articleId === articleId) {  //将当前编辑的草稿id重置
+            this.articleId = '';
+          }
+          getDraft(id).then((response) =>{   //重新获取草稿列表
+            this.draftList = response;
+          })
+          this.$message({
+            type:'success',
+            message:'删除成功'
+          })
+        })
       }
     },
   },
