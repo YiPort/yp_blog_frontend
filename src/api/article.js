@@ -101,3 +101,15 @@ export function deleteDraft(createBy,articleId) {
     method: 'delete'
   })
 }
+
+// 添加收藏
+export function addCollection(createBy,articleId) {
+  return request({
+    url: '/collection/addCollection/' + createBy + '/' + articleId,
+    headers: {
+      isToken: true
+    },
+    method: 'put'
+  })
+
+}
