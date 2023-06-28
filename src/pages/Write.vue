@@ -138,7 +138,7 @@
           size=50%>
           <el-divider></el-divider>
           <ul class="infinite-list" style="overflow:auto">
-            <li v-for="(item,index) in draftList" :key="index" class="list">
+            <li v-for="(item,index) in draftList" :key="item.id" class="list">
               {{item.title}}/{{item.summary}}
               <button class="btn btn-danger" @click="deleteDraft(item.id)">删除</button>
               <button class="btn btn-edit" @click="loadDraft(index)">编辑</button>
@@ -223,7 +223,6 @@ export default {
       if(localStorage.getItem('userInfo')){
         that.haslogin = true;
         that.userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        that.userId = that.userInfo.id;
         getUserInfo(that.userId).then((response)=>{
           that.userInfoObj = response;
           that.userInfoObj.head_start = 0;
