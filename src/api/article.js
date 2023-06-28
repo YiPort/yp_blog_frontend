@@ -60,7 +60,7 @@ export function postArticle(articleId,userId,title,content,summary,status,isComm
       'title':title,
       'content':content,
       'summary':summary,
-      'articleStatus':status,
+      'status':status,
       'isComment':isComment,
       'categoryId':id,
       'thumbnail':thumbnail
