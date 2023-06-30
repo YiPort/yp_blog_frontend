@@ -113,3 +113,15 @@ export function addCollection(createBy,articleId) {
   })
 
 }
+
+
+// 获取收藏文章列表
+export function getCollectList(createBy) {
+  return request({
+    url: '/collection/getCollectList/' + createBy,
+    headers: {
+      isToken: true
+    },
+    method: 'get'
+  })
+}
