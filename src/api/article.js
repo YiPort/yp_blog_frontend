@@ -125,3 +125,14 @@ export function getCollectList(createBy) {
     method: 'get'
   })
 }
+
+// 取消收藏文章
+export function deleteCollection(createBy,articleId) {
+  return request({
+      url: '/collection/deleteCollection/' + createBy + '/' + articleId,
+      headers: {
+        isToken: true
+      },
+      method: 'delete'
+  })
+}

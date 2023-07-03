@@ -4,9 +4,9 @@
       <wbc-nav></wbc-nav>
       <el-tooltip class="item" effect="dark" content="查看收藏" placement="left" hide-after=1000>
           <el-button
-          type="primary" 
-          icon="el-icon-star-off" 
-          circle class="collect button1"
+          type="primary"
+          icon="el-icon-star-off"
+          circle class="collect1 button1"
           @click="getCollectList">
           </el-button>
       </el-tooltip>
@@ -18,7 +18,9 @@
           <el-divider></el-divider>
               <ul class="infinite-list" style="overflow:auto">
                   <li v-for="item in collectionList" :key="item.id" class="list">
+                    <a :href="'#/DetailArticle?aid='+item.id" target="_blank" class="font1">
                       {{item.title}}/{{item.summary}}
+                    </a>
                       <button class="btn btn-danger" @click="deleteCollection(item.id)">取消收藏</button>
                   </li>
               </ul>
@@ -115,7 +117,7 @@
                           <span class="leftTitle">注册日期</span>
                           <span>{{userInfoObj.createTime?userInfoObj.createTime:"无"}}</span>
                       </li>
-                   
+
                   </ul>
 
               </section>
@@ -128,7 +130,7 @@
 import header from '../components/header.vue'
 import {getUserInfo,savaUserInfo} from '../api/user.js'//获取用户信息，保存用户信息
 import store from '../store'
-import { getCollectList } from '../api/article'
+import { getCollectList,deleteCollection } from '../api/article'
   export default {
       name: 'UserInfo',
       data() { //选项 / 数据
@@ -206,6 +208,16 @@ import { getCollectList } from '../api/article'
                   this.collectionList = response
               })
               this.myCollection = true;
+          },
+          deleteCollection(articleId) {   //取消收藏文章
+              deleteCollection(this.userId,articleId).then(response => {
+                  this.getCollectList();
+                  this.$message({
+                     type: 'success',
+                     message: '取消收藏成功'
+                  })
+              })
+
           }
       },
       components: { //定义组件
@@ -223,7 +235,18 @@ import { getCollectList } from '../api/article'
 </script>
 
 <style>
-.collect{
+.font1{
+  color: rgb(0, 0, 0);
+}
+.font1:hover{
+  color: #3689db;
+}
+.a_list{
+  width: 548px;
+  height: 47px;
+  padding: 0 10px 0 10px;
+}
+.collect1{
   position: fixed;
   bottom: 60px;
 right: 40px;
