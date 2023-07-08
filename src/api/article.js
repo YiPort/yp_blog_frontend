@@ -136,3 +136,21 @@ export function deleteCollection(createBy,articleId) {
       method: 'delete'
   })
 }
+
+
+// 提交文章问题
+export function postQuestion(articleId,userId,description) {
+  return request({
+    url: '/question/postQuestion',
+    method: 'post',
+    headers: {
+      isToken: true
+    },
+    data: {
+      'articleId':articleId,
+      'createBy':userId,
+      'questionDescription':description
+    }
+  })
+}
+

@@ -1,7 +1,7 @@
 <!-- 文章详情 -->
 <template>
   <div>
-    <yp-nav></yp-nav>
+    <sg-nav></sg-nav>
     <div  class="container" id="detail">
       <el-tooltip class="item" effect="dark" content="收藏" placement="left" hide-after=1000>
         <el-button
@@ -19,16 +19,16 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitCategory">确 定</el-button>
+          <el-button type="primary" @click="postQuestion">确 定</el-button>
         </div>
       </el-dialog>
       <el-row  :gutter="30">
         <el-col :sm="24" :md="16" style="transition:all .5s ease-out;margin-bottom:30px;">
-          <yp-articleDetail></yp-articleDetail>
-          <yp-message></yp-message>
+          <sg-articleDetail></sg-articleDetail>
+          <sg-message></sg-message>
         </el-col>
         <el-col :sm="24"  :md="8" >
-          <yp-rightlist></yp-rightlist>
+          <sg-rightlist></sg-rightlist>
         </el-col>
       </el-row>
       <el-tooltip class="item" effect="dark" content="有错误？" placement="left" hide-after=1000>
@@ -36,7 +36,7 @@
           type="danger"
           icon="el-icon-question"
           circle class="question button1"
-          @click="postQuestion">
+          @click="submitQuestion">
         </el-button>
       </el-tooltip>
     </div>
@@ -49,7 +49,7 @@ import rightlist from '../components/rightlist.vue'
 import articleDetail from '../components/articleDetail.vue'
 import message from '../components/message.vue'
 import { MessageBox } from 'element-ui'
-import { addCollection } from '../api/article'
+import { addCollection,postQuestion } from '../api/article'
 import router from '../router/index'
 export default {
   name:'DetailShare',
@@ -108,15 +108,35 @@ export default {
         })
       }
     },
-    postQuestion() {
-      this.dialogFormVisible = true
+    submitQuestion() {  //打开问题提交弹窗
+      const id = this.userInfo.id;
+      if(!id) {
+        this.loginMessage();
+      }else {
+        this.dialogFormVisible = true
+      }
+    },
+    postQuestion() {    //提交文章问题
+      if(this.form.description.length > 150) {
+        this.$message({
+          type:'error',
+          message:'问题描述不得超过150字'
+        })
+      }else{
+        postQuestion(this.articleId,this.userInfo.id,this.form.description).then(response => {
+          this.$message({
+            type:'success',
+            message:'反馈成功'
+          })
+        })
+      }
     }
   },
   components: { //定义组件
-    'yp-nav':header,
-    'yp-articleDetail':articleDetail,
-    'yp-message':message,
-    'yp-rightlist':rightlist,
+    'sg-nav':header,
+    'sg-articleDetail':articleDetail,
+    'sg-message':message,
+    'sg-rightlist':rightlist,
   },
   created() { //生命周期函数
     this.routeChange();
