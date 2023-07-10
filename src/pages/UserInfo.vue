@@ -18,10 +18,38 @@
           <el-divider></el-divider>
               <ul class="infinite-list" style="overflow:auto">
                   <li v-for="item in collectionList" :key="item.id" class="list">
-                    <a :href="'#/DetailArticle?aid='+item.id" target="_blank" class="font1">
+                      <a :href="'#/DetailArticle?aid='+item.id" target="_blank" class="font1">
                       {{item.title}}/{{item.summary}}
-                    </a>
+                      </a>
                       <button class="btn btn-danger" @click="deleteCollection(item.id)">取消收藏</button>
+                  </li>
+              </ul>
+      </el-drawer>
+      <el-tooltip class="item" effect="dark" content="反馈列表" placement="left" hide-after=1000>
+          <el-button
+          type="danger"
+          icon="el-icon-question"
+          circle class="question1 button1"
+          @click="getQuestionList"
+          v-show="isAdmin">
+          </el-button>
+      </el-tooltip>
+      <el-drawer
+      title="反馈列表"
+      :visible.sync="myQuestion"
+      direction="ltr"
+      size=50%>
+      <el-tooltip class="item" effect="dark" content="刷新" placement="left" hide-after=1000>
+          <el-button type="primary" class="refresh1" icon="el-icon-refresh-right" :loading="isLoading" @click="refresh" circle></el-button>
+      </el-tooltip>
+          <el-divider></el-divider>
+              <ul class="infinite-list" style="overflow:auto">
+                  <li v-for="item in questionList" :key="item.id" class="list">
+                      <a :href="'#/DetailArticle?aid='+item.articleId" target="_blank" class="font1">
+                      用户-{{item.createBy}} 提交，文章-{{item.articleId}} 的错误（{{item.createTime}}）
+                      </a>
+                      <button class="btn btn-danger" @click="deleteQuestion(item.id)">已解决</button>
+                      <button class="btn btn-edit" @click="getDetail(item.id)">详情</button>
                   </li>
               </ul>
       </el-drawer>
@@ -93,16 +121,16 @@
                       <li class="avatarlist">
                           <span class="leftTitle">头像</span>
                           <div class="avatar-uploader">
-                              <img  :src="userInfoObj.avatarUrl?userInfoObj.avatarUrl:'static/img/tou.jpg'"   :onerror="$store.state.errorImg" class="avatar">
+                              <img  :src="userInfoObj.avatar?userInfoObj.avatar:'static/img/tou.jpg'"   :onerror="$store.state.errorImg" class="avatar">
                           </div>
                       </li>
                       <li>
                           <span class="leftTitle">账号</span>
-                          <span>{{userInfoObj.userAccount?userInfoObj.userAccount:"无"}}</span>
+                          <span>{{userInfoObj.userName?userInfoObj.userName:"无"}}</span>
                       </li>
                       <li class="username">
                           <span class="leftTitle">昵称</span>
-                          <span>{{userInfoObj.username?userInfoObj.username:"无"}}</span>
+                          <span>{{userInfoObj.nickName?userInfoObj.nickName:"无"}}</span>
 
                       </li>
                       <li>
@@ -111,7 +139,7 @@
                       </li>
                       <li>
                           <span class="leftTitle">性别</span>
-                          <span>{{userInfoObj.gender==0?'男':'女'}}</span>
+                          <span>{{userInfoObj.sex=="0"?'男':'女'}}</span>
                       </li>
                       <li>
                           <span class="leftTitle">注册日期</span>
@@ -130,7 +158,8 @@
 import header from '../components/header.vue'
 import {getUserInfo,savaUserInfo} from '../api/user.js'//获取用户信息，保存用户信息
 import store from '../store'
-import { getCollectList,deleteCollection } from '../api/article'
+import { getCollectList,deleteCollection,getQuestionList,deleteQuestion } from '../api/article'
+import { MessageBox } from 'element-ui'
   export default {
       name: 'UserInfo',
       data() { //选项 / 数据
@@ -141,11 +170,22 @@ import { getCollectList,deleteCollection } from '../api/article'
               userInfoObj:'',//用户的信息
               myCollection: false,//是否显示收藏面板
               collectionList: [],//收藏列表
+              myQuestion: false,//是否显示反馈面板
+              questionList: [],//反馈列表
+              description: '',//问题描述
+              isLoading: false,
           }
       },
       computed: {
           userId() {
               return this.userInfo.id;
+          },
+          isAdmin() { //是否是管理员
+              if(this.userInfo.userRole === "1") {
+                  return true;
+              }else {
+                  return false;
+              }
           }
       },
       methods: { //事件处理器
@@ -174,7 +214,7 @@ import { getCollectList,deleteCollection } from '../api/article'
           saveInfoFun: function(){//保存编辑的用户信息
               var that = this;
 
-              if(!that.userInfoObj.username){ //昵称为必填
+              if(!that.userInfoObj.nickName){ //昵称为必填
                    that.$message.error('昵称为必填项，请填写昵称');
                    return;
               }
@@ -188,7 +228,6 @@ import { getCollectList,deleteCollection } from '../api/article'
           },
           routeChange: function(){//展示页面信息
               var that = this;
-              // console.log(this.$router,this.$route);
               if(localStorage.getItem('userInfo')){
                   that.haslogin = true;
                   that.userInfo = JSON.parse(localStorage.getItem('userInfo'));
@@ -199,25 +238,94 @@ import { getCollectList,deleteCollection } from '../api/article'
                   })
               }else{
                   that.haslogin = false;
+                  this.loginMessage();
               }
 
           },
+          loginMessage() {  //未登录消息提示
+              MessageBox.confirm('未登录！请先登录', '系统提示', {
+                      confirmButtonText: '登录',
+                      cancelButtonText: '取消',
+                      type: 'warning'
+                    }).then(() => {
+                          localStorage.setItem('logUrl', router.currentRoute.fullPath);
+                          router.push({
+                              path: '/Login?login=1'
+                          });
+                       }).catch(() => { })
+                          return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+          },
           getCollectList() {  //获取收藏文章列表
-              getCollectList(this.userId).then(response => {
+              if(!this.userId) this.loginMessage();
+              else {
+                  getCollectList(this.userId).then(response => {
                   console.log(response)
                   this.collectionList = response
               })
               this.myCollection = true;
+              }
           },
           deleteCollection(articleId) {   //取消收藏文章
               deleteCollection(this.userId,articleId).then(response => {
                   this.getCollectList();
                   this.$message({
-                     type: 'success',
-                     message: '取消收藏成功'
+                      type: 'success',
+                      message: '取消收藏成功'
                   })
               })
-
+          },
+          getQuestionList() {   //获取反馈列表
+              if(!this.isAdmin) {
+                  this.$message({
+                      type: 'error',
+                      message: '无权限'
+                  })
+                  return
+              }
+              getQuestionList(this.userId).then(response => {
+                  this.questionList = response;
+              })
+              this.myQuestion = true;
+          },
+          getDetail(id) {     //获取文章问题详情
+              this.questionList.forEach(question => {
+                  if(question.id === id) {
+                      this.$confirm(question.questionDescription, '问题详情', {
+                      confirmButtonText: '已解决',
+                      cancelButtonText: '未解决',
+                      type: 'info'
+                  }).then(() => {
+                      this.$message({
+                          type: 'success',
+                          message: '删除成功!'
+                      });
+                      this.deleteQuestion();
+                  }).catch(() => {
+                      this.$message({
+                          type: 'info',
+                          message: '已取消删除'
+                      });
+                  });
+                  }
+                  return
+              })
+          },
+          deleteQuestion(id) {    //删除文章问题
+              deleteQuestion(this.userId,id).then(response => {
+                  this.$message({
+                      type: 'success',
+                      message: '删除成功'
+                  })
+                  this.getQuestionList()
+              })
+          },
+          refresh() {     //刷新问题列表
+              this.isLoading = true;
+              this.questionList = [];
+              setTimeout(() => {
+                  this.getQuestionList();
+                  this.isLoading = false;
+              }, 500);
           }
       },
       components: { //定义组件
@@ -235,6 +343,12 @@ import { getCollectList,deleteCollection } from '../api/article'
 </script>
 
 <style>
+.refresh1{
+  position: fixed;
+  top: 60px;
+  left: 45%;
+  margin-right: 10px;
+}
 .font1{
   color: rgb(0, 0, 0);
 }
@@ -245,6 +359,13 @@ import { getCollectList,deleteCollection } from '../api/article'
   width: 548px;
   height: 47px;
   padding: 0 10px 0 10px;
+}
+.question1{
+  position: fixed;
+  bottom: 107px;
+right: 40px;
+  box-shadow: #333;
+  z-index:9999;
 }
 .collect1{
   position: fixed;
@@ -285,6 +406,8 @@ li:hover button{display: block;}
   line-height: 20px;text-align: center;vertical-align: middle;cursor: pointer;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
   border-radius: 4px;}
+.btn-edit {color: #fff;background: #409eff;border: 1px solid #409eff;margin-right: 5px;}
+.btn-edit:hover{color: #fff;background: #0577e9}
 .btn-danger {color: #fff;background-color: #da4f49;border: 1px solid #bd362f;}
 .btn-danger:hover {color: #fff;background-color: #bd362f;}
 .userInfoBox .avatarlist{

@@ -154,3 +154,25 @@ export function postQuestion(articleId,userId,description) {
   })
 }
 
+// 获取反馈列表
+export function getQuestionList(userId) {
+  return request({
+    url: '/question/getQuestionList/' + userId,
+    method: 'get',
+    headers: {
+      isToken: true
+    }
+  })
+}
+
+// 删除文章问题
+export function deleteQuestion(userId,id) {
+  return request({
+    url: '/question/deleteQuestion/' + userId + '/' + id,
+    method: 'delete',
+    headers: {
+      isToken: true
+    }
+  })
+}
+
