@@ -12,27 +12,38 @@
 								<template slot="title"><i class="fa fa-wa fa-archive"></i> 分类</template>
 								<el-menu-item v-for="(item,index) in classListObj" :key="'class1'+index" :index="'/Share?classId='+item.id">{{item.name}}</el-menu-item>
 							</el-submenu>
-<!--							<el-menu-item index="/Reward"><i class="fa fa-wa fa-cny"></i> 赞赏</el-menu-item>-->
+							<!-- <el-menu-item index="/Reward"><i class="fa fa-wa fa-cny"></i> 赞赏</el-menu-item> -->
 							<el-menu-item index="/Friendslink"><i class="fa fa-wa fa-users"></i>友链</el-menu-item>
-              <el-menu-item index="/Write"><i class="fa fa-wa fa-users"></i>写博客</el-menu-item>
+							<el-menu-item index="/Write"><i class="fa fa-wa fa-users"></i>写博客</el-menu-item>
 
-              <div class="userInfo">
+							<div class="userInfo">
 								<div v-show="!haslogin" class="nologin">
 									<a href="javascript:void(0);" @click="logoinFun(1)">登录&nbsp;</a><!--|<a href="javascript:void(0);" @click="logoinFun(0)">&nbsp;注册</a>-->
 								</div>
-								<div v-show="haslogin" class="haslogin">
-                  <a href="#/UserInfo">个人中心</a>
-                  <el-divider direction="vertical"></el-divider>
-                  <a href="javascript:void(0);" @click="userlogout">退出登录</a>
-                  <!--<i class="fa fa-fw fa-user-circle userImg"></i>
-                      <ul class="haslogin-info">
-                        <li>
-                          <a href="#/UserInfo">个人中心</a>
-                        </li>
-                        <li>
-                          <a href="javascript:void(0);" @click="userlogout">退出登录</a>
-                        </li>
-                      </ul>-->
+								<div v-show="haslogin" class="haslogin avatarClass">
+									<el-dropdown @command="commandHandle">
+									<div>
+										<el-avatar size="small" :src="getAvatar"></el-avatar>
+									</div>
+									<el-dropdown-menu slot="dropdown">
+										<a href="#/UserInfo">
+											<el-dropdown-item icon="el-icon-user">个人中心</el-dropdown-item>
+										</a>
+										<el-dropdown-item divided icon="el-icon-switch-button" command="userlogout">退出登录</el-dropdown-item>
+									</el-dropdown-menu>
+									</el-dropdown>
+									<!-- <a href="#/UserInfo">个人中心</a> -->
+									<!-- <el-divider direction="vertical"></el-divider>
+									<a href="javascript:void(0);" @click="userlogout">退出登录</a> -->
+									<!--<i class="fa fa-fw fa-user-circle userImg"></i>
+									<ul class="haslogin-info">
+										<li>
+											<a href="#/UserInfo">个人中心</a>
+										</li>
+										<li>
+											<a href="javascript:void(0);" @click="userlogout">退出登录</a>
+										</li>
+									</ul>-->
 								</div>
 							</div>
 						</el-menu>
@@ -61,9 +72,8 @@
 	import {logout} from '../api/user'
 	import {removeToken} from '../utils/auth'
 	import {getCategoryList} from '../api/category'
-	import {
-		Typeit
-	} from '../utils/plug.js'
+	import { Typeit } from '../utils/plug.js'
+
 	export default {
 		data() { //选项 / 数据
 			return {
@@ -79,11 +89,18 @@
 				projectList: '' //项目列表
 			}
 		},
-    computed: {
-      classListObj() { //分类
-        return this.$store.state.classListObj;
-      },
-    },
+		computed: {
+			classListObj() { //分类
+				return this.$store.state.classListObj;
+			},
+			getAvatar() {
+				if(!this.userInfo.avatarUrl) {
+					return 'static/img/tou.jpg';
+				}else {
+					return this.userInfo.avatarUrl;
+				}
+			}
+		},
 		watch: {
 
 		},
@@ -103,8 +120,8 @@
 			},
 			getCategoryList(){
 				getCategoryList().then((response)=>{
-          this.$store.commit('getCategoryList',response)
-        })
+					this.$store.commit('getCategoryList',response)
+				})
 			},
 			handleSelect(key, keyPath) { //pc菜单选择
 				//    console.log(key, keyPath);
@@ -175,7 +192,12 @@
 					this.input = '';
 					this.$store.state.keywords = '';
 				}
-			}
+			},
+			commandHandle(command) {	//退出登录
+				if(command === 'userlogout') {
+					this.userlogout();
+				}
+			},
 		},
 		components: { //定义组件
 
@@ -211,8 +233,8 @@
 		},
 		mounted() { //页面元素加载完成
 			var that = this;
-      this.getCategoryList()
-      var timer = setTimeout(function() {
+			this.getCategoryList()
+			var timer = setTimeout(function() {
 				Typeit(that.$store.state.themeObj.user_start, "#luke"); //打字机效果
 				clearTimeout(timer);
 			}, 500);
@@ -221,6 +243,10 @@
 	</script>
 
 	<style>
+	.avatarClass{
+		margin-top: 5px;
+		margin-right: -60px;
+	}
 	/*********头部导航栏********/
 
 	/*头部导航栏盒子*/
