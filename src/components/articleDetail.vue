@@ -19,7 +19,7 @@
                     <a :href="'#/Share?classId='+detailObj.categoryId">{{detailObj.categoryName}}</a>
                 </div>
             </header>
-            <div class="article-content markdown-body" v-html="detailObj.content"></div>
+            <div id="article1" class="article-content markdown-body" v-html="detailObj.content"></div>
 
             <div class="donate">
                 <div class="donate-word">

@@ -2,17 +2,20 @@
 <template>
   <div>
       <sg-nav></sg-nav>
-      <el-button class="directoryClass" type="primary" :icon="icon" @click="getDirectory"></el-button>
-      <el-tree
-          :data="toc"
-          :props="defaultProps"
-          highlight-current
-          :indent="20"
-          @node-click="scrollToPosition"
-          ref="menuTree"
-          class="tree"
-          v-show="showDirectory">
-      </el-tree>
+      <el-collapse-transition>
+          <el-tree
+              id="boxFixed"
+              :data="toc"
+              :props="defaultProps"
+              highlight-current
+              :indent="20"
+              node-key ="id" 
+              @node-click="scrollToPosition"
+              ref="menuTree"
+              class="treeFixed"
+              v-show="showDirectory">
+          </el-tree>
+      </el-collapse-transition>
       <div  class="container" id="detail">
           <el-tooltip class="item" effect="dark" content="收藏" placement="left" hide-after=1000>
               <el-button
@@ -76,19 +79,24 @@ import $ from 'jquery'
               form: {
                   description: '' //错误描述
               },
-              toc: [],
+              toc: [],    //目录节点数据
               defaultProps: {
                 children: 'children',
                 label: 'name'
               },
-              catalogue: [],
-              showDirectory: false,
-              icon: 'el-icon-d-arrow-left',
+              id: 1,
+              catalogue: [],  //节点元素的id和其距顶部的距离
+              showDirectory: false,   //是否显示目录
+              isFixed: false,     //目录css样式选择
           }
       },
       watch: {
           // 如果路由有变化，会再次执行该方法
           '$route':'routeChange',
+          isFixed(newValue) {
+              this.showDirectory = newValue;
+              this.tocAndCli();
+          }
       },
       methods: { //事件处理器
           routeChange() {//展示页面信息
@@ -152,7 +160,7 @@ import $ from 'jquery'
               })
               }
           },
-          tocAndCli() {
+          tocAndCli() {   //生成目录树
             this.$nextTick(() => {
               const aArr1 = $(
                   "#article1 a"
@@ -165,8 +173,9 @@ import $ from 'jquery'
                 }
               })
               //给数据赋值，保存元素的id和其距顶部的距离
-              this.tocAndDist(aArr)
-              console.log("aArr",aArr)
+              if(this.catalogue.length === 0) {
+                  this.tocAndDist(aArr);
+              }
 
               let toc = [];
               aArr.forEach((item, index) => {
@@ -174,7 +183,7 @@ import $ from 'jquery'
                 let name = $(item).parent().text();
                 let prop = $(item).parent().prop('nodeName');
                 let children = this.getChildren(aArr, item, index)
-                if (href && (prop === 'H2' || prop === 'H3')) { // 这里判断是因为我们只需要有id的内容，没有id的则过滤掉。
+                if (href && (prop === 'H2')) { // 这里判断是因为我们只需要有id的内容，没有id的则过滤掉。
                   toc.push({
                     id: href.substring(href.lastIndexOf("_") + 1),
                     href: "#" + href,
@@ -183,24 +192,22 @@ import $ from 'jquery'
                     children
                   });
                   // this.catalog = true
-                  console.log("toc",toc)
                 }
               });
               this.toc = toc
             });
           },
-          tocAndDist(arr) {
-            arr.forEach(item => {
-              if ($(item).attr("id")) {
-                let id = item.id.substring(item.id.lastIndexOf("_") + 1)
-                let dist = $('#' + item.id).offset().top;
+          tocAndDist(arr) {   //存储节点元素的id和其距顶部的距离
+              arr.forEach(item => {
+                  if ($(item).attr("id")) {
+                      let id = item.id.substring(item.id.lastIndexOf("_") + 1)
+                      let dist = $('#' + item.id).offset().top;
 
-                this.catalogue.push({id, dist})
-              }
-
-            })
+                      this.catalogue.push({id, dist})
+                  }
+              })
           },
-          getChildren(aArr, item, index) {
+          getChildren(aArr, item, index) {    //获取目录子节点
             let out = []
             if (index === aArr.length - 1) {
               return []
@@ -240,16 +247,64 @@ import $ from 'jquery'
               position.top = position.top - 35
               $("html,body").animate({ scrollTop: position.top }, 500);
           },
-          getDirectory() {
-              if(this.showDirectory) {
-                  this.showDirectory = false;
-                  this.icon = 'el-icon-d-arrow-left';
-              }else {
-                  this.showDirectory = true;
-                  this.icon = 'el-icon-d-arrow-right';
-                  this.tocAndCli();
+          handleScroll(){     //处理目录显示样式
+              let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop // 滚动条偏移量
+              let offsetTop = 1600  // 要滚动到顶部吸附的元素的偏移量
+              console.log("scrollTop",scrollTop)
+              console.log("offsetTop",offsetTop)
+              this.isFixed = scrollTop > offsetTop ? true : false;  // 如果滚动到顶部了，this.isFixed就为true
+              let temp;   //存储当前浏览节点
+              this.catalogue.forEach(item => {
+                  let dist = scrollTop - item.dist + 500;
+                  if (dist > 0) {
+                      temp = item
+                      return;
+                  }
+              });
+              try {
+                  // let nodes = this.$refs.menuTree.store.root.data;
+                  let nodes = this.catalogue;
+                  console.log("nodes",nodes)
+                  /* nodes.forEach(node => {
+                      let childrenNode = node.children;
+                      if(childrenNode.length !== 0) {
+                          childrenNode.forEach(item => {
+                              nodes.push(item);
+                          })
+                      }
+                  })
+                  console.log("newNodes",nodes) */
+                  /* for (let i in nodes) {
+                      console.log(i)
+                      if (nodes[i].data.id === temp.id) {
+                          nodes[i].expanded = true
+                          console.log("nodeId",nodes[i].data.id)
+                          this.$refs.menuTree.setCurrentKey(nodes[i].data.id)
+
+                          this.expand(nodes[i])
+                      } else {
+                          nodes[i].expanded = false
+                      }
+                  } */
+                  nodes.forEach(node => {
+                      if(node.id === temp.id) {
+                          this.$refs.menuTree.setCurrentKey(node.id)
+
+                      }
+                  })
+              } catch (e) {
+
               }
-          }
+          },
+          //TODO:自动展开子节点
+          expand(node) {
+              if (node && node.parent) {
+                  node.parent.expanded = true
+              }
+
+              if (node.parent)
+                  this.expand(node.parent)
+          },
       },
       components: { //定义组件
           'sg-nav':header,
@@ -262,6 +317,7 @@ import $ from 'jquery'
           this.uploadURL = this.$store.state.baseURL+'upload'
       },
       mounted(){
+          window.addEventListener('scroll',this.handleScroll) // 监听滚动事件，然后用handleScroll这个方法进行相应的处理
           /* var anchor = document.querySelector("#detail");
           // console.log(anchor,anchor.offsetTop);
           var top = anchor.offsetTop-60;
@@ -282,16 +338,23 @@ right: 100px;
   box-shadow: #333;
   z-index:9999;
 }
-.tree{
+.treeFixed{
   position: fixed;
-  top: 100px;
+  top: 90px;
 right: 10%;
   box-shadow: #333;
-  width: 385px;
-  z-index:9999;
-  -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
-  border-radius: 7px;
+  width: 355px;
+  border-radius: 5px;
+  z-index:99;
+  transition: all 0.2s linear;
+  padding: 15px;
+  text-align: center;
+  margin: 0 0 0 -65px;
+  letter-spacing: 0.5px;
+}
+.treeFixed:hover{
+  transform: translate(0, -2px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 .collect{
   position: fixed;
