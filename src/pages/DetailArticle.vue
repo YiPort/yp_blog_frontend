@@ -12,6 +12,7 @@
               node-key ="id" 
               @node-click="scrollToPosition"
               ref="menuTree"
+              style="position: fixed;"
               class="treeFixed"
               v-show="showDirectory">
           </el-tree>
@@ -330,14 +331,7 @@ import $ from 'jquery'
   }
 </script>
 
-<style>
-.directoryClass{
-  position: fixed;
-  bottom: 107px;
-right: 100px;
-  box-shadow: #333;
-  z-index:9999;
-}
+<style lang="less">
 .treeFixed{
   position: fixed;
   top: 90px;

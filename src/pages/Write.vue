@@ -137,7 +137,7 @@
           direction="ltr"
           size=50%>
           <el-divider></el-divider>
-          <ul class="infinite-list" style="overflow:auto">
+          <ul class="infinite-list">
             <li v-for="(item,index) in draftList" :key="item.id" class="list">
               {{item.title}}/{{item.summary}}
               <button class="btn btn-danger" @click="deleteDraft(item.id)">删除</button>
@@ -433,10 +433,15 @@ export default {
 }
 </script>
 
-<style>
-.el-drawer {
-  overflow: scroll
-}
+/*1.显示滚动条：当内容超出容器的时候，可以拖动：*/
+.el-drawer__body {    
+    overflow: auto;
+    /* overflow-x: auto; */
+} 
+/*2.隐藏滚动条*/
+/* .el-drawer__container ::-webkit-scrollbar{    
+    display: none;
+} */
 .list {
   list-style: none;
   height: 36px;

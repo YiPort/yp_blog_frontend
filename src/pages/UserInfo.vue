@@ -377,9 +377,15 @@ right: 40px;
 .button1 {
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
-.el-drawer {
-  overflow: scroll
-}
+/*1.显示滚动条：当内容超出容器的时候，可以拖动：*/
+.el-drawer__body {    
+    overflow: auto;
+    /* overflow-x: auto; */
+} 
+/*2.隐藏滚动条*/
+/* .el-drawer__container ::-webkit-scrollbar{    
+    display: none;
+} */
 .list {
   list-style: none;
   height: 36px;
