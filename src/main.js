@@ -9,8 +9,10 @@ import './assets/css/style.less'
 import store from './store'
 import MavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+// highlight.js代码高亮插件
+import Highlight from './utils/highlight'; // from 路径是highlight.js的路径，纯属自定义
 
-
+Vue.use(Highlight);
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(MavonEditor)

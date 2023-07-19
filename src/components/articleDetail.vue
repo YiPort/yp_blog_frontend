@@ -19,7 +19,7 @@
                     <a :href="'#/Share?classId='+detailObj.categoryId">{{detailObj.categoryName}}</a>
                 </div>
             </header>
-            <div id="article1" class="article-content markdown-body" v-html="detailObj.content"></div>
+            <div id="article1" v-highlight class="article-content markdown-body" v-html="detailObj.content"></div>
 
             <div class="donate">
                 <div class="donate-word">
@@ -98,7 +98,6 @@ import { mavonEditor } from 'mavon-editor'
 </script>
 
 <style lang="less">
-
 .detailBox .article-content{
     font-size: 15px;
     white-space: normal;
@@ -114,10 +113,29 @@ import { mavonEditor } from 'mavon-editor'
     overflow-x: hidden;
 }
 .detailBox .article-content pre{
+    position: relative;
+    background-color: #1a1818;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     word-wrap: break-word;
     word-break: break-all;
-    overflow-x: hidden;
+    overflow-x: auto;
 }
+/* pre .btn-pre-copy{
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    color: hsla(0,0%,54.9%,.8);
+    transition: color .1s;
+} */
 .detailBox .article-content img{
     max-width: 100%!important;
     height: auto!important;
@@ -466,7 +484,8 @@ import { mavonEditor } from 'mavon-editor'
 .markdown-body kbd,
 .markdown-body pre {
   font-family: monospace, monospace;
-  font-size: 1em;
+  font-size: 4em;
+  font-family: Lucida Console;
 }
 
 .markdown-body hr {
@@ -930,7 +949,7 @@ import { mavonEditor } from 'mavon-editor'
 .markdown-body pre {
   padding: 16px;
   overflow: auto;
-  font-size: 85%;
+  font-size: 0.9em;
   line-height: 1.45;
   background-color: #f6f8fa;
   border-radius: 3px;
