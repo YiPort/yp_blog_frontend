@@ -120,6 +120,8 @@ import { mavonEditor } from 'mavon-editor'
     word-wrap: break-word;
     word-break: break-all;
     overflow-x: auto;
+    border: 0;
+    box-shadow: 4px 10px 3px rgba(0, 0, 0, 0.5);
 }
 /* pre .btn-pre-copy{
     -webkit-user-select: none;
@@ -720,6 +722,7 @@ import { mavonEditor } from 'mavon-editor'
 .markdown-body table,
 .markdown-body pre {
   margin-top: 0;
+  margin-right: 9px;
   margin-bottom: 16px;
 }
 

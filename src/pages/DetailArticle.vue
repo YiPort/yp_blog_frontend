@@ -6,10 +6,11 @@
           <el-tree
               id="boxFixed"
               :data="toc"
+              empty-text="暂无目录"
               :props="defaultProps"
               highlight-current
               :indent="20"
-              node-key ="id" 
+              node-key ="id"
               @node-click="scrollToPosition"
               ref="menuTree"
               style="position: fixed;"
@@ -20,7 +21,7 @@
       <div  class="container" id="detail">
           <el-tooltip class="item" effect="dark" content="收藏" placement="left" hide-after=1000>
               <el-button
-              type="primary" 
+              type="primary"
               icon="el-icon-star-off"
               circle class="collect button1"
               @click="addCollect()">
@@ -48,8 +49,8 @@
           </el-row>
           <el-tooltip class="item" effect="dark" content="有错误？" placement="left" hide-after=1000>
               <el-button
-              type="danger" 
-              icon="el-icon-question" 
+              type="danger"
+              icon="el-icon-question"
               circle class="question button1"
               @click="submitQuestion">
               </el-button>
