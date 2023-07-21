@@ -19,7 +19,7 @@
           </el-tree>
       </el-collapse-transition>
       <div  class="container" id="detail">
-          <el-tooltip class="item" effect="dark" content="收藏" placement="left" hide-after=1000>
+          <el-tooltip class="item" effect="dark" content="收藏" placement="left" :hide-after="1000">
               <el-button
               type="primary"
               icon="el-icon-star-off"
@@ -29,7 +29,7 @@
           </el-tooltip>
           <el-dialog title="提交错误" :visible.sync="dialogFormVisible">
           <el-form :model="form">
-              <el-form-item label="错误描述" :label-width="formLabelWidth">
+              <el-form-item label="错误描述">
               <el-input type="textarea" v-model="form.description"></el-input>
               </el-form-item>
           </el-form>
@@ -47,7 +47,7 @@
                   <sg-rightlist></sg-rightlist>
               </el-col>
           </el-row>
-          <el-tooltip class="item" effect="dark" content="有错误？" placement="left" hide-after=1000>
+          <el-tooltip class="item" effect="dark" content="有错误？" placement="left" :hide-after="1000">
               <el-button
               type="danger"
               icon="el-icon-question"
@@ -242,9 +242,8 @@ import $ from 'jquery'
             }
             return out
           },
-          scrollToPosition(data) {
+          scrollToPosition(data) {    //点击目录标题跳转
               let id = data.href
-              console.log("id",id)
               const position = $(id).offset();
               position.top = position.top - 35
               $("html,body").animate({ scrollTop: position.top }, 500);
@@ -252,8 +251,6 @@ import $ from 'jquery'
           handleScroll(){     //处理目录显示样式
               let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop // 滚动条偏移量
               let offsetTop = 1600  // 要滚动到顶部吸附的元素的偏移量
-              console.log("scrollTop",scrollTop)
-              console.log("offsetTop",offsetTop)
               this.isFixed = scrollTop > offsetTop ? true : false;  // 如果滚动到顶部了，this.isFixed就为true
               let temp;   //存储当前浏览节点
               this.catalogue.forEach(item => {
@@ -266,7 +263,7 @@ import $ from 'jquery'
               try {
                   // let nodes = this.$refs.menuTree.store.root.data;
                   let nodes = this.catalogue;
-                  console.log("nodes",nodes)
+                  // console.log("nodes",nodes)
                   /* nodes.forEach(node => {
                       let childrenNode = node.children;
                       if(childrenNode.length !== 0) {

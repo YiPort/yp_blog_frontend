@@ -2,7 +2,7 @@
 <template>
   <div>
       <wbc-nav></wbc-nav>
-      <el-tooltip class="item" effect="dark" content="查看收藏" placement="left" hide-after=1000>
+      <el-tooltip class="item" effect="dark" content="查看收藏" placement="left" :hide-after="1000">
           <el-button
           type="primary"
           icon="el-icon-star-off"
@@ -25,7 +25,7 @@
                   </li>
               </ul>
       </el-drawer>
-      <el-tooltip class="item" effect="dark" content="反馈列表" placement="left" hide-after=1000>
+      <el-tooltip class="item" effect="dark" content="反馈列表" placement="left" :hide-after="1000">
           <el-button
           type="danger"
           icon="el-icon-question"
@@ -39,7 +39,7 @@
       :visible.sync="myQuestion"
       direction="ltr"
       size=50%>
-      <el-tooltip class="item" effect="dark" content="刷新" placement="left" hide-after=1000>
+      <el-tooltip class="item" effect="dark" content="刷新" placement="left" :hide-after="1000">
           <el-button type="primary" class="refresh1" icon="el-icon-refresh-right" :loading="isLoading" @click="refresh" circle></el-button>
       </el-tooltip>
           <el-divider></el-divider>
@@ -378,12 +378,12 @@ right: 40px;
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
 /*1.显示滚动条：当内容超出容器的时候，可以拖动：*/
-.el-drawer__body {    
+.el-drawer__body {
     overflow: auto;
     /* overflow-x: auto; */
-} 
+}
 /*2.隐藏滚动条*/
-/* .el-drawer__container ::-webkit-scrollbar{    
+/* .el-drawer__container ::-webkit-scrollbar{
     display: none;
 } */
 .list {

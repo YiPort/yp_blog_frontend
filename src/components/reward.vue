@@ -8,10 +8,10 @@
     </header>
     <section>
       <div>
-        <img 
+        <img
           src="static/img/coffee.jpg"
           alt=""
-          style="max-width: 50% ;  text-align: center"
+          style="max-width: 20%"
           class="coffee"
         />
       </div>
@@ -66,20 +66,7 @@ export default {
     //选项 / 数据
     return {
       rewardData: "", //赞赏二维码
-      tableData: [
-        {
-          //赞赏数据
-          "payTime":"2023-04-06",
-          "name":"可乐鲲翅",
-          "money":"6"
-        },
-        {
-          "payTime":"2023-05-01",
-          "name":"康达姆",
-          "money":"10"
-        },
-      ],
-    };
+      tableData: [],
   },
   methods: {
     //事件处理器
@@ -133,8 +120,8 @@ export default {
 }
 .tRewardBox .donate-item div {
   display: inline-block;
-  width: 250px;
-  padding: 5 6px;
+  width: 150px;
+  padding: 0 6px;
   text-align: center;
   box-sizing: border-box;
 }
