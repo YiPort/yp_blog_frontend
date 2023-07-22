@@ -1,20 +1,15 @@
 <!-- 友情链接模块 -->
 <template>
 <div class="tFriendsBox">
-    <h1>友链申请格式
-        <h3>        网站名称: YiPortBlog</h3>
-        <h3>网站地址: https://www.baidu.com </h3>
-        <h3>网站描述: 百度你懂的</h3>
-        <h3>网站logo: https://www.yiport.me/1.png</h3>
-
-</h1>
     <el-row>
         <el-col :span="12" class="tf-item" v-for="(item,index) in friendslink" :key="'f'+index">
-            <a :href="item.address" target="_blank">
-                <img :src="item.logo?item.logo:'static/img/tou.jpg'"  :onerror="$store.state.errorImg">
-                <h4>{{item.name}}</h4>
-                <p>{{item.description}}</p>
-            </a>
+            <el-card style="padding-left: 80px; margin: 5px">
+                <a :href="item.address" target="_blank">
+                    <img :src="item.logo?item.logo:'static/img/tou.jpg'"  :onerror="$store.state.errorImg">
+                    <h4>{{item.name}}</h4>
+                    <p>{{item.description}}</p>
+                </a>
+            </el-card>
         </el-col>
     </el-row>
 </div>
@@ -62,11 +57,11 @@ export default {
     position: relative;
 }
 .tFriendsBox .tf-item:hover{
-    background: rgba(230,244,250,.5);
+    background: rgba(137, 186, 209, 0.5);
 }
 .tFriendsBox .tf-item a{
     display: block;
-    padding:0 10px 0 90px;
+    padding:0;
     height:90px;
 }
 .tFriendsBox .tf-item a img{
