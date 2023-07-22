@@ -15,8 +15,8 @@
           <span>穷则变，变则通，通则久</span>
         </h1>
       </div>
-      <div class="r1-body">
-        <p>YiPort</p>
+      <div class="r1-body"></br>
+        <p>YiPort</p></br>
         <div class="catch-me">
           <div class="">
             <el-tooltip class="item" content="Github" placement="top">
@@ -51,7 +51,6 @@
                 ><i class="fa fa-fw fa-wechat"></i
               ></a>
             </el-tooltip>
-           
           </div>
         </div>
       </div>
@@ -131,11 +130,12 @@ export default {
         //获取滚动条距离顶部高度
         var osTop =
           document.documentElement.scrollTop || document.body.scrollTop;
-        var ispeed = Math.floor(-osTop / 7);
+        //返回顶部滚动速度
+        var ispeed = Math.floor(-osTop / 5);
         document.documentElement.scrollTop = document.body.scrollTop =
           osTop + ispeed;
         //到达顶部，清除定时器
-        if (osTop == 0) {
+        if (osTop < 850) {
           that.going = false;
           clearInterval(timer);
           timer = null;
@@ -157,9 +157,9 @@ export default {
     var that = this;
     window.onscroll = function () {
       var t = document.documentElement.scrollTop || document.body.scrollTop;
-      // console.log(t);
       if (!that.going) {
-        if (t > 600) {
+        //距离顶部超过1600px显示返回顶部图片
+        if (t > 1600) {
           that.gotoTop = true;
         } else {
           that.gotoTop = false;
@@ -173,7 +173,6 @@ export default {
     };
     //查询浏览量最多的10篇文章数据
     this.getHotArticleList();
-
   },
 };
 </script>
@@ -221,7 +220,7 @@ export default {
   opacity: 0.3;
 }
 .rightlistBox .r1-body p {
-  font-size: 14px;
+  font-size: 19px;
   margin: 5px 0 8px 0;
   font-weight: 700;
   text-align: center;
