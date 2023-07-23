@@ -2,25 +2,50 @@
 <template>
   <div class="detailBox tcommonBox" >
     <el-skeleton :rows="20" animated :loading="loading">
-      <span class="s-round-date">
-          <span class="month" v-html="showInitDate(detailObj.createTime,'month')+'月'"></span>
-          <span class="day" v-html="showInitDate(detailObj.createTime,'date')"></span>
-      </span>
-      <header>
-          <h1>
-              <a :href="'#/DetailShare?aid='+detailObj.id" target="_blank">
-                  {{detailObj.title}}
-              </a>
-          </h1>
-          <h2>
-              <i class="fa fa-fw fa-user"></i>发表于 <span >{{detailObj.createTime}}</span> •
-              <i class="fa fa-fw fa-eye"></i>{{detailObj.viewCount}} 次围观 •
-          </h2>
-          <div class="ui label">
-              <a :href="'#/Share?classId='+detailObj.categoryId">{{detailObj.categoryName}}</a>
+      <template slot="template">
+        <div style="padding: 14px;">
+          <el-skeleton-item variant="h1" style="width: 30%;margin: 0 33% 10px" />
+          <el-skeleton-item variant="text" style="width: 45%;margin: 0 25% 100px" />
+          <el-skeleton-item variant="h2" style="width: 30%;" />
+          <div
+            style="display: flex; align-items: center; justify-items: space-between; margin-top: 30px; height: 16px;"
+          >
+            <el-skeleton-item variant="text" style="margin-right: 16px;" />
+            <el-skeleton-item variant="text" style="width: 30%;" />
           </div>
-      </header>
-      <div id="article1" v-highlight class="article-content markdown-body" v-html="detailObj.content"></div>
+          <el-skeleton-item variant="text" style="margin: 30px 0 30px"/>
+          <el-skeleton-item variant="text" style="margin: 0 0 30px"/>
+          <el-skeleton-item variant="text" style="margin: 0 0 30px"/>
+          <el-skeleton-item variant="text" style="margin: 0 0 30px"/>
+          <el-skeleton-item variant="text" style="margin: 0 0 30px"/>
+          <el-skeleton-item variant="text" style="margin: 0 0 30px"/>
+          <el-skeleton-item variant="text" style="margin: 0 0 30px"/>
+          <el-skeleton-item variant="text" style="margin: 0 0 30px"/>
+          <el-skeleton-item variant="text" style="margin: 0 0 30px"/>
+          <el-skeleton-item variant="text" style="margin: 0 0 30px"/>
+        </div>
+      </template>
+      <template>
+        <span class="s-round-date">
+            <span class="month" v-html="showInitDate(detailObj.createTime,'month')+'月'"></span>
+            <span class="day" v-html="showInitDate(detailObj.createTime,'date')"></span>
+        </span>
+        <header>
+            <h1>
+                <a :href="'#/DetailShare?aid='+detailObj.id" target="_blank">
+                    {{detailObj.title}}
+                </a>
+            </h1>
+            <h2>
+                <i class="fa fa-fw fa-user"></i>发表于 <span >{{detailObj.createTime}}</span> •
+                <i class="fa fa-fw fa-eye"></i>{{detailObj.viewCount}} 次围观 •
+            </h2>
+            <div class="ui label">
+                <a :href="'#/Share?classId='+detailObj.categoryId">{{detailObj.categoryName}}</a>
+            </div>
+        </header>
+        <div id="article1" v-highlight class="article-content markdown-body" v-html="detailObj.content"></div>
+      </template>
     </el-skeleton>
       <!-- <div class="donate">
           <div class="donate-word">
