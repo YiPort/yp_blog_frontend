@@ -56,15 +56,17 @@
       </div>
     </section>
     <section class="rs4">
-      <h2 class="ui label">热门文章</h2>
-      <ul>
-        <li v-for="(item, index) in browseList" :key="'browseList' + index">
-          <a :href="'#/DetailArticle?aid=' + item.id" target="_blank">{{
-            item.title
-          }}</a>
-          —— {{ item.viewCount }} 次围观
-        </li>
-      </ul>
+      <el-skeleton :rows="10" animated :loading="loading">
+        <h2 class="ui label">热门文章</h2>
+        <ul>
+          <li v-for="(item, index) in browseList" :key="'browseList' + index">
+            <a :href="'#/DetailArticle?aid=' + item.id" target="_blank">{{
+              item.title
+            }}</a>
+            —— {{ item.viewCount }} 次围观
+          </li>
+        </ul>
+      </el-skeleton>
     </section>
     <!-- 右侧上滑小图片 -->
     <div
@@ -118,7 +120,13 @@ export default {
         qq: "/static/img/qq.png",
         wechat: "/static/img/qq.jpg",
       },
+      loading: true, //是否显示骨架屏
     };
+  },
+  watch: {
+    browseList() {
+      this.loading = false;
+    }
   },
   methods: {
     //事件处理器
