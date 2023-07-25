@@ -15,7 +15,8 @@
               ref="menuTree"
               style="position: fixed;"
               class="treeFixed"
-              v-show="showDirectory">
+              v-show="showDirectory"
+              accordion>
           </el-tree>
       </el-collapse-transition>
       <div  class="container" id="detail">
@@ -330,6 +331,11 @@ import $ from 'jquery'
 </script>
 
 <style lang="less">
+// 当前选中目录标题样式
+.el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
+  border-radius: 4px;
+  color: #409eff;
+}
 .treeFixed{
   position: fixed;
   top: 90px;
