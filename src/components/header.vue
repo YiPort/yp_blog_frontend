@@ -14,9 +14,16 @@
 							</el-submenu>
 							<!-- <el-menu-item index="/Reward"><i class="fa fa-wa fa-cny"></i> 赞赏</el-menu-item> -->
 							<el-menu-item index="/Friendslink"><i class="fa fa-wa fa-users"></i>友链</el-menu-item>
-							<el-menu-item index="/Write"><i class="fa fa-wa fa-users"></i>写博客</el-menu-item>
-
-							<div class="userInfo">
+							<el-menu-item style="margin-right: 15px" index="/Write"><i class="fa fa-wa fa-users"></i>写博客</el-menu-item>
+							<el-autocomplete
+							v-model="inputState"
+							:fetch-suggestions="querySearchAsync"
+							placeholder="搜索文章"
+							@focus="getArticleIndex"
+							@select="handleSelectTitle">
+								<i slot="prefix" class="el-input__icon el-icon-search"></i>
+							</el-autocomplete>
+								<div class="userInfo">
 								<div v-show="!haslogin" class="nologin">
 									<a href="javascript:void(0);" @click="logoinFun(1)">登录&nbsp;</a><!--|<a href="javascript:void(0);" @click="logoinFun(0)">&nbsp;注册</a>-->
 								</div>
@@ -73,6 +80,8 @@
 	import {removeToken} from '../utils/auth'
 	import {getCategoryList} from '../api/category'
 	import { Typeit } from '../utils/plug.js'
+	import router from '@/router'
+	import { getArticleIndex } from '../api/article'
 
 	export default {
 		data() { //选项 / 数据
@@ -80,29 +89,31 @@
 				userInfo: '', //用户信息
 				haslogin: false, //是否已登录
 				activeIndex: '/', //当前选择的路由模块
-				state: '', //icon点击状态
+				// state: '', //icon点击状态
 				pMenu: true, //手机端菜单打开
 				// path:'',//当前打开页面的路径
 				input: '', //input输入内容
 				headBg: 'url(static/img/dongtu01.gif)', //头部背景图
 				headTou: '', //头像
-				projectList: '' //项目列表
+				projectList: '', //项目列表
+				allTitle: [],
+				timeout:  null,
+				inputState: '',
+				inputStateOld: ''
 			}
 		},
+
 		computed: {
 			classListObj() { //分类
 				return this.$store.state.classListObj;
 			},
 			getAvatar() {
-				if(!this.userInfo.avatarUrl) {
+				if(!this.userInfo.avatar) {
 					return 'static/img/tou.jpg';
 				}else {
-					return this.userInfo.avatarUrl;
+					return this.userInfo.avatar;
 				}
 			}
-		},
-		watch: {
-
 		},
 		methods: { //事件处理器
 			handleOpen(key, keyPath) { //分组菜单打开
@@ -148,7 +159,7 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					console.log(that.$route.path);
+					// console.log(that.$route.path);
 
 					logout().then((response)=>{
 						// 清除 Token
@@ -198,13 +209,49 @@
 					this.userlogout();
 				}
 			},
+			getArticleIndex() {	//获取文章索引数据
+				getArticleIndex().then(response => {
+					//为这个数组中每一个对象加一个value字段, autocomplete只识别value字段并在下拉列中显示
+					/* for(let i of response){
+						i.value = i.title;  //将想要展示的数据作为value
+					} */
+					this.allTitle = response;
+				})
+			},
+			querySearchAsync(queryString, cb) {	//输入数据queryString,返回建议数据通过cb返回数据
+				var allTitle = this.allTitle;
+				var results = queryString ? allTitle.filter(this.createStateFilter(queryString)) : allTitle;
+				clearTimeout(this.timeout);
+				this.timeout = setTimeout(() => {
+					cb(results);
+				}, 500);
+			},
+			createStateFilter(queryString) {	//过滤
+				return (state) => {
+					return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
+				};
+			},
+			handleSelectTitle(item) {	//处理选中菜单
+				this.inputState = this.inputStateOld;	//保持搜索框不变
+				const articleId = item.articleId;
+				router.push({
+					path: '/DetailArticle?aid=' + articleId
+				});
+				if(item.indexPosition) {		//如果是二级标题则定位到标题位置
+					let position = item.indexPosition;
+					$("html,body").animate({ scrollTop: position - 35 }, 500);
+				}
+			},
 		},
 		components: { //定义组件
 
 		},
 		watch: {
 			// 如果路由有变化，会再次执行该方法
-			'$route': 'routeChange'
+			'$route': 'routeChange',
+			inputState(newValue) {	//保持搜索框不变
+				this.inputStateOld = newValue;
+			}
 		},
 		created() { //生命周期函数
 			//判断当前页面是否被隐藏
@@ -243,6 +290,12 @@
 	</script>
 
 	<style>
+	/* 搜索框列表样式 */
+	.el-autocomplete-suggestion li {
+		letter-spacing: 0.5px;
+		color: black;
+	}
+	/* 头像 */
 	.avatarClass{
 		margin-top: 5px;
 		margin-right: -60px;
@@ -376,14 +429,38 @@
 	.headBox .pcsearchbox .el-input {
 		width: 100%;
 	}
-
+	/* 搜索框 */
 	.headBox .el-input__inner {
 		height: 30px;
 		border: none;
-		background: #fff;
-		/*border: 1px solid #333;*/
-		border-radius: 2px;
+		background: rgba(40, 42, 44, 0.178);
+		border: 2px solid #ffffff;
+		border-radius: 15px;
 		padding-right: 10px;
+		margin-top: 4px;
+		color: white;
+	}
+
+	.headBox .el-input__inner:focus {
+		height: 30px;
+		width: 270%;
+		border: none;
+		background: rgba(40, 42, 44, 0.178);
+		border: 2px solid #409eff;
+		border-radius: 15px;
+		padding-right: 10px;
+		margin: 4px;
+	}
+
+	.headBox .el-input__inner:hover {
+		height: 30px;
+		width: 270%;
+		border: none;
+		background: rgba(40, 42, 44, 0.178);
+		border: 2px solid #409eff;
+		border-radius: 15px;
+		padding-right: 10px;
+		margin: 4px;
 	}
 
 	.headBox .userInfo {
