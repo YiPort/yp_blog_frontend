@@ -291,6 +291,9 @@ import { addCategory,getCategoryList } from '../api/category'
                                 type:'success',
                                 message:'保存成功'
                             })
+                            router.push({   //跳转到文章页面
+                                path: '/DetailArticle?aid=' + response
+                            });
                         })
             },
             saveDraft() {  //保存为草稿
