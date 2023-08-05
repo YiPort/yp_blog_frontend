@@ -22,7 +22,7 @@
                 type="text"
                 placeholder="文章标题"
                 v-model="title"
-                maxlength="10"
+                maxlength="20"
                 prefix-icon="el-icon-edit"
                 show-word-limit>
                 </el-input>
@@ -30,7 +30,7 @@
                 type="text"
                 placeholder="文章摘要"
                 v-model="summary"
-                maxlength="30"
+                maxlength="50"
                 prefix-icon="el-icon-notebook-2"
                 show-word-limit>
                 </el-input>
@@ -203,7 +203,8 @@ import { addCategory,getCategoryList } from '../api/category'
                 isComment:'0',//是否允许评论
                 id:'',//分类id
                 thumbnail:'',//缩略图
-                articleId:'',//文章id
+                articleId: null,//文章id
+                viewCount: null,//文章浏览量
                 articleObj:{   //用于本地保存未提交的草稿
                     id:'',//文章id
                     userId:'',//用户id
@@ -214,6 +215,7 @@ import { addCategory,getCategoryList } from '../api/category'
                     isComment:'0',//是否允许评论
                     categoryId:'',//分类id
                     thumbnail:'',//缩略图
+                    viewCount: null,//文章浏览量
                 },
                 form:{//新建分类表单
                     name:'',
@@ -285,15 +287,18 @@ import { addCategory,getCategoryList } from '../api/category'
                     this.loginMessage();
                 }
                 const userId = JSON.parse(userInfo).id;
-                postArticle(this.articleId,userId,this.title,this.content,this.summary,this.status,this.isComment,this.id,this.thumbnail)
+                postArticle(this.articleId,userId,this.title,this.content,this.summary,this.status,this.isComment,this.id,this.thumbnail,this.viewCount)
                         .then((response) => {
                             this.$message({
                                 type:'success',
                                 message:'保存成功'
                             })
-                            router.push({   //跳转到文章页面
-                                path: '/DetailArticle?aid=' + response
-                            });
+                            this.refresh();     //重置文章数据
+                            if(response) {
+                                router.push({   //跳转到文章页面
+                                    path: '/DetailArticle?aid=' + response
+                                });
+                            }
                         })
             },
             saveDraft() {  //保存为草稿
@@ -313,6 +318,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 this.isComment = articleObj.isComment;
                 this.id = articleObj.categoryId;
                 this.thumbnail = articleObj.thumbnail;
+                this.viewCount = articleObj.viewCount;
             },
             getArticleObj() {   //获取未提交编辑
                 const articleObj = JSON.parse(localStorage.getItem('articleObj'));
@@ -324,17 +330,21 @@ import { addCategory,getCategoryList } from '../api/category'
                         cancelButtonText: '取消',
                         type: 'warning'
                       }).then(() => {
-                            this.content = '';//Markdown文本内容
-                            this.title = '';//文章标题
-                            this.summary = '';//文章摘要
-                            this.status = '1';//是否发布
-                            this.isComment = '0';//是否允许评论
-                            this.classListObj = null;//分类
-                            this.id = '';//分类id
-                            this.thumbnail = '';//缩略图
-                            this.articleId = '';//文章id
-                            localStorage.removeItem('articleObj');
+                            this.refresh();
                          })
+            },
+            refresh() {     //重置文章数据
+                this.content = '';//Markdown文本内容
+                this.title = '';//文章标题
+                this.summary = '';//文章摘要
+                this.status = '1';//是否发布
+                this.isComment = '0';//是否允许评论
+                this.classListObj = null;//分类
+                this.id = '';//分类id
+                this.thumbnail = '';//缩略图
+                this.articleId = '';//文章id
+                this.viewCount = null,//文章浏览量
+                localStorage.removeItem('articleObj');
             },
             getDraft() { //获取草稿列表
                 const id = this.userInfo.id;
@@ -392,7 +402,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 }else {
                     deleteDraft(id,articleId).then((response) => {
                         if(this.articleId === articleId) {  //将当前编辑的草稿id重置
-                            this.articleId = '';
+                            this.articleId = null;
                         }
                         getDraft(id).then((response) =>{   //重新获取草稿列表
                             this.draftList = response;
@@ -468,6 +478,10 @@ import { addCategory,getCategoryList } from '../api/category'
             articleId(newValue){
                 this.articleObj.id = newValue;
             },
+            //侦听文章浏览量
+            viewCount(newValue){
+                this.articleObj.viewCount = newValue;
+            }
          },
         created() { //生命周期函数
             this.routeChange();
