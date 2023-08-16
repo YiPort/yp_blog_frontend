@@ -71,7 +71,7 @@
 
 <script>
 import {initDate} from '../utils/server.js'
-import {getArticle,updateViewCount} from '../api/article.js'
+import {getArticle,updateViewCount,postArticleIndex} from '../api/article.js'
 import { mavonEditor } from 'mavon-editor'
 export default {
   data() { //选项 / 数据
@@ -82,6 +82,7 @@ export default {
           haslogin:false,//是否已经登录
           userId:'',//用户id
           loading: true,//是否显示骨架屏
+          directoryIndex: []   //文章目录索引
       }
   },
   methods: { //事件处理器
@@ -112,15 +113,58 @@ export default {
           //获取详情接口
           this.getArticleDetail()
           updateViewCount(that.aid)
-      }
+      },
+      tocAndCli() {
+        debugger
+        this.$nextTick(() => {
+          const aArr1 = $(
+              "#article1 a"
+          ).toArray();
+          let aArr = []
+
+          aArr1.forEach(item => {
+            if (item.id) {
+              aArr.push(item)
+            }
+          })
+          //给数据赋值，保存元素的id和其距顶部的距离
+          if(this.directoryIndex.length === 0) {
+              this.tocAndDist(aArr);
+          }
+        })
+      },
+      tocAndDist(arr) {   //存储节点元素的信息
+        debugger
+          arr.forEach(item => {
+              if ($(item).attr("id")) {
+                  let value = this.detailObj.title + ' | ' + $(item).parent().text(); //标题
+                  let indexPosition = $('#' + item.id).offset().top; //距离顶部位置
+                  let indexType = '1';
+                  let articleId = this.detailObj.id; //文章id
+
+                  this.directoryIndex.push({value, indexPosition, indexType, articleId});
+              }
+          })
+          if(arr.length === 0) {    //当文章无二级标题时将文章标题保存为索引
+            let value = this.detailObj.title;
+            let indexType = '0';
+            let articleId = this.detailObj.id;
+            this.directoryIndex.push({value, indexType, articleId})
+          }
+      },
   },
   watch: {
      // 如果路由有变化，会再次执行该方法
      '$route':'routeChange',
       detailObj() {     //侦听detailObj当获取到文章内容loading=false
         this.loading = false;
-      }
-   },
+        if(this.detailObj.viewCount === "2") {  //为新发布的文章创建索引(新发布文章浏览量设为1)
+          this.tocAndCli();
+          const userId = JSON.parse(window.localStorage.getItem('userInfo')).id;
+          postArticleIndex(this.directoryIndex,userId);
+        }
+      },
+  },
   components: { //定义组件
 
   },

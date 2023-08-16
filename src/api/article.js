@@ -176,3 +176,26 @@ export function deleteQuestion(userId,id) {
   })
 }
 
+
+// 提交文章目录索引
+export function postArticleIndex(directoryIndex,userId) {
+  return request({
+      url: '/index/postArticleIndex/' + userId,
+      method: 'post',
+      headers: {
+          isToken: true
+      },
+      data: directoryIndex
+  })
+}
+
+// 获取文章目录索引
+export function getArticleIndex() {
+  return request({
+      url: '/index/getArticleIndex',
+      method: 'get',
+      headers: {
+          isToken: false
+      }
+  })
+}
