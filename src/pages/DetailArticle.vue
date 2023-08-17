@@ -1,7 +1,7 @@
 <!-- 文章详情 -->
 <template>
   <div>
-      <sg-nav></sg-nav>
+      <yp-nav></yp-nav>
       <el-collapse-transition>
           <el-tree
               id="boxFixed"
@@ -41,11 +41,11 @@
           </el-dialog>
           <el-row  :gutter="30">
               <el-col :sm="24" :md="16" style="transition:all .5s ease-out;margin-bottom:30px;">
-                  <sg-articleDetail></sg-articleDetail>
-                  <sg-message></sg-message>
+                  <yp-articleDetail></yp-articleDetail>
+                  <yp-message></yp-message>
               </el-col>
               <el-col :sm="24"  :md="8" >
-                  <sg-rightlist></sg-rightlist>
+                  <yp-rightlist></yp-rightlist>
               </el-col>
           </el-row>
           <el-tooltip class="item" effect="dark" content="有错误？" placement="left" :hide-after="1000">
@@ -91,6 +91,7 @@ import $ from 'jquery'
               catalogue: [],  //节点元素的id和其距顶部的距离
               showDirectory: false,   //是否显示目录
               isFixed: false,     //目录css样式选择
+              timeout: null,
           }
       },
       watch: {
@@ -113,6 +114,13 @@ import $ from 'jquery'
                       that.userInfoObj.head_start = 0;
                   })
               }
+            this.$nextTick(() =>{   //重新加载目录
+              clearTimeout(this.timeout)
+              this.timeout = setTimeout(() => {
+                this.catalogue = [];
+                this.tocAndCli();
+              }, 1000);
+            })
           },
           loginMessage() {  //未登录消息提示
               MessageBox.confirm('未登录！请先登录', '系统提示', {
@@ -289,7 +297,6 @@ import $ from 'jquery'
                   nodes.forEach(node => {
                       if(node.id === temp.id) {
                           this.$refs.menuTree.setCurrentKey(node.id)
-
                       }
                   })
               } catch (e) {
@@ -307,10 +314,10 @@ import $ from 'jquery'
           },
       },
       components: { //定义组件
-          'sg-nav':header,
-          'sg-articleDetail':articleDetail,
-          'sg-message':message,
-          'sg-rightlist':rightlist,
+          'yp-nav':header,
+          'yp-articleDetail':articleDetail,
+          'yp-message':message,
+          'yp-rightlist':rightlist,
       },
       created() { //生命周期函数
           this.routeChange();
@@ -339,7 +346,7 @@ import $ from 'jquery'
 .treeFixed{
   position: fixed;
   top: 90px;
-right: 10%;
+  right: 10%;
   box-shadow: #333;
   width: 355px;
   border-radius: 5px;
@@ -357,14 +364,14 @@ right: 10%;
 .collect{
   position: fixed;
   bottom: 107px;
-left: 80px;
+  left: 80px;
   box-shadow: #333;
   z-index:9999;
 }
 .question{
   position: fixed;
   bottom: 60px;
-left: 80px;
+  left: 80px;
   box-shadow: #333;
   z-index:9999;
 }
