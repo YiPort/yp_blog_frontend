@@ -1,41 +1,52 @@
 <!-- 文章列表 -->
 <template>
     <el-row class="sharelistBox">
-
         <el-col :span="24" class="s-item tcommonBox" v-for="(item,index) in articleList" :key="'article'+index">
-            <span class="s-round-date">
-                <span class="month" v-html="showInitDate(item.createTime,'month')+'月'"></span>
-                <span class="day" v-html="showInitDate(item.createTime,'date')"></span>
-            </span>
-            <header>
-                <h1>
-                    <a :href="'#/DetailArticle?aid='+item.id" target="_blank">
-                        {{item.title}}
-                    </a>
-                </h1>
-                <h2>
-                    <i class="fa fa-fw fa-user"></i>发表于
-                    <i class="fa fa-fw fa-clock-o"></i><span v-html="showInitDate(item.createTime,'all')">{{showInitDate(item.createTime,'all')}}</span> •
-                    <i class="fa fa-fw fa-eye"></i>{{item.viewCount}} 次围观 •
-
-                </h2>
-                <div class="ui label">
-                    <a :href="'#/Share?classId='+item.class_id">{{item.categoryName}}</a>
+            <el-skeleton animated :loading="loading">
+                <template slot="template">
+                <div style="padding: 14px;">
+                    <el-skeleton-item variant="h1" style="width: 30%;margin: 0 33% 10px" />
+                    <el-skeleton-item variant="text" style="width: 45%;margin: 0 25% 50px" />
+                    <el-skeleton-item variant="h2" style="width: 30%;" />
+                    <el-skeleton-item variant="image" style="width: 100%; height: 240px;" />
                 </div>
-            </header>
-            <div class="article-content">
-                <p style="text-indent:2em;">
-                    {{item.summary}}
-                </p>
-                <p  style="max-height:300px;overflow:hidden;text-align:center;">
-                    <img :src="item.thumbnail" alt="" class="maxW">
-                </p>
-            </div>
-            <div class="viewdetail">
-                <a class="tcolors-bg" :href="'#/DetailArticle?aid='+item.id" target="_blank">
-                    阅读全文>>
-                </a>
-            </div>
+                </template>
+                <template>
+                <span class="s-round-date">
+                    <span class="month" v-html="showInitDate(item.createTime,'month')+'月'"></span>
+                    <span class="day" v-html="showInitDate(item.createTime,'date')"></span>
+                </span>
+                <header>
+                    <h1>
+                        <a :href="'#/DetailArticle?aid='+item.id" target="_blank">
+                            {{item.title}}
+                        </a>
+                    </h1>
+                    <h2>
+                        <i class="fa fa-fw fa-user"></i>发表于
+                        <i class="fa fa-fw fa-clock-o"></i><span v-html="showInitDate(item.createTime,'all')">{{showInitDate(item.createTime,'all')}}</span> •
+                        <i class="fa fa-fw fa-eye"></i>{{item.viewCount}} 次浏览 •
+
+                    </h2>
+                    <div class="ui label">
+                        <a :href="'#/Share?classId='+item.categoryId">{{item.categoryName}}</a>
+                    </div>
+                </header>
+                <div class="article-content">
+                    <p style="text-indent:2em;">
+                        {{item.summary}}
+                    </p>
+                    <p  style="max-height:300px;overflow:hidden;text-align:center;">
+                        <img :src="item.thumbnail" alt="" class="maxW">
+                    </p>
+                </div>
+                <div class="viewdetail">
+                    <a class="tcolors-bg" :href="'#/DetailArticle?aid='+item.id" target="_blank">
+                        阅读全文>>
+                    </a>
+                </div>
+                </template>
+            </el-skeleton>
 
         </el-col>
          <el-col class="viewmore">
@@ -59,7 +70,9 @@ import {articleList} from '../api/article'
                     categoryId: 0
                 },
                 articleList:[],
-                hasMore:true
+                hasMore:true,
+                loading: true,  //是否显示骨架屏
+                timeout: null,
             }
         },
 
@@ -69,12 +82,12 @@ import {articleList} from '../api/article'
             },
             getList(){
                 articleList(this.queryParams).then((response)=>{
-                  if(response.total == 0) {
-                    this.$message({
-                      type:'info',
-                      message:'该分类暂时没有文章'
-                    })
-                  }
+                    if(response.total == 0) {
+                        this.$message({
+                            type:'info',
+                            message:'该分类暂时没有文章'
+                        })
+                    }
                     this.articleList = this.articleList.concat(response.rows)
                     if(response.total<=this.articleList.length){
                         this.hasMore=false
@@ -82,6 +95,10 @@ import {articleList} from '../api/article'
                         this.hasMore=true
                         this.queryParams.pageNum++
                     }
+                    clearTimeout(this.timeout);
+                    this.timeout = setTimeout(() => {
+                        this.loading = false;
+                    }, 700);
                 })
             },
             showSearchShowList:function(initData){//展示数据
