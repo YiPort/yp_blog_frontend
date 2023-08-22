@@ -31,6 +31,11 @@
             <span class="day" v-html="showInitDate(detailObj.createTime,'date')"></span>
         </span>
         <header>
+          <a :href="'#/Write'" target="_blank" v-show="isAdmin">
+            <el-button style="left: 90%;position: relative;color: black"
+            @click="editArticle" v-show="isAdmin" round>
+              编辑</el-button>
+          </a>
             <h1>
                 <a :href="'#/DetailShare?aid='+detailObj.id" target="_blank">
                     {{detailObj.title}}
@@ -38,7 +43,7 @@
             </h1>
             <h2>
                 <i class="fa fa-fw fa-user"></i>发表于 <span >{{detailObj.createTime}}</span> •
-                <i class="fa fa-fw fa-eye"></i>{{detailObj.viewCount}} 次围观 •
+                <i class="fa fa-fw fa-eye"></i>{{detailObj.viewCount}} 次浏览 •
             </h2>
             <div class="ui label">
                 <a :href="'#/Share?classId='+detailObj.categoryId">{{detailObj.categoryName}}</a>
@@ -79,10 +84,12 @@ export default {
           aid:'',//文章ID
           pdonate:true,//打开赞赏控制,
           detailObj:{},//返回详情数据
+          articleObj:{},//保存文章原始数据
           haslogin:false,//是否已经登录
           userId:'',//用户id
           loading: true,//是否显示骨架屏
-          directoryIndex: []   //文章目录索引
+          directoryIndex: [],//文章目录索引
+          isAdmin: false,//是否是管理员
       }
   },
   methods: { //事件处理器
@@ -93,7 +100,9 @@ export default {
       getArticleDetail:function(){
           getArticle(this.aid).then((response)=>{
               this.detailObj = response
-               const markdownIt = mavonEditor.getMarkdownIt()
+              // this.articleObj = JSON.parse(JSON.stringify(response))
+              Object.assign(this.articleObj,response) //深拷贝
+              const markdownIt = mavonEditor.getMarkdownIt()
               // markdownIt.re
               this.detailObj.content = markdownIt.render(response.content);
           })
@@ -106,6 +115,7 @@ export default {
               that.haslogin = true;
               that.userInfo = JSON.parse(localStorage.getItem('userInfo'));
               that.userId = that.userInfo.userId;
+              that.isAdmin = that.userInfo.userRole === "1" ? true : false;
               // console.log(that.userInfo);
           }else{
               that.haslogin = false;
@@ -115,7 +125,6 @@ export default {
           updateViewCount(that.aid)
       },
       tocAndCli() {
-        debugger
         this.$nextTick(() => {
           const aArr1 = $(
               "#article1 a"
@@ -134,7 +143,6 @@ export default {
         })
       },
       tocAndDist(arr) {   //存储节点元素的信息
-        debugger
           arr.forEach(item => {
               if ($(item).attr("id")) {
                   let value = this.detailObj.title + ' | ' + $(item).parent().text(); //标题
@@ -152,6 +160,9 @@ export default {
             this.directoryIndex.push({value, indexType, articleId})
           }
       },
+      editArticle() {
+        window.localStorage.setItem('articleObj', JSON.stringify(this.articleObj));
+      }
   },
   watch: {
      // 如果路由有变化，会再次执行该方法

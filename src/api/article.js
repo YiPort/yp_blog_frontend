@@ -47,7 +47,7 @@ export function updateViewCount(articleId) {
 }
 
 // 提交文章
-export function postArticle(articleId,userId,title,content,summary,status,isComment,id,thumbnail) {
+export function postArticle(articleId,userId,title,content,summary,status,isComment,id,thumbnail,viewCount) {
   return request({
     url: '/article/postArticle',
     method: 'post',
@@ -63,7 +63,8 @@ export function postArticle(articleId,userId,title,content,summary,status,isComm
       'status':status,
       'isComment':isComment,
       'categoryId':id,
-      'thumbnail':thumbnail
+      'thumbnail':thumbnail,
+      'viewCount':viewCount
     }
   })
 
