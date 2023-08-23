@@ -169,7 +169,7 @@ export default {
      '$route':'routeChange',
       detailObj() {     //侦听detailObj当获取到文章内容loading=false
         this.loading = false;
-        if(this.detailObj.viewCount === "2") {  //为新发布的文章创建索引(新发布文章浏览量设为1)
+        if(this.detailObj.viewCount === "2" || this.detailObj.viewCount === "1") {  //为新发布的文章创建索引(新发布文章浏览量设为1)
           this.tocAndCli();
           const userId = JSON.parse(window.localStorage.getItem('userInfo')).id;
           postArticleIndex(this.directoryIndex,userId);
