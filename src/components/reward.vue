@@ -67,6 +67,7 @@ export default {
     return {
       rewardData: "", //赞赏二维码
       tableData: [],
+    }
   },
   methods: {
     //事件处理器
