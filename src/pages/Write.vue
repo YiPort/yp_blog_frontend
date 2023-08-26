@@ -295,6 +295,7 @@ import { addCategory,getCategoryList } from '../api/category'
                             })
                             this.refresh();     //重置文章数据
                             if(response) {
+                                this.$store.commit('loadingIndex',true) //标记需要重新提交文章索引
                                 router.push({   //跳转到文章页面
                                     path: '/DetailArticle?aid=' + response
                                 });

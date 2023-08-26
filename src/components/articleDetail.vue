@@ -78,6 +78,7 @@
 import {initDate} from '../utils/server.js'
 import {getArticle,updateViewCount,postArticleIndex} from '../api/article.js'
 import { mavonEditor } from 'mavon-editor'
+import store from '../store'
 export default {
   data() { //选项 / 数据
       return {
@@ -125,12 +126,15 @@ export default {
           updateViewCount(that.aid)
       },
       tocAndCli() {
+        debugger
         this.$nextTick(() => {
           const aArr1 = $(
               "#article1 a"
           ).toArray();
           let aArr = []
 
+          console.log('array110在这1：')
+          console.log(aArr1)
           aArr1.forEach(item => {
             if (item.id) {
               aArr.push(item)
@@ -159,6 +163,10 @@ export default {
             let articleId = this.detailObj.id;
             this.directoryIndex.push({value, indexType, articleId})
           }
+          console.log()
+
+        console.log('110在这2：')
+        console.log(this.directoryIndex)
       },
       editArticle() {
         window.localStorage.setItem('articleObj', JSON.stringify(this.articleObj));
@@ -169,11 +177,12 @@ export default {
      '$route':'routeChange',
       detailObj() {     //侦听detailObj当获取到文章内容loading=false
         this.loading = false;
-        if(this.detailObj.viewCount === "2" || this.detailObj.viewCount === "1") {  //为新发布的文章创建索引(新发布文章浏览量设为1)
+        if(this.$store.state.loadingIndex) {  //为新发布和已编辑的文章创建索引
           this.tocAndCli();
           const userId = JSON.parse(window.localStorage.getItem('userInfo')).id;
           postArticleIndex(this.directoryIndex,userId);
         }
+        this.$store.commit('loadingIndex',false);
       },
   },
   components: { //定义组件
