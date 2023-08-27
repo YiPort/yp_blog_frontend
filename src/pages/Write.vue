@@ -486,7 +486,7 @@ import { addCategory,getCategoryList } from '../api/category'
          },
         created() { //生命周期函数
             this.routeChange();
-            this.uploadURL = store.state.baseURL+'upload'
+            this.uploadURL = store.state.resourceURL+'upload'
         },
         mounted() { //生命周期函数
             // 加载编辑数据

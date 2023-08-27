@@ -321,7 +321,7 @@ import $ from 'jquery'
       },
       created() { //生命周期函数
           this.routeChange();
-          this.uploadURL = this.$store.state.baseURL+'upload'
+          this.uploadURL = this.$store.state.resourceURL+'upload'
       },
       mounted(){
           window.addEventListener('scroll',this.handleScroll) // 监听滚动事件，然后用handleScroll这个方法进行相应的处理

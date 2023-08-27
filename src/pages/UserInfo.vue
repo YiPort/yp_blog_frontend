@@ -73,7 +73,7 @@
                             :before-upload="beforeAvatarUpload">
                             <img   v-if="userInfoObj.avatarUrl" :src="userInfoObj.avatarUrl?userInfoObj.avatarUrl:'static/img/tou.jpg'"  :onerror="$store.state.errorImg" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                            <div slot="tip" class="el-upload__tip">点击上传头像，只能上传jpg/png文件，且不超过1mb</div>
+                            <div slot="tip" class="el-upload__tip">点击上传头像，只能上传jpg/png文件，且不超过3mb</div>
                           </el-upload>
                       </li>
                       <li>
@@ -200,15 +200,15 @@ import { MessageBox } from 'element-ui'
           },
           beforeAvatarUpload(file) {//判断头像大小
               const isJPG = file.type == 'image/png'||file.type=='image/jpg'||file.type=='image/jpeg';
-              const isLt2M = file.size / 1024 / 1024 < 1;
+              const isLt3M = file.size / 1024 / 1024 /3 < 1;
               // console.log(file);
               if (!isJPG) {
                 this.$message.error('上传头像图片只能是 JPG/JPEG/PNG 格式!');
               }
-              if (!isLt2M) {
-                this.$message.error('上传头像图片大小不能超过 1MB!');
+              if (!isLt3M) {
+                this.$message.error('上传头像图片大小不能超过 3MB!');
               }
-              return isJPG && isLt2M;
+              return isJPG && isLt3M;
           },
 
           saveInfoFun: function(){//保存编辑的用户信息
@@ -337,7 +337,7 @@ import { MessageBox } from 'element-ui'
        },
       created() { //生命周期函数
           this.routeChange();
-          this.uploadURL = store.state.baseURL+'upload'
+          this.uploadURL = store.state.resourceURL+'upload'
       }
   }
 </script>
