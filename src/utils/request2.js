@@ -13,7 +13,7 @@ const service = axios.create({
   //baseURL: store.state.SSOLogin,
   baseURL: store.state.SSOLogin,
   // 超时
-  timeout: 5000
+  timeout: 2 * 5000
 })
 
 // request登录拦截器
