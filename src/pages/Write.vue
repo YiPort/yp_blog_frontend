@@ -361,6 +361,7 @@ import { addCategory,getCategoryList } from '../api/category'
             loadDraft(index) { //加载草稿
                 const articleObj = this.draftList[index];
                 this.reloadArticle(articleObj);
+                this.drawer = false;
             },
             addCategory() { //新建分类
                 if(!this.userInfoObj) {
