@@ -48,7 +48,7 @@
                     <yp-rightlist></yp-rightlist>
                 </el-col>
             </el-row>
-            <el-tooltip class="item" effect="dark" content="有错误？" placement="left" :hide-after="1000">
+            <el-tooltip class="item" effect="dark" content="纠错" placement="left" :hide-after="1000">
               <el-button
                 type="danger"
                 icon="el-icon-question"
