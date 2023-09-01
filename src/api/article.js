@@ -200,3 +200,26 @@ export function getArticleIndex() {
       }
   })
 }
+
+
+// 获取我发布的文章总数
+export function getMyArticleTotal(id) {
+  return request({
+    url: '/article/getMyArticleTotal/' + id,
+    method: 'get',
+    headers: {
+      isToken: true
+    }
+  })
+}
+
+// 获取我发布的文章总浏览量
+export function getTotalView(id) {
+  return request({
+    url: '/article/getTotalView/' + id,
+    method: 'get',
+    headers: {
+      isToken: true
+    }
+  })
+}
