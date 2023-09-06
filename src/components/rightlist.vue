@@ -12,11 +12,35 @@
           alt=""
         />
         <h1 v-if="this.$store.state.themeObj.user_start != 0">
-          <span>穷则变，变则通，通则久</span>
+          <p>{{username}}</p>
+          <span>{{introduction}}</span>
         </h1>
       </div>
-      <div class="r1-body"></br>
-        <p>YiPort</p></br>
+      <div class="r1-body">
+        <el-row :gutter="12">
+          <el-col :span="8">
+            <el-card shadow="hover">
+              <h1 class="count-title">总文章</h1>
+              <countTo class="count-num" :startVal="0" :endVal="articleTotal" :duration="5000" />
+            </el-card>
+          </el-col>
+          <el-col :span="8">
+            <el-card shadow="hover">
+              <h1 class="count-title">我发布</h1>
+              <countTo class="count-num" v-show="isLogin" :startVal="0" :endVal="myArticleTotal" :duration="5000" />
+              <span class="count-num" v-show="!isLogin" >- -</span>
+            </el-card>
+          </el-col>
+          <el-col :span="8">
+            <el-card shadow="hover">
+              <h1 class="count-title">总浏览</h1>
+              <countTo class="count-num" v-show="isLogin" :startVal="0" :endVal="totalView" :duration="5000" />
+              <span class="count-num" v-show="!isLogin" >- -</span>
+            </el-card>
+          </el-col>
+        </el-row>
+        <br>
+        <br>
         <div class="catch-me">
           <div class="">
             <el-tooltip class="item" content="Github" placement="top">
@@ -61,8 +85,8 @@
         <ul>
           <li v-for="(item, index) in browseList" :key="'browseList' + index">
             <a :href="'#/DetailArticle?aid=' + item.id" target="_blank">{{
-              item.title
-            }}</a>
+                item.title
+              }}</a>
             —— {{ item.viewCount }} 次围观
           </li>
         </ul>
@@ -102,7 +126,9 @@
 
 
 <script>
-import { hotArticleList } from "../api/article";
+import { hotArticleList,getMyArticleTotal,getTotalView } from "../api/article";
+import countTo from 'vue-count-to';
+import moment from 'moment';
 export default {
   data() {
     //选项 / 数据
@@ -121,7 +147,15 @@ export default {
         wechat: "/static/img/qq.jpg",
       },
       loading: true, //是否显示骨架屏
+      isLogin: false,
+      username: '游客',
+      introduction: '穷则变，变则通，通则久',
+      articleTotal: 0,       //总文章
+      myArticleTotal: 0,     //我发布的
+      totalView: 0,     //总浏览
     };
+  },
+  computed: {
   },
   watch: {
     browseList() {
@@ -157,11 +191,36 @@ export default {
     },
   },
   components: {
-    //定义组件
+    countTo
   },
 
   created() {
     //生命周期函数
+    let hour = Number(moment().format('HH'));
+    console.log(hour);
+    if(hour < 12 && hour > 5) {
+      this.introduction = '上午好';
+    }else if (hour > 11 && hour < 19) {
+      this.introduction = '下午好';
+    }else {
+      this.introduction = '晚上好';
+    }
+    this.articleTotal = window.localStorage.getItem('articleTotal');
+    const userInfo = window.localStorage.getItem('userInfo');
+    console.log(userInfo)
+    if(userInfo !== null) {
+      this.username = JSON.parse(userInfo).nickName;
+      let userId = JSON.parse(userInfo).id;
+      getMyArticleTotal(userId).then(response => {     //获取我发布的文章总数
+        console.log(response);
+        this.isLogin = true;
+        this.myArticleTotal = response.myArticleTotal;
+      })
+      getTotalView(userId).then(response => {       // 获取我发布的文章总浏览量
+        console.log(response);
+        this.totalView = response.totalView;
+      })
+    }
     var that = this;
     window.onscroll = function () {
       var t = document.documentElement.scrollTop || document.body.scrollTop;
@@ -186,6 +245,23 @@ export default {
 </script>
 
 <style lang="less">
+.count-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #42bcef;
+  margin-bottom: 10px
+}
+.count-num {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+.el-card {
+  border: 0;
+}
+.el-card__body {
+  cursor: pointer;
+  text-align: center;
+}
 .rightlistBox {
   position: relative;
 }
@@ -224,8 +300,13 @@ export default {
   width: 130px;
   left: 50%;
 }
-.rightlistBox .r1-head h1 span {
-  opacity: 0.3;
+.rightlistBox .r1-head h1 span{
+  opacity: 0.9;
+  text-shadow: 6px 3px 10px #c0ab95;
+}
+.rightlistBox .r1-head h1 p{
+  opacity: 0.9;
+  text-shadow: 6px 3px 10px #c0ab95;
 }
 .rightlistBox .r1-body p {
   font-size: 19px;
