@@ -77,33 +77,35 @@
                           </el-upload>
                       </li>
                       <li>
-                          <span class="leftTitle">账号</span>
-                          <span>{{userInfoObj.userAccount?userInfoObj.userAccount:"无"}}</span>
+                          <span class="leftTitle">账号：</span>
+                          <span>{{userInfoObj.username?userInfoObj.username:"无"}}</span>
                       </li>
                       <li class="username">
-                          <span class="leftTitle">昵称</span>
-                          <el-input v-model="userInfoObj.username" placeholder="昵称"></el-input> <i  class="fa fa-wa fa-asterisk"></i>
+                          <span class="leftTitle">昵称：</span>
+                          <el-input v-model="userInfoObj.nickName" placeholder="昵称" clearable></el-input>
                       </li>
                       <li>
-                          <span class="leftTitle">电子邮件</span>
-                          <span>{{userInfoObj.email}}</span>
+                          <span class="leftTitle">邮箱：</span>
+                          <el-input v-model="userInfoObj.email" placeholder="邮箱" clearable></el-input>
                       </li>
                       <li>
-                          <span class="leftTitle">性别</span>
+                          <span class="leftTitle">性别：</span>
                           <template>
-                            <el-radio class="radio" v-model="userInfoObj.gender" label="0">男</el-radio>
-                            <el-radio class="radio" v-model="userInfoObj.gender" label="1">女</el-radio>
+                              <el-radio-group v-model="userInfoObj.sex">
+                                  <el-radio class="radio" :label="0">男</el-radio>
+                                  <el-radio class="radio" :label="1">女</el-radio>
+                              </el-radio-group>
                           </template>
                       </li>
                       <li>
-                          <span class="leftTitle">注册日期</span>
+                          <span class="leftTitle">注册日期：</span>
                           <span>{{userInfoObj.createTime?userInfoObj.createTime:"无"}}</span>
                       </li>
 
 
                   </ul>
                   <div class="saveInfobtn">
-                      <a class="tcolors-bg"  href="javascript:void(0);" @click="isEdit=!isEdit">返 回</a>
+                      <a class="tcolors-bg"  href="javascript:void(0);" @click="back">返 回</a>
                       <a class="tcolors-bg" href="javascript:void(0);" @click="saveInfoFun">保 存</a>
                   </div>
               </section>
@@ -125,24 +127,24 @@
                           </div>
                       </li>
                       <li>
-                          <span class="leftTitle">账号</span>
+                          <span class="leftTitle">账号：</span>
                           <span>{{userInfoObj.userName?userInfoObj.userName:"无"}}</span>
                       </li>
                       <li class="username">
-                          <span class="leftTitle">昵称</span>
-                          <span>{{userInfoObj.nickName?userInfoObj.nickName:"无"}}</span>
+                          <span class="leftTitle">昵称：</span>
+                          <span>{{userInfoObj.nickName?userInfoObj.nickName:"游客"}}</span>
 
                       </li>
                       <li>
-                          <span class="leftTitle">电子邮件</span>
+                          <span class="leftTitle">邮箱：</span>
                           <span>{{userInfoObj.email?userInfoObj.email:"无"}}</span>
                       </li>
                       <li>
-                          <span class="leftTitle">性别</span>
+                          <span class="leftTitle">性别：</span>
                           <span>{{userInfoObj.sex=="0"?'男':'女'}}</span>
                       </li>
                       <li>
-                          <span class="leftTitle">注册日期</span>
+                          <span class="leftTitle">注册日期：</span>
                           <span>{{userInfoObj.createTime?userInfoObj.createTime:"无"}}</span>
                       </li>
 
@@ -181,7 +183,7 @@ import { MessageBox } from 'element-ui'
               return this.userInfo.id;
           },
           isAdmin() { //是否是管理员
-              if(this.userInfo.userRole === "1") {
+              if(this.userInfo.userRole === 1) {
                   return true;
               }else {
                   return false;
@@ -200,7 +202,7 @@ import { MessageBox } from 'element-ui'
           },
           beforeAvatarUpload(file) {//判断头像大小
               const isJPG = file.type == 'image/png'||file.type=='image/jpg'||file.type=='image/jpeg';
-              const isLt3M = file.size / 1024 / 1024 /3 < 1;
+              const isLt3M = file.size / 1024 / 1024 / 3 < 1;
               // console.log(file);
               if (!isJPG) {
                 this.$message.error('上传头像图片只能是 JPG/JPEG/PNG 格式!');
@@ -210,18 +212,27 @@ import { MessageBox } from 'element-ui'
               }
               return isJPG && isLt3M;
           },
-
+          getUserInfo(userId) {       //获取用户信息
+              getUserInfo(userId).then((response)=>{
+                  this.userInfoObj = response;
+                  this.userInfoObj.head_start = 0;
+              })
+          },
+          back() {        //返回
+              this.getUserInfo(this.userId);
+              this.isEdit = false;
+          },
           saveInfoFun: function(){//保存编辑的用户信息
               var that = this;
 
-              if(!that.userInfoObj.nickName){ //昵称为必填
+              if(that.userInfoObj.username.length < 1){ //昵称为必填
                    that.$message.error('昵称为必填项，请填写昵称');
                    return;
               }
 
 
               savaUserInfo(that.userInfoObj).then((response)=>{//保存信息接口，返回展示页
-                  that.$message.success( '保存成功！');
+                  that.$message.success( '修改成功！');
                   that.isEdit = false;
                   that.routeChange() ;
               })
@@ -232,10 +243,7 @@ import { MessageBox } from 'element-ui'
                   that.haslogin = true;
                   that.userInfo = JSON.parse(localStorage.getItem('userInfo'));
                   that.userId = that.userInfo.id;
-                  getUserInfo(that.userId).then((response)=>{
-                      that.userInfoObj = response;
-                      that.userInfoObj.head_start = 0;
-                  })
+                  this.getUserInfo(this.userId);
               }else{
                   that.haslogin = false;
                   this.loginMessage();
@@ -379,12 +387,12 @@ right: 40px;
 }
 /*1.显示滚动条：当内容超出容器的时候，可以拖动：*/
 .el-drawer__body {
-    overflow: auto;
-    /* overflow-x: auto; */
+  overflow: auto;
+  /* overflow-x: auto; */
 }
 /*2.隐藏滚动条*/
 /* .el-drawer__container ::-webkit-scrollbar{
-    display: none;
+  display: none;
 } */
 .list {
   list-style: none;

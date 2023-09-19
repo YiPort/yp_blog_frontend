@@ -46,7 +46,7 @@ export function logout() {
 //  获取用户信息
 export function getUserInfo() {
   return request ({
-    url: '/user/userInfo',
+    url: '/user/current',
     method: 'get',
   })
 }
