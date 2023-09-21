@@ -141,15 +141,15 @@
 				// console.log(msg);
 				localStorage.setItem('logUrl', this.$route.fullPath);
 				// console.log(666,this.$router.currentRoute.fullPath);
-				if (msg == 0) {
-					this.$router.push({
-						path: '/Login?login=0'
-					});
-				} else {
+				if (msg == 1) {
 					this.$router.push({
 						path: '/Login?login=1'
 					});
-				}
+				} /* else {
+					this.$router.push({
+						path: '/Login?login=0'
+					});
+				} */
 			},
 			// 用户退出登录
 			userlogout: function() {
@@ -167,21 +167,18 @@
 						// 清除 userInfo
 						localStorage.removeItem('userInfo');
 						that.haslogin = false;
-						window.location.reload();
-							that.$message({
-								type: 'success',
-								message: '退出成功!'
-							});
-						if (that.$route.path == '/UserInfo') {
+						that.$message({
+							type: 'success',
+							message: '退出成功!'
+						});
+						if (that.$route.path === '/UserInfo') {
+							console.log(that.$route.path)
 							that.$router.push({
-								path: '/'
+								path: '/Home'
 							});
 						}
 					})
-				}).catch(() => {
-					//
-				});
-
+				})
 			},
 			routeChange: function() {
 				var that = this;
@@ -303,7 +300,6 @@
 	/*********头部导航栏********/
 
 	/*头部导航栏盒子*/
-
 	.headBack {
 		width: 100%;
 		background: rgba(40, 42, 44, 0.6);
@@ -703,7 +699,6 @@
 		top: 160px;
 		font-family: 'Sigmar One', Arial;
 		text-shadow: 0 2px 2px #47456d;
-
 	}
 
 	.headImgBox .scene span {
