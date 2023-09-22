@@ -88,6 +88,9 @@ import {articleList} from '../api/article'
                             message:'该分类暂时没有文章'
                         })
                     }
+                  if(this.queryParams.categoryId === 0) {
+                    window.localStorage.setItem('articleTotal', response.total);
+                  }
                     this.articleList = this.articleList.concat(response.rows)
                     if(response.total<=this.articleList.length){
                         this.hasMore=false

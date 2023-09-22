@@ -6,7 +6,7 @@
 
             </h1>
             <!-- 登录 -->
-            <div v-show="!err2005" class="">
+            <div class="">
                 <div v-if="login==1" class="registerBox">
                     <div class="lr-title">
                         <h1>登录</h1>
@@ -36,7 +36,8 @@
                             type="password"
                           placeholder="密码"
                            @keyup.enter.native="loginEnterFun"
-                          v-model="password">
+                          v-model="password"
+                          show-password>
                     </el-input>
                     <el-alert
                         v-show="passwordErr"

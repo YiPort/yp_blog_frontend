@@ -197,7 +197,7 @@ export default {
   created() {
     //生命周期函数
     let hour = Number(moment().format('HH'));
-    console.log(hour);
+    // console.log(hour);
     if(hour < 12 && hour > 5) {
       this.introduction = '上午好';
     }else if (hour > 11 && hour < 19) {
@@ -205,9 +205,9 @@ export default {
     }else {
       this.introduction = '晚上好';
     }
-    this.articleTotal = window.localStorage.getItem('articleTotal');
+    this.articleTotal = Number(window.localStorage.getItem('articleTotal'));
     const userInfo = window.localStorage.getItem('userInfo');
-    console.log(userInfo)
+    // console.log(userInfo)
     if(userInfo !== null) {
       this.username = JSON.parse(userInfo).nickName;
       let userId = JSON.parse(userInfo).id;
