@@ -54,7 +54,7 @@ export function getUserInfo() {
 // 保存用户信息
 export function savaUserInfo(userinfo) {
   return request({
-    url: '/user/userInfo',
+    url: '/user/saveUserInfo',
     method: 'put',
     data: userinfo
   })

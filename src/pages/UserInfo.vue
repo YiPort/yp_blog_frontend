@@ -78,7 +78,7 @@
                       </li>
                       <li>
                           <span class="leftTitle">账号：</span>
-                          <span>{{userInfoObj.username?userInfoObj.username:"无"}}</span>
+                          <span>{{userInfoObj.userName?userInfoObj.userName:"无"}}</span>
                       </li>
                       <li class="username">
                           <span class="leftTitle">昵称：</span>
@@ -225,7 +225,7 @@ import { MessageBox } from 'element-ui'
           saveInfoFun: function(){//保存编辑的用户信息
               var that = this;
 
-              if(that.userInfoObj.username.length < 1){ //昵称为必填
+              if(that.userInfoObj.nickName.length < 1){ //昵称为必填
                    that.$message.error('昵称为必填项，请填写昵称');
                    return;
               }
