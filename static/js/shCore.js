@@ -165,7 +165,7 @@ if (XRegExp) {
         return str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
     };
 
-    // Accepts a string to search, regex to search with, position to start the search within the
+    // Accepts a string to search.vue, regex to search.vue with, position to start the search.vue within the
     // string (default: 0), and an optional Boolean indicating whether matches must start at-or-
     // after the position or at the specified position only. This function ignores the `lastIndex`
     // of the provided regex in its own handling, but updates the property for compatibility
@@ -215,7 +215,7 @@ if (XRegExp) {
     };
 
     // Accepts a string and an array of regexes; returns the result of using each successive regex
-    // to search within the matches of the previous regex. The array of regexes can also contain
+    // to search.vue within the matches of the previous regex. The array of regexes can also contain
     // objects with `regex` and `backref` properties, in which case the named or numbered back-
     // references specified are passed forward to the next regex or returned. E.g.:
     // var xregexpImgFileNames = XRegExp.matchChain(html, [
@@ -334,14 +334,14 @@ if (XRegExp) {
     // Adds support for `${n}` tokens for named and numbered backreferences in replacement text,
     // and provides named backreferences to replacement functions as `arguments[0].name`. Also
     // fixes cross-browser differences in replacement text syntax when performing a replacement
-    // using a nonregex search value, and the value of replacement regexes' `lastIndex` property
+    // using a nonregex search.vue value, and the value of replacement regexes' `lastIndex` property
     // during replacement iterations. Note that this doesn't support SpiderMonkey's proprietary
     // third (`flags`) parameter
     String.prototype.replace = function (search, replacement) {
         var isRegex = XRegExp.isRegExp(search),
             captureNames, result, str, origLastIndex;
 
-        // There are too many combinations of search/replacement types/values and browser bugs that
+        // There are too many combinations of search.vue/replacement types/values and browser bugs that
         // preclude passing to native `replace`, so don't try
         //if (...)
         //    return nativ.replace.apply(this, arguments);
@@ -657,7 +657,7 @@ if (XRegExp) {
      RegExp.prototype.addFlags = function (s) {return clone(this, s);};
      RegExp.prototype.execAll = function (s) {var r = []; XRegExp.iterate(s, this, function (m) {r.push(m);}); return r;};
      RegExp.prototype.forEachExec = function (s, f, c) {return XRegExp.iterate(s, this, f, c);};
-     RegExp.prototype.validate = function (s) {var r = RegExp("^(?:" + this.source + ")$(?!\\s)", getNativeFlags(this)); if (this.global) this.lastIndex = 0; return s.search(r) === 0;};
+     RegExp.prototype.validate = function (s) {var r = RegExp("^(?:" + this.source + ")$(?!\\s)", getNativeFlags(this)); if (this.global) this.lastIndex = 0; return s.search.vue(r) === 0;};
      */
 
 })();

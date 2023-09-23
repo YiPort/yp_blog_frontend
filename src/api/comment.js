@@ -1,9 +1,11 @@
 ﻿import request from '@/utils/request'
 
+const API_PREFIX = '/blog'
+
 // 发送文章评论
 export function sendComment(type,articleId,rootId,toCommentId,toCommentUserId,createBy,content) {
   return request({
-    url: '/comment/',
+    url: API_PREFIX + '/comment/',
     method: 'post',
     headers: {
       isToken: true
@@ -15,7 +17,7 @@ export function sendComment(type,articleId,rootId,toCommentId,toCommentUserId,cr
 // 获取当前文章评论列表
 export function getArticleComment(query) {
     return request({
-        url: '/comment/commentList',
+        url: API_PREFIX + '/comment/commentList',
         method: 'get',
         headers: {
           isToken: false
@@ -27,7 +29,7 @@ export function getArticleComment(query) {
 // 获取友链评论列表
 export function getLinkComment(query) {
     return request({
-        url: '/comment/linkCommentList',
+        url: API_PREFIX + '/comment/linkCommentList',
         method: 'get',
         params: query
     })

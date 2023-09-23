@@ -1,9 +1,11 @@
 import request from '@/utils/request'
 
+const API_PREFIX = '/blog'
+
 // 查询分类列表
 export function getCategoryList() {
     return request({
-        url: '/category/getCategoryList',
+        url: API_PREFIX + '/category/getCategoryList',
         headers: {
           isToken: false
         },
@@ -14,7 +16,7 @@ export function getCategoryList() {
 // 新建分类
 export function addCategory(categoryName,description,createBy) {
     return request({
-        url: '/category/addCategory',
+        url: API_PREFIX + '/category/addCategory',
         headers: {
             isToken: true
         },

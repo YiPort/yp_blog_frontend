@@ -43,6 +43,14 @@ export default new Router({
 			},
 			name: 'Share'
 		}, //分类
+    {
+			path: '/Search',
+			component: resolve => require(['../pages/Search.vue'], resolve),
+			meta: {
+				auth: true
+			},
+			name: 'Search'
+		}, //搜索
 		{
 			path: '/DetailArticle',
 			component: resolve => require(['../pages/DetailArticle.vue'], resolve),
