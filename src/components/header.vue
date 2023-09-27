@@ -18,7 +18,7 @@
 							<el-autocomplete
 							v-model="inputState"
 							:fetch-suggestions="querySearchAsync"
-							placeholder="搜索文章"
+							placeholder="搜索标题|侧边按钮搜索内容"
 							@focus="getArticleIndex"
 							@select="handleSelectTitle">
 								<i slot="prefix" class="el-input__icon el-icon-search"></i>
@@ -53,6 +53,11 @@
 									</ul>-->
 								</div>
 							</div>
+
+              <div  class="searchArticle" >
+                <el-button v-model="searchKey" type="info" icon="el-icon-search"  size="mini" circle @click="searchArticle"></el-button>
+              </div>
+
 						</el-menu>
 					</div>
 				</el-col>
@@ -81,7 +86,7 @@
 	import {getCategoryList} from '../api/category'
 	import { Typeit } from '../utils/plug.js'
 	import router from '@/router'
-	import { getArticleIndex } from '../api/article'
+  import {getArticleIndex,searchArticle} from '../api/search'
 
 	export default {
 		data() { //选项 / 数据
@@ -93,6 +98,11 @@
 				pMenu: true, //手机端菜单打开
 				// path:'',//当前打开页面的路径
 				input: '', //input输入内容
+        queryParams: {
+          pageNum: 1,
+          pageSize: 10,
+          searchKey: ''
+        },
 				headBg: 'url(static/img/dongtu01.gif)', //头部背景图
 				headTou: '', //头像
 				projectList: '', //项目列表
@@ -180,6 +190,31 @@
 					})
 				})
 			},
+      searchArticle() {
+        this.$prompt('请输入搜索的关键字', '搜索文章', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          inputPattern: /\S+/,
+          inputErrorMessage: '关键字不能为空'
+        }).then(({ value }) => {
+          // this.$message({
+          //   type: 'success',
+          //   message: '内容是: ' + value
+          // });
+          this.queryParams.searchKey= value===undefined?'':value
+          searchArticle(this.queryParams).then((response)=>{
+            this.$store.commit('searchArticle',response)
+          })
+          this.$router.push({ path:'Search',query:{ searchKey: this.queryParams.searchKey}})
+        })
+        //   .catch(() => {
+        //   this.$message({
+        //     type: 'info',
+        //     message: '取消搜索文章内容'
+        //   });
+        // })
+        ;
+      },
 			routeChange: function() {
 				var that = this;
 				that.pMenu = true
@@ -194,7 +229,7 @@
 				//获取分类
 				// this.getCategoryList()
 
-				if ((this.$route.name == "Share" || this.$route.name == "Home") && this.$store.state.keywords) {
+				if (( this.$route.name == "Share" || this.$route.name == "Home") && this.$store.state.keywords) {
 					this.input = this.$store.state.keywords;
 				} else {
 					this.input = '';
@@ -467,6 +502,15 @@
 		top: 0;
 		color: #fff;
 	}
+
+  .headBox .searchArticle {
+    height: 100%;
+    line-height: 38px;
+    position: absolute;
+    right: 1px;
+    top: 0;
+    color: #fff;
+  }
 
 	.headBox .userInfo a {
 		color: #fff;

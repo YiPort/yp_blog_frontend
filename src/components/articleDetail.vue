@@ -76,8 +76,9 @@
 
 <script>
 import {initDate} from '../utils/server.js'
-import {getArticle,updateViewCount,postArticleIndex} from '../api/article.js'
+import {getArticle,updateViewCount} from '../api/article.js'
 import { mavonEditor } from 'mavon-editor'
+import {postArticleIndex} from '../api/search'
 import store from '../store'
 export default {
   data() { //选项 / 数据
