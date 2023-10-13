@@ -18,9 +18,8 @@
                 </span>
           <header>
             <h1>
-              <a :href="'#/DetailArticle?aid='+item.id" target="_blank">
-                {{item.title}}
-              </a>
+              <a :href="'#/DetailArticle?aid='+item.id"  target="_blank" v-html="item.title"></a>
+
             </h1>
             <h2>
               <i class="fa fa-fw fa-user"></i>发表于
