@@ -19,6 +19,7 @@
             <div class="tcommonBox">
                 <el-divider>文章标题/摘要</el-divider>
                 <el-input
+                ref="title"
                 type="text"
                 placeholder="文章标题"
                 v-model="title"
@@ -34,13 +35,28 @@
                 prefix-icon="el-icon-notebook-2"
                 show-word-limit>
                 </el-input>
-                <el-divider>文章配置</el-divider>
+                <el-divider>文章配置
+                    <el-tooltip class="item" effect="dark" content="每个用户每天只能上传10张图片（包括缩略图和文章图片）" placement="top">
+                        <i class="el-icon-info"></i>
+                    </el-tooltip>
+                </el-divider>
                 <el-input
                 type="text"
                 placeholder="缩略图"
                 v-model="thumbnail"
                 prefix-icon="el-icon-picture">
                 <template slot="prepend">https://</template>
+                <!-- <el-button slot="append" @click="handleThumbnailSuccess" type="primary" plain icon="el-icon-upload">上传</el-button> -->
+                <el-upload
+                action="#"
+                slot="append"
+                name="thumbnail"
+                :show-file-list="false"
+                :http-request="handleThumbnailSuccess"
+                :before-upload="beforeThumbnailUpload"
+                accept=".jpg,.png,.jpeg">
+                <el-button icon="el-icon-upload">上传</el-button>
+                </el-upload>
                 </el-input>
                 <el-divider></el-divider>
                 <el-switch
@@ -86,13 +102,16 @@
                     <el-timeline style="margin-left:20px" :reverse="reverse">
                         <el-timeline-item
                         v-for="(activity, index) in activities"
+                        placement="top"
                         :key="index"
                         :icon="activity.icon"
                         :type="activity.type"
                         :color="activity.color"
-                        :size="activity.size"
-                        :timestamp="activity.timestamp">
-                        {{activity.content}}
+                        :size="activity.size?activity.size:'normal'"
+                        :timestamp="activity.timestamp"
+                        @click.native="handleSelectActivity(activity)"
+                        >
+                        <div :class="activity.recordId?'time-line':''">{{activity.content}}</div>
                         </el-timeline-item>
                     </el-timeline>
                 </el-drawer>
@@ -103,7 +122,7 @@
                     icon="el-icon-plus"
                     circle class="add-category button1"
                     @click="addCategory"
-                    :disabled="userRole">
+                    :disabled="!userRole">
                     </el-button>
                 </el-tooltip>
 
@@ -127,11 +146,14 @@
                 <el-button type="primary" icon="el-icon-refresh" circle @click="refreshAll"></el-button>
                 </el-tooltip>
                 <el-divider direction="vertical"></el-divider>
-                <el-button type="primary" @click="saveDraft">保存为草稿
+                <el-button type="warning" @click="saveDraft">保存为草稿
                     <i class="el-icon-folder-opened el-icon--right"></i>
                 </el-button>
                 <el-divider direction="vertical"></el-divider>
-                <el-button type="primary" @click="saveCommit" :disabled="userRole">发布
+                <el-button v-if="userRole" type="primary" @click="saveCommit">发布
+                    <i class="el-icon-check el-icon--right"></i>
+                </el-button>
+                <el-button v-else type="primary" @click="saveCommit" :disabled="!haslogin">提交审核
                     <i class="el-icon-check el-icon--right"></i>
                 </el-button>
 
@@ -161,24 +183,31 @@
             </div>
             <div class="tcommonBox">
                 <div id="main">
-                    <mavon-editor ref="md" v-model="content">
+                    <mavon-editor
+                    ref="md"
+                    v-model="content"
+                    @save="saveFile"
+                    @imgAdd="handleImgAdd">
                         <template v-slot:left-toolbar-after>
                             <button
                             type="button"
-                            title="md文件读取"
+                            title="导入md文件"
                             class="op-icon fa markdown-upload iconfont iconupload"
                             aria-hidden="true"
-                            @click="uploadFile"
-                            >
-                            <!-- 这里用的是element-ui给出的图标 -->
+                            @click="uploadFile">
                             <i class="el-icon-upload" />
                             </button>
                         </template>
                     </mavon-editor>
                     <!-- 隐藏的input，用来选择文件 -->
-                    <input ref="uploadInput" style="display: none" type="file" @change="uploadFileChange">
+                    <input ref="uploadInput" style="display: none" type="file" accept=".txt,.md" @change="uploadFileChange">
                 </div>
             </div>
+        </div>
+        <div class="footer">
+            <a style="color:aliceblue">备案号：</a>
+            <a href="https://beian.miit.gov.cn/" class="font">赣ICP备2022003448号-1</a>
+            <p style="color:aliceblue; margin-top: 10px">Blog ©2022 Created by ultima</p>
         </div>
     </div>
 </template>
@@ -188,6 +217,7 @@ import header from '../components/header.vue'
 import store from '../store'
 import { postArticle,getDraft,getEditHistory,deleteDraft } from '../api/article'
 import { MessageBox } from 'element-ui'
+import { uploadImage } from '../api/resource'
 import router from '@/router'
 import { getUserInfo } from '../api/user'
 import { addCategory,getCategoryList } from '../api/category'
@@ -200,7 +230,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 title:'',//文章标题
                 summary:'',//文章摘要
                 status:'1',//是否发布
-                isComment:'0',//是否允许评论
+                isComment:'1',//是否允许评论
                 id:'',//分类id
                 thumbnail:'',//缩略图
                 articleId: null,//文章id
@@ -212,7 +242,7 @@ import { addCategory,getCategoryList } from '../api/category'
                     title:'',//文章标题
                     summary:'',//文章摘要
                     status:'1',//是否发布
-                    isComment:'0',//是否允许评论
+                    isComment:'1',//是否允许评论
                     categoryId:'',//分类id
                     thumbnail:'',//缩略图
                     viewCount: null,//文章浏览量
@@ -231,6 +261,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 userInfo:{},//本地存储的用户信息
                 userInfoObj:'',//用户的信息
                 haslogin:false,//是否登录
+                imgArray: {},//上传的图片链接
             }
         },
         computed: {
@@ -240,14 +271,88 @@ import { addCategory,getCategoryList } from '../api/category'
             userRole() {  //用户角色
                 const role = this.userInfoObj.userRole;
                 if(role === "1") {
-                    return false;
-                }else {
                     return true;
+                }else {
+                    return false;
                 }
             },
         },
         methods: { //事件处理器
-            routeChange() {//展示页面信息
+            handleThumbnailSuccess(params) {   // 上传缩略图
+                let formData = new FormData();
+                formData.append('img', params.file);
+                uploadImage(formData).then(res => {
+                    this.thumbnail = res.data;
+                    this.$message.success('上传成功！');
+                })
+            },
+            async beforeThumbnailUpload(file) {    //判断缩略图大小
+                const isJPG = file.type == 'image/png'||file.type=='image/jpg'||file.type=='image/jpeg';
+                const isLt3M = file.size / 1024 / 1024  < 3;
+                // console.log(file);
+                if (!isJPG) {
+                  this.$message.error('上传图片只能是 JPG/JPEG/PNG 格式!').then(() => {
+                    return false;
+                  });
+                }
+                if (!isLt3M) {
+                  this.$message.error('上传图片大小不能超过 3MB!').then(() => {
+                    return false;
+                  });
+                }
+                return true;
+            },
+            handleImgAdd(pos, file) {    // 上传文章图片
+                let formdata = new FormData();
+                formdata.append('img', file);
+                uploadImage(formdata).then(res => {
+                    this.$message.success('上传成功！');
+                    let url = res;
+                    let name = file.name;
+                    let content = this.content;
+                    // 将返回的url替换到文本原位置![file.name](1) -> ![file.name](url)
+                    if (content.includes(name)) {
+                        let oStr = `(${pos})`;
+                        let nStr = `(${url})`;
+                        let index = content.indexOf(oStr);
+                        let str = content.replace(oStr, '');
+                        let insertStr = (soure, start, newStr) => {
+                          return soure.slice(0, start) + newStr + soure.slice(Math.max(start, 0));
+                        };
+                        this.content = insertStr(str, index, nStr);
+                        this.imgArray[pos] = url;
+                    }
+                })
+            },
+            saveFile(text) {    // 将文章保存到本地
+                if(!this.title) {
+                    this.$message.info('文章标题不能为空');
+                    this.$refs.title.focus();
+                    return;
+                }
+                if(!this.content) {
+                    this.$message.info('文章内容不能为空');
+                    return;
+                }
+                const eleLink = document.createElement('a');
+                eleLink.download = this.title + '.md';
+                eleLink.style.display = 'none';
+                // 将内容转为 blob
+                const blob = new Blob([text], {type: 'text/markdown;charset=utf-8'});
+                eleLink.href = URL.createObjectURL(blob);
+                document.body.appendChild(eleLink);
+                eleLink.click();
+                document.body.removeChild(eleLink);
+            },
+            handleSelectActivity(active) {     // 获取文章详情历史记录
+                if(active.recordId) {
+                    getEditHistory({recordId:active.recordId}).then(res => {
+                        this.reloadArticle(res);
+                        this.historyDrawer = false;
+                    })
+                }
+            },
+            routeChange() {     //展示页面信息
                 var that = this;
                 if(localStorage.getItem('userInfo')){
                     that.haslogin = true;
@@ -274,27 +379,41 @@ import { addCategory,getCategoryList } from '../api/category'
                             return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
             },
             postArticle() { //文章提交
-                if(!this.id) {
-                    this.$message({
-                        type:'info',
-                        message:'请选择文章分类'
-                    })
-                    this.$refs.select.toggleMenu();
-                    return
-                }
                 const userInfo = localStorage.getItem('userInfo');
                 if(!userInfo) {
                     this.loginMessage();
+                    return;
+                }
+                if(!this.title) {
+                    this.$message.info('文章标题不能为空');
+                    this.$refs.title.focus();
+                    return;
+                }
+                if(!this.content) {
+                    this.$message.info('文章内容不能为空');
+                    return;
+                }
+                if(!this.id) {
+                    this.$message.info('请选择文章分类');
+                    this.$refs.select.toggleMenu();
+                    return;
                 }
                 const userId = JSON.parse(userInfo).id;
                 postArticle(this.articleId,userId,this.title,this.content,this.summary,this.status,this.isComment,this.id,this.thumbnail,this.viewCount)
                         .then((response) => {
-                            this.$message({
-                                type:'success',
-                                message:'保存成功'
-                            })
+                            if(this.status==="0"){
+                                this.$message({
+                                    type:'success',
+                                    message:'提交成功'
+                                })
+                            }else{
+                                this.$message({
+                                    type:'success',
+                                    message:'保存成功'
+                                })
+                            }
                             this.refresh();     //重置文章数据
-                            if(response) {
+                            if(response && this.userRole) {
                                 this.$store.commit('loadingIndex',true) //标记需要重新提交文章索引
                                 router.push({   //跳转到文章页面
                                     path: '/DetailArticle?aid=' + response
@@ -326,8 +445,8 @@ import { addCategory,getCategoryList } from '../api/category'
                 this.reloadArticle(articleObj);
             },
             refreshAll() {  //重新编辑
-                MessageBox.confirm('确认重新编辑文章，确认后文章和配置将不能找回', '系统提示', {
-                        confirmButtonText: '确认',
+                this.$confirm('确认重新编辑文章？确认后文章和配置将不能找回', '系统提示', {
+                        confirmButtonText: '重置',
                         cancelButtonText: '取消',
                         type: 'warning'
                       }).then(() => {
@@ -339,7 +458,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 this.title = '';//文章标题
                 this.summary = '';//文章摘要
                 this.status = '1';//是否发布
-                this.isComment = '0';//是否允许评论
+                this.isComment = '1';//是否允许评论
                 this.classListObj = null;//分类
                 this.id = '';//分类id
                 this.thumbnail = '';//缩略图
@@ -398,10 +517,11 @@ import { addCategory,getCategoryList } from '../api/category'
                 }
             },
             deleteDraft(articleId) {    // 删除草稿
-                const id = this.userInfo.id;
-                if(!id) {
-                   this.loginMessage();
-                }else {
+                this.$confirm('确定要删除草稿吗？', '系统提示', {
+                    confirmButtonText: '删除',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
                     deleteDraft(id,articleId).then((response) => {
                         if(this.articleId === articleId) {  //将当前编辑的草稿id重置
                             this.articleId = null;
@@ -414,7 +534,7 @@ import { addCategory,getCategoryList } from '../api/category'
                             message:'删除成功'
                         })
                     })
-                }
+                })
             },
             uploadFile() {
                 // 通过ref找到隐藏的input标签，触发它的点击方法
@@ -422,13 +542,13 @@ import { addCategory,getCategoryList } from '../api/category'
             },
             uploadFileChange(e) {   //监听input获取文件的状态
                 // 获取到input选取的文件
-                const file = e.target.files[0]
-                let fileName = file.name;
-                let pattern = /^\S+md$/;
-                if(!pattern.test(fileName)) {   //验证文件类型
+                const file = e.target.files[0];
+                let type = file.name.split('.')[1];
+                if(type !== 'md' && type !== 'txt') {   //验证文件类型
                     this.$message({
                         type: 'error',
-                        message: '请选择md类型文件！'
+                        message: '请选择 .md 或 .txt 类型文件！',
+                        duration: 4000
                     })
                     return;
                 }
@@ -504,6 +624,14 @@ import { addCategory,getCategoryList } from '../api/category'
 </script>
 
 <style lang="less">
+.time-line {
+    color: #409eff;
+}
+.time-line:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #409eff;
+}
 /*1.显示滚动条：当内容超出容器的时候，可以拖动：*/
 .el-drawer__body {
     overflow: auto;
@@ -582,60 +710,6 @@ li:hover{
 .userInfoBox .avatarlist{
     position: relative;
 }
-.avatar-uploader {
-    display: inline-block;
-    vertical-align: top;
-}
-.avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 50%;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    width: 120px;
-    height: 120px;
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #20a0ff;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 120px;
-    height: 120px;
-    line-height: 120px;
-    text-align: center;
-    position: absolute;
-    top:0;
-    left:0;
-  }
-  .avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    display: block;
-    object-fit: cover;
-  }
-.gotoEdit{
-    font-size: 15px;
-    float:right;
-    cursor: pointer;
-    color:#999;
-}
-.gotoEdit:hover {
-    color:#333;
-}
-/*个人设置*/
-.userInfoBox .leftTitle{
-    display: inline-block;
-    width:100px;
-    padding: 10px 0;
-}
-.userInfoBox .rightInner{
-    display: inline-block;
-    max-width: calc(100% - 140px);
-    vertical-align: top;
-}
 .userInfoBox li{
     padding:20px;
     border-bottom: 1px solid #ddd;
@@ -657,13 +731,6 @@ li:hover{
 .saveInfobtn{
     margin: 20px 0;
     text-align: center;
-}
-.saveInfobtn a{
-    color:#fff;
-    padding:6px 20px;
-    margin:5px 10px;
-    border-radius: 5px;
-    font-size: 14px;
 }
 .userInfoBox .fa-asterisk{
     color: #DF2050;

@@ -127,7 +127,7 @@ export default {
           updateViewCount(that.aid)
       },
       tocAndCli() {
-        debugger
+        // debugger
         this.$nextTick(() => {
           const aArr1 = $(
               "#article1 a"
