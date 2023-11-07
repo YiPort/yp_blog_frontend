@@ -183,7 +183,7 @@ import { MessageBox } from 'element-ui'
               return this.userInfo.id;
           },
           isAdmin() { //是否是管理员
-              if(this.userInfo.userRole === 1) {
+              if(this.userInfo.userRole === "1") {
                   return true;
               }else {
                   return false;
@@ -229,8 +229,6 @@ import { MessageBox } from 'element-ui'
                    that.$message.error('昵称为必填项，请填写昵称');
                    return;
               }
-
-
               savaUserInfo(that.userInfoObj).then((response)=>{//保存信息接口，返回展示页
                   that.$message.success( '修改成功！');
                   that.isEdit = false;
@@ -268,7 +266,7 @@ import { MessageBox } from 'element-ui'
               else {
                   getCollectList(this.userId).then(response => {
                   console.log(response)
-                  this.collectionList = response
+                  this.collectionList =  response.filter(item => item !== null);
               })
               this.myCollection = true;
               }
