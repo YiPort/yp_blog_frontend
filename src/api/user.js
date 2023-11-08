@@ -39,7 +39,10 @@ export function userRegister(username,nickName,email,password) {
 export function logout() {
   return request({
     url: '/user/logout',
-    method: 'post'
+    method: 'post',
+    headers: {
+      isToken: true
+    }
   })
 }
 
@@ -48,6 +51,9 @@ export function getUserInfo() {
   return request ({
     url: '/user/current',
     method: 'get',
+    headers: {
+     isToken: true
+    }
   })
 }
 
@@ -56,6 +62,9 @@ export function savaUserInfo(userinfo) {
   return request({
     url: '/user/saveUserInfo',
     method: 'put',
+    headers: {
+      isToken: true
+    },
     data: userinfo
   })
 }
