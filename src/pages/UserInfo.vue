@@ -80,6 +80,10 @@
                           <span class="leftTitle">账号：</span>
                           <span>{{userInfoObj.userName?userInfoObj.userName:"无"}}</span>
                       </li>
+                      <li>
+                          <span class="leftTitle">UID：</span>
+                          <span>{{userInfoObj.uid?userInfoObj.uid:"无"}}</span>
+                      </li>
                       <li class="username">
                           <span class="leftTitle">昵称：</span>
                           <el-input v-model="userInfoObj.nickName" placeholder="昵称" clearable></el-input>
