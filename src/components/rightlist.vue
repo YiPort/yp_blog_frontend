@@ -19,20 +19,20 @@
       <div class="r1-body">
         <el-row :gutter="12">
           <el-col :span="8">
-            <el-card shadow="hover">
+            <el-card style="border: 0;" shadow="hover">
               <h1 class="count-title">总文章</h1>
               <countTo class="count-num" :startVal="0" :endVal="articleTotal" :duration="5000" />
             </el-card>
           </el-col>
           <el-col :span="8">
-            <el-card shadow="hover">
+            <el-card style="border: 0;" shadow="hover">
               <h1 class="count-title">我发布</h1>
               <countTo class="count-num" v-show="isLogin" :startVal="0" :endVal="myArticleTotal" :duration="5000" />
               <span class="count-num" v-show="!isLogin" >- -</span>
             </el-card>
           </el-col>
           <el-col :span="8">
-            <el-card shadow="hover">
+            <el-card style="border: 0;" shadow="hover">
               <h1 class="count-title">总浏览</h1>
               <countTo class="count-num" v-show="isLogin" :startVal="0" :endVal="totalView" :duration="5000" />
               <span class="count-num" v-show="!isLogin" >- -</span>
@@ -254,9 +254,6 @@ export default {
 .count-num {
   font-size: 1.3em;
   font-weight: bold;
-}
-.el-card {
-  border: 0;
 }
 .el-card__body {
   cursor: pointer;
