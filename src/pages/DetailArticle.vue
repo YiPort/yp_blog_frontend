@@ -109,7 +109,7 @@ import $ from 'jquery'
                 if(localStorage.getItem('userInfo')){
                     that.userInfo = JSON.parse(localStorage.getItem('userInfo'));
                     that.userId = that.userInfo.id;
-                    getUserInfo(that.userId).then((response)=>{
+                    getUserInfo().then((response)=>{
                         that.userInfoObj = response;
                         that.userInfoObj.head_start = 0;
                     })
