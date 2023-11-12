@@ -134,6 +134,10 @@
                           <span class="leftTitle">账号：</span>
                           <span>{{userInfoObj.userName?userInfoObj.userName:"无"}}</span>
                       </li>
+                      <li>
+                          <span class="leftTitle">UID：</span>
+                          <span>{{userInfoObj.uid?userInfoObj.uid:"无"}}</span>
+                      </li>
                       <li class="username">
                           <span class="leftTitle">昵称：</span>
                           <span>{{userInfoObj.nickName?userInfoObj.nickName:"游客"}}</span>
@@ -166,6 +170,8 @@ import {getUserInfo,savaUserInfo} from '../api/user.js'//获取用户信息，�
 import store from '../store'
 import { getCollectList,deleteCollection,getQuestionList,deleteQuestion } from '../api/article'
 import { MessageBox } from 'element-ui'
+import { setToken } from '../utils/auth'
+import router from '@/router'
   export default {
       name: 'UserInfo',
       data() { //选项 / 数据
@@ -183,8 +189,13 @@ import { MessageBox } from 'element-ui'
           }
       },
       computed: {
-          userId() {
-              return this.userInfo.id;
+          userId: {
+              get() {
+                  return this.userInfo.id;
+              },
+              set(newValue) {
+                  this.userInfo.id = newValue;
+              }
           },
           isAdmin() { //是否是管理员
               if(this.userInfo.userRole === "1") {
@@ -216,14 +227,15 @@ import { MessageBox } from 'element-ui'
               }
               return isJPG && isLt3M;
           },
-          getUserInfo(userId) {       //获取用户信息
-              getUserInfo(userId).then((response)=>{
+          getUserInfo() {       //获取用户信息
+              getUserInfo().then((response)=>{
                   this.userInfoObj = response;
+                  localStorage.setItem('userInfo',JSON.stringify(response));
                   this.userInfoObj.head_start = 0;
               })
           },
           back() {        //返回
-              this.getUserInfo(this.userId);
+              this.getUserInfo();
               this.isEdit = false;
           },
           saveInfoFun: function(){//保存编辑的用户信息
@@ -233,22 +245,24 @@ import { MessageBox } from 'element-ui'
                    that.$message.error('昵称为必填项，请填写昵称');
                    return;
               }
+
+
               savaUserInfo(that.userInfoObj).then((response)=>{//保存信息接口，返回展示页
                   that.$message.success( '修改成功！');
                   that.isEdit = false;
-                  that.routeChange() ;
+                  that.routeChange();
               })
           },
           routeChange: function(){//展示页面信息
               var that = this;
-              if(localStorage.getItem('userInfo')){
+              if(localStorage.getItem('token')){
+                  that.getUserInfo();
                   that.haslogin = true;
                   that.userInfo = JSON.parse(localStorage.getItem('userInfo'));
                   that.userId = that.userInfo.id;
-                  this.getUserInfo(this.userId);
               }else{
                   that.haslogin = false;
-                  this.loginMessage();
+                  // that.loginMessage();
               }
 
           },

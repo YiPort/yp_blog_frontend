@@ -203,10 +203,8 @@ import {setToken} from '../utils/auth.js'
                 this.checkLogin();
                 if (this.usernameErr === false && this.passwordErr === false){
                     userLogin(this.username,this.password,this.captcha,this.uuid).then((response)=>{
-                        // 登录成功记录token和用户信息，登录失败给对应提示
-                        setToken(response.token);
                         // 存储用户信息
-                        localStorage.setItem("userInfo",JSON.stringify(response.userInfo));
+                        localStorage.setItem("userInfo",JSON.stringify(response));
                         // 登录成功提示
 						this.$message({
 							type: 'success',

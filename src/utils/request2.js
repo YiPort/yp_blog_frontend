@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Notification, MessageBox, Message } from 'element-ui'
 import router from '@/router'
 import store from '../store'
-import { getToken, removeToken } from '@/utils/auth'
+import { getToken, removeToken, setToken } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
@@ -83,10 +83,15 @@ service.interceptors.response.use(res => {
       return Promise.reject(new Error(msg))
     } else if (code !== 200) {
       Notification.error({
-        title: msg
+        title: msg,
+        timeout: 3000
       })
       return Promise.reject('error')
     } else {
+      if(res.data.data.token) {     //返回token则存储token
+        setToken(res.data.data.token);
+        return res.data.data.userInfo;
+      }
       return res.data.data
     }
   },
