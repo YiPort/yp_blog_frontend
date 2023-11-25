@@ -16,6 +16,12 @@ const mutations = {
   },
   loadingIndex(state,response) {
     state.loadingIndex = response
+  },
+  changeIsMy(state,response) {
+    state.isMy = response
+  },
+  changeCreateBy(state,response) {
+    state.createBy = response
   }
 }
 
@@ -28,6 +34,8 @@ export const state = {
   // searchKey: '',//搜索关键字
   loadingIndex: false,//编辑文章后是否重新提交文章索引
   errorImg: 'this.onerror=null;this.src="' + require('../../static/img/tou.jpg') + '"',
+  isMy: false,
+  createBy: null,
   baseURL:'http://127.0.0.1:10086/',
   resourceURL:'http://127.0.0.1:10086/resource/',
   SSOLogin:'http://127.0.0.1:10086/'
