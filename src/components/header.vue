@@ -337,8 +337,10 @@
 	/*头部导航栏盒子*/
 	.headBack {
 		width: 100%;
-		background: rgba(40, 42, 44, 0.6);
-		/*margin-bottom:30px;*/
+    /* background: rgba(40, 42, 44, 0.6); */
+    background: rgb(93 93 93 / 44%);
+    backdrop-filter: saturate(50%) blur(8px);
+    /*margin-bottom:30px;*/
 		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .12), 0 0 6px 0 rgba(0, 0, 0, .04);
 		position: fixed;
 		left: 0;
