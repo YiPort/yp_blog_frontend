@@ -53,7 +53,8 @@
                   </li>
               </ul>
       </el-drawer>
-      <div class="container">
+      <template v-if="haslogin">
+          <div class="container">
           <div v-show="isEdit" class="tcommonBox">
               <header>
                   <h1>
@@ -157,10 +158,10 @@
                       </li>
 
                   </ul>
-
               </section>
           </div>
-      </div>
+          </div>
+      </template>
   </div>
 </template>
 
@@ -170,8 +171,9 @@ import {getUserInfo,savaUserInfo} from '../api/user.js'//获取用户信息，�
 import store from '../store'
 import { getCollectList,deleteCollection,getQuestionList,deleteQuestion } from '../api/article'
 import { MessageBox } from 'element-ui'
-import { setToken } from '../utils/auth'
+import { getToken } from '../utils/auth'
 import router from '@/router'
+import axios from 'axios'
   export default {
       name: 'UserInfo',
       data() { //选项 / 数据
@@ -186,6 +188,8 @@ import router from '@/router'
               questionList: [],//反馈列表
               description: '',//问题描述
               isLoading: false,
+              haslogin: false,
+              ip: ''
           }
       },
       computed: {
@@ -227,18 +231,23 @@ import router from '@/router'
               }
               return isJPG && isLt3M;
           },
-          getUserInfo() {       //获取用户信息
-              getUserInfo().then((response)=>{
+          async getUserInfo() {       //获取用户信息
+              var that = this;
+              await getUserInfo().then((response)=>{
                   this.userInfoObj = response;
+                  that.haslogin = true;
                   localStorage.setItem('userInfo',JSON.stringify(response));
                   this.userInfoObj.head_start = 0;
               })
+          },
+          jsShow(location) {
+              this.ip = location;
           },
           back() {        //返回
               this.getUserInfo();
               this.isEdit = false;
           },
-          saveInfoFun: function(){//保存编辑的用户信息
+          async saveInfoFun(){//保存编辑的用户信息
               var that = this;
 
               if(that.userInfoObj.nickName.length < 1){ //昵称为必填
@@ -247,7 +256,7 @@ import router from '@/router'
               }
 
 
-              savaUserInfo(that.userInfoObj).then((response)=>{//保存信息接口，返回展示页
+              await savaUserInfo(that.userInfoObj).then((response)=>{//保存信息接口，返回展示页
                   that.$message.success( '修改成功！');
                   that.isEdit = false;
                   that.routeChange();
@@ -255,14 +264,13 @@ import router from '@/router'
           },
           routeChange: function(){//展示页面信息
               var that = this;
-              if(localStorage.getItem('token')){
+              if(getToken()){
                   that.getUserInfo();
-                  that.haslogin = true;
                   that.userInfo = JSON.parse(localStorage.getItem('userInfo'));
                   that.userId = that.userInfo.id;
               }else{
                   that.haslogin = false;
-                  // that.loginMessage();
+                  that.loginMessage();
               }
 
           },
@@ -280,6 +288,19 @@ import router from '@/router'
                           return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
           },
           getCollectList() {  //获取收藏文章列表
+          // 创建 axios实例
+              const service = axios.create({
+                  // axios中请求配置有baseURL选项，表示请求URL公共部分
+                  baseURL: 'http://whois.pconline.com.cn',
+                  // 超时
+                  timeout: 2 * 5000
+              })
+              service({
+                  url: '/ipJson.jsp?ip=140.210.69.133&json=true',
+                  methods: 'get'
+              }).then(res => {
+                  console.log(res)
+              })
               if(!this.userId) this.loginMessage();
               else {
                   getCollectList(this.userId).then(response => {
