@@ -33,7 +33,7 @@ export const state = {
   classListObj:null,//分类数组
   // searchKey: '',//搜索关键字
   loadingIndex: false,//编辑文章后是否重新提交文章索引
-  errorImg: 'this.onerror=null;this.src="' + require('../../static/img/tou.jpg') + '"',
+  errorImg: "https://aiguider.top/wp-content/uploads/b0bdcfd3-334c-3dd3-9e42-f239d1f9ba84-jpg.webp",
   isMy: false,
   createBy: null,
   baseURL:'http://127.0.0.1:10086/',
