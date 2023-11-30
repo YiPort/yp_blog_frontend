@@ -93,6 +93,7 @@
 			return {
 				userInfo: '', //用户信息
 				haslogin: false, //是否已登录
+        searchKey: '',//文章搜索关键字
 				activeIndex: '/', //当前选择的路由模块
 				// state: '', //icon点击状态
 				pMenu: true, //手机端菜单打开
