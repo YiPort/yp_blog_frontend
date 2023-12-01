@@ -20,7 +20,7 @@
             </el-tree>
         </el-collapse-transition>
         <div  class="container" id="detail">
-            <el-tooltip class="item" effect="dark" content="收藏" placement="left" :hide-after="1000">
+            <el-tooltip class="item" effect="light" content="收藏" placement="left" :hide-after="1000">
                 <el-button
                 type="primary"
                 icon="el-icon-star-off"
@@ -31,7 +31,11 @@
             <el-dialog title="提交错误" :visible.sync="dialogFormVisible">
             <el-form :model="form">
                 <el-form-item label="错误描述">
-                <el-input type="textarea" v-model="form.description"></el-input>
+                <el-input
+                type="textarea"
+                v-model="form.description"
+                maxlength="150"
+                show-word-limit></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -39,6 +43,14 @@
                 <el-button type="primary" @click="postQuestion">确 定</el-button>
             </div>
             </el-dialog>
+            <el-tooltip class="item" effect="light" content="纠错" placement="left" :hide-after="1000">
+                <el-button
+                type="danger"
+                icon="el-icon-question"
+                circle class="question button1"
+                @click="submitQuestion">
+                </el-button>
+            </el-tooltip>
             <el-row  :gutter="30">
                 <el-col :sm="24" :md="16" style="transition:all .5s ease-out;margin-bottom:30px;">
                     <yp-articleDetail></yp-articleDetail>
@@ -48,12 +60,12 @@
                     <yp-rightlist></yp-rightlist>
                 </el-col>
             </el-row>
-            <el-tooltip class="item" effect="dark" content="纠错" placement="left" :hide-after="1000">
-              <el-button
-                type="danger"
-                icon="el-icon-question"
-                circle class="question button1"
-                @click="submitQuestion">
+            <el-tooltip class="item" effect="light" content="评论" placement="left" :hide-after="1000">
+                <el-button
+                type="info"
+                icon="el-icon-chat-dot-round"
+                circle class="comment button1"
+                @click="sendComment">
                 </el-button>
             </el-tooltip>
         </div>
@@ -69,6 +81,7 @@ import { MessageBox } from 'element-ui'
 import { addCollection,postQuestion } from '../api/article'
 import router from '../router/index'
 import { getUserInfo } from '../api/user'
+import { getToken } from '../utils/auth'
 import $ from 'jquery'
     export default {
         name:'DetailShare',
@@ -103,14 +116,15 @@ import $ from 'jquery'
             }
         },
         methods: { //事件处理器
-            routeChange() {//展示页面信息
+            async routeChange() {//展示页面信息
                 var that = this;
                 that.articleId = that.$route.query.aid==undefined?1:parseInt(that.$route.query.aid);//获取传参的aid
-                if(localStorage.getItem('userInfo')){
-                    that.userInfo = JSON.parse(localStorage.getItem('userInfo'));
-                    that.userId = that.userInfo.id;
-                    getUserInfo().then((response)=>{
+                if(getToken()){
+                    await getUserInfo().then((response)=>{
+                        that.userInfo = response;
                         that.userInfoObj = response;
+                        window.localStorage.setItem('userInfo',JSON.stringify(response));
+                        that.userId = that.userInfo.id;
                         that.userInfoObj.head_start = 0;
                     })
                 }
@@ -325,6 +339,9 @@ import $ from 'jquery'
                 if (node.parent)
                     this.expand(node.parent)
             },
+            sendComment() {     //获取发送评论框焦点
+                document.getElementById('rootInput').focus();
+            }
         },
         components: { //定义组件
             'yp-nav':header,
@@ -377,6 +394,13 @@ import $ from 'jquery'
 .collect{
     position: fixed;
     bottom: 107px;
+	left: 80px;
+    box-shadow: #333;
+    z-index:9999;
+}
+.comment{
+    position: fixed;
+    bottom: 154px;
 	left: 80px;
     box-shadow: #333;
     z-index:9999;
