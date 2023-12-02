@@ -127,6 +127,7 @@
 
 <script>
 import { hotArticleList,getMyArticleTotal,getTotalView } from "../api/article";
+import { getToken } from '../utils/auth'
 import countTo from 'vue-count-to';
 import moment from 'moment';
 export default {
@@ -184,8 +185,8 @@ export default {
         }
       }, 30);
     },
-    getHotArticleList() {
-      hotArticleList().then((response) => {
+    async getHotArticleList() {
+      await hotArticleList().then((response) => {
         this.browseList = response;
       });
     },
@@ -193,8 +194,7 @@ export default {
   components: {
     countTo
   },
-
-  created() {
+  async created() {
     //生命周期函数
     let hour = Number(moment().format('HH'));
     // console.log(hour);
@@ -205,19 +205,21 @@ export default {
     }else {
       this.introduction = '晚上好';
     }
+    //查询浏览量最多的10篇文章数据
+    this.getHotArticleList();
     this.articleTotal = Number(window.localStorage.getItem('articleTotal'));
     const userInfo = window.localStorage.getItem('userInfo');
     // console.log(userInfo)
-    if(userInfo !== null) {
-      this.username = JSON.parse(userInfo).nickName;
+    if(getToken()) {
+      this.username = JSON.parse(userInfo).username;
       let userId = JSON.parse(userInfo).id;
-      getMyArticleTotal(userId).then(response => {     //获取我发布的文章总数
-        console.log(response);
+      await getMyArticleTotal(userId).then(response => {     //获取我发布的文章总数
+        // console.log(response);
         this.isLogin = true;
         this.myArticleTotal = response.myArticleTotal;
       })
-      getTotalView(userId).then(response => {       // 获取我发布的文章总浏览量
-        console.log(response);
+      await getTotalView(userId).then(response => {       // 获取我发布的文章总浏览量
+                                                          // console.log(response);
         this.totalView = response.totalView;
       })
     }
@@ -238,8 +240,6 @@ export default {
         that.fixDo = false;
       }
     };
-    //查询浏览量最多的10篇文章数据
-    this.getHotArticleList();
   },
 };
 </script>
