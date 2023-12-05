@@ -112,7 +112,32 @@ input[type="text"], input[type="button"], input[type="submit"], input[type="sear
   -webkit-overflow-x: hidden;
   color: #444;
 }
+// 导航栏hover样式
+.el-menu--horizontal>.el-menu-item:not(.is-disabled):focus,
+.el-menu--horizontal>.el-menu-item:not(.is-disabled):hover,
+.el-menu--horizontal>.el-submenu .el-submenu__title:hover {
+  background-color: #48456c;
+  color: #fff;
+}
 
+.footer{
+  background: #7277d4;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #7277d4,#555288);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom,#7277d4, #555288); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+  height: 10px;
+  /* background: #64609E; */
+  text-align: center;
+  padding: 45px 0;
+  opacity: 0.8;
+
+}
+.font{
+  color: aliceblue;
+}
+.font:hover{
+  color: #060422;
+}
 h1, h2 {
   font-weight: normal;
 }

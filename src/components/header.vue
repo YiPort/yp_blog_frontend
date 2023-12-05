@@ -336,12 +336,13 @@
 	/*********头部导航栏********/
 
 	/*头部导航栏盒子*/
+
 	.headBack {
 		width: 100%;
-    /* background: rgba(40, 42, 44, 0.6); */
-    background: rgb(93 93 93 / 44%);
-    backdrop-filter: saturate(50%) blur(8px);
-    /*margin-bottom:30px;*/
+		/* background: rgba(40, 42, 44, 0.6); */
+		background: rgb(93 93 93 / 44%);
+		backdrop-filter: saturate(50%) blur(8px);
+		/*margin-bottom:30px;*/
 		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .12), 0 0 6px 0 rgba(0, 0, 0, .04);
 		position: fixed;
 		left: 0;
@@ -351,6 +352,10 @@
 	}
 
 	.headBox li.is-active {
+		/*background: #48456C;*/
+		background: rgba(73, 69, 107, 0.7);
+	}
+	.headBox li:hover {
 		/*background: #48456C;*/
 		background: rgba(73, 69, 107, 0.7);
 	}
@@ -505,6 +510,17 @@
 		top: 0;
 		color: #fff;
 	}
+
+
+  .headBox .searchArticle {
+    height: 100%;
+    line-height: 38px;
+    position: absolute;
+    right: 1px;
+    top: 0;
+    color: #fff;
+  }
+
 
   .headBox .searchArticle {
     height: 100%;
