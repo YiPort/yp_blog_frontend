@@ -1,62 +1,94 @@
 <!-- 文章详情 -->
 <template>
     <div>
-        <yp-nav></yp-nav>
-        <el-collapse-transition>
-            <el-tree
-                id="boxFixed"
-                :data="toc"
-                empty-text="暂无目录"
-                :props="defaultProps"
-                highlight-current
-                :indent="20"
-                node-key ="id"
-                @node-click="scrollToPosition"
-                ref="menuTree"
-                style="position: fixed;"
-                class="treeFixed"
-                v-show="showDirectory"
-                accordion>
-            </el-tree>
-        </el-collapse-transition>
+        <yp-nav id="header"></yp-nav>
+        <!-- 回到顶部 -->
+        <el-backtop v-show="isFullScreen" :bottom="90" :right="300" class="back-top" :visibility-height="2000">
+            <div
+            style="
+            {
+                position: fixed;
+                bottom: 180px;
+                right: 40px;
+                box-shadow: #333;
+                z-index:9999;
+            }
+            ">up</div>
+        </el-backtop>
+        <el-tooltip class="item" effect="light" :content="isFullScreen?'退出':'全屏'" placement="left" :hide-after="1000">
+            <el-button
+            type="success"
+            :icon="isFullScreen?'el-icon-aim':'el-icon-full-screen'"
+            circle class="full-screen button1"
+            v-show="showLeft"
+            @click="fullScreen">
+            </el-button>
+        </el-tooltip>
+        <el-col id="collapse" :sm="24" :md="24" style="transition:all .5s ease-out;">
+            <el-collapse-transition>
+                <el-tree
+                    id="boxFixed"
+                    :data="toc"
+                    empty-text="暂无目录"
+                    :props="defaultProps"
+                    highlight-current
+                    :indent="20"
+                    node-key ="id"
+                    @node-click="scrollToPosition"
+                    ref="menuTree"
+                    style="position: fixed;"
+                    :class="isFullScreen?'fullTreeFixed':'treeFixed'"
+                    v-show="showDirectory"
+                    accordion>
+                </el-tree>
+            </el-collapse-transition>
+        </el-col>
         <div  class="container" id="detail">
-            <el-tooltip class="item" effect="light" content="收藏" placement="left" :hide-after="1000">
-                <el-button
-                type="primary"
-                icon="el-icon-star-off"
-                circle class="collect button1"
-                @click="addCollect()">
-                </el-button>
-            </el-tooltip>
-            <el-dialog title="提交错误" :visible.sync="dialogFormVisible">
-            <el-form :model="form">
-                <el-form-item label="错误描述">
-                <el-input
-                type="textarea"
-                v-model="form.description"
-                maxlength="150"
-                show-word-limit></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="postQuestion">确 定</el-button>
+            <div id="collection">
+                <el-tooltip class="item" effect="light" content="收藏" placement="left" :hide-after="1000">
+                    <el-button
+                    type="primary"
+                    icon="el-icon-star-off"
+                    circle class="collect button1"
+                    v-show="showLeft"
+                    @click="addCollect()">
+                    </el-button>
+                </el-tooltip>
             </div>
-            </el-dialog>
-            <el-tooltip class="item" effect="light" content="纠错" placement="left" :hide-after="1000">
-                <el-button
-                type="danger"
-                icon="el-icon-question"
-                circle class="question button1"
-                @click="submitQuestion">
-                </el-button>
-            </el-tooltip>
+            <div id="diaQuestion">
+                <el-dialog title="提交错误" :visible.sync="dialogFormVisible">
+                <el-form :model="form">
+                    <el-form-item label="错误描述">
+                    <el-input
+                    type="textarea"
+                    v-model="form.description"
+                    maxlength="150"
+                    show-word-limit></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="postQuestion">确 定</el-button>
+                </div>
+                </el-dialog>
+            </div>
+            <div id="question">
+                <el-tooltip class="item" effect="light" content="纠错" placement="left" :hide-after="1000">
+                    <el-button
+                    type="danger"
+                    icon="el-icon-question"
+                    circle class="question button1"
+                    v-show="showLeft"
+                    @click="submitQuestion">
+                    </el-button>
+                </el-tooltip>
+            </div>
             <el-row  :gutter="30">
-                <el-col :sm="24" :md="16" style="transition:all .5s ease-out;margin-bottom:30px;">
+                <el-col id="fullScreen" ref="article" :sm="24" :md="isFullScreen?20:16" style="transition:all .5s ease-out;margin-bottom:30px;">
                     <yp-articleDetail></yp-articleDetail>
                     <yp-message></yp-message>
                 </el-col>
-                <el-col :sm="24"  :md="8" >
+                <el-col :style="isFullScreen?'display: none':''" :sm="24"  :md="8" >
                     <yp-rightlist></yp-rightlist>
                 </el-col>
             </el-row>
@@ -65,9 +97,15 @@
                 type="info"
                 icon="el-icon-chat-dot-round"
                 circle class="comment button1"
+                v-show="showLeft"
                 @click="sendComment">
                 </el-button>
             </el-tooltip>
+        </div>
+        <div class="footer">
+            <a style="color:aliceblue">备案号：</a>
+            <a href="https://beian.miit.gov.cn/" class="font">闽ICP备2021019654号-1</a>
+            <p style="color:aliceblue; margin-top: 10px">Blog ©2021 Created by yiport</p>
         </div>
     </div>
 </template>
@@ -103,8 +141,10 @@ import $ from 'jquery'
                 id: 1,
                 catalogue: [],  //节点元素的id和其距顶部的距离
                 showDirectory: false,   //是否显示目录
+                showLeft: false,   //是否显示按钮
                 isFixed: false,     //目录css样式选择
                 timeout: null,
+                isFullScreen: false     //是否全屏
             }
         },
         watch: {
@@ -288,6 +328,7 @@ import $ from 'jquery'
                 let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop // 滚动条偏移量
                 let offsetTop = 1600  // 要滚动到顶部吸附的元素的偏移量
                 this.isFixed = scrollTop > offsetTop ? true : false;  // 如果滚动到顶部了，this.isFixed就为true
+                this.showLeft = scrollTop > offsetTop-1300 ? true : false;  // 如果滚动到顶部了，this.showLeft就为true
                 let temp;   //存储当前浏览节点
                 this.catalogue.forEach(item => {
                     let dist = scrollTop - item.dist + 500;
@@ -341,6 +382,61 @@ import $ from 'jquery'
             },
             sendComment() {     //获取发送评论框焦点
                 document.getElementById('rootInput').focus();
+            },
+            //全屏/非全屏
+            fullScreen() {
+                if(!this.isFullScreen) {
+                    let el = document.documentElement
+                    console.log(el)
+                    let rfs = el.requestFullScreen ||
+                                el.webkitRequestFullScreen ||
+                                el.mozRequestFullScreen ||
+                                el.msRequestFullScreen ||
+                                el.webkitIsFullScreen ||
+                                el.mozFullScreen,
+                                wscript
+                    if (typeof rfs != "undefined" && rfs) {
+                        this.isFullScreen = true;
+                        rfs.call(el);
+                        return;
+                    }else {wscript = new ActiveXObject("WScript.Shell");
+                        if (wscript != null) {
+                            this.isFullScreen = false;
+                            wscript.SendKeys("{F11}");
+                        }
+                    }
+                }
+                else{
+                    let el = document,
+                        cfs = el.cancelFullScreen ||
+                        el.webkitCancelFullScreen ||
+                        el.mozCancelFullScreen ||
+                        el.exitFullScreen, wscript;
+                    if (typeof cfs != "undefined" && cfs) {
+                        this.isFullScreen = false;
+                        cfs.call(el);
+                        return;
+                    }
+                    if (typeof window.ActiveXObject != "undefined") {
+                        wscript = new ActiveXObject("WScript.Shell");
+                        if (wscript != null) {
+                            wscript.SendKeys("{F11}");
+                        }
+                    }
+                }
+            },
+            checkFull() {       //检查当前是否全屏
+                if (document.mozFullScreen) {
+                    console.log(1)
+                    return true;
+                } else if (document.webkitIsFullScreen) {
+                    console.log(2)
+                    return true;
+                } else if (document.msFullscreenElement) {
+                    console.log(3)
+                    return true;
+                }
+                return false;
             }
         },
         components: { //定义组件
@@ -355,6 +451,15 @@ import $ from 'jquery'
         },
         mounted(){
             window.addEventListener('scroll',this.handleScroll) // 监听滚动事件，然后用handleScroll这个方法进行相应的处理
+            let that = this;
+            //监听退出全屏事件
+            window.onresize = function() {
+                if(that.checkFull()) {
+                    that.isFullScreen = true;
+                }else{
+                    that.isFullScreen = false;
+                }
+            }
             /* var anchor = document.querySelector("#detail");
             // console.log(anchor,anchor.offsetTop);
             var top = anchor.offsetTop-60;
@@ -363,7 +468,7 @@ import $ from 'jquery'
             document.documentElement.scrollTop = top;
             // Safari
             window.pageYOffset = top; */
-        }
+        },
     }
 </script>
 
@@ -387,6 +492,20 @@ import $ from 'jquery'
     margin: 0 0 0 -65px;
     letter-spacing: 0.5px;
 }
+.fullTreeFixed{
+    position: fixed;
+    top: 90px;
+	right: 0%;
+    box-shadow: #333;
+    width: 320px;
+    border-radius: 5px;
+    z-index:99;
+    transition: all 0.2s linear;
+    padding: 15px;
+    text-align: center;
+    margin: 0 0 0 -65px;
+    letter-spacing: 0.5px;
+}
 .treeFixed:hover{
     transform: translate(0, -2px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
@@ -401,6 +520,13 @@ import $ from 'jquery'
 .comment{
     position: fixed;
     bottom: 154px;
+	left: 80px;
+    box-shadow: #333;
+    z-index:9999;
+}
+.full-screen{
+    position: fixed;
+    bottom: 201px;
 	left: 80px;
     box-shadow: #333;
     z-index:9999;
