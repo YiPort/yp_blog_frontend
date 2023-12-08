@@ -162,6 +162,11 @@
           </div>
           </div>
       </template>
+      <div class="footer">
+          <a style="color:aliceblue">备案号：</a>
+          <a href="https://beian.miit.gov.cn/" class="font">闽ICP备2021019654号-1</a>
+          <p style="color:aliceblue; margin-top: 10px">Blog ©2021 Created by yiport</p>
+      </div>
   </div>
 </template>
 

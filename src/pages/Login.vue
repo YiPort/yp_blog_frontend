@@ -1,7 +1,7 @@
 <!-- 登录注册 -->
 <template>
     <div>
-        <div class="container">
+        <div class="container" style="min-height: 86.5vh">
             <h1 class="loginTitle">
 
             </h1>
@@ -135,7 +135,11 @@
                     <div class="lr-btn tcolors-bg" @click="newRegister" v-loading.fullscreen.lock="fullscreenLoading"  element-loading-text="提交中">注册</div>
                 </div>
             </div>
-
+            <div class="footer">
+                <a style="color:aliceblue">备案号：</a>
+                <a href="https://beian.miit.gov.cn/" class="font">闽ICP备2021019654号-1</a>
+                <p style="color:aliceblue; margin-top: 10px">Blog ©2021 Created by yiport</p>
+            </div>
         </div>
     </div>
 </template>
