@@ -120,7 +120,7 @@
 			},
 			getAvatar() {
 				if(!this.userInfo.avatar) {
-					return 'static/img/tou.jpg';
+          return '/static/img/defaultAvatar.png';
 				}else {
 					return this.userInfo.avatar;
 				}

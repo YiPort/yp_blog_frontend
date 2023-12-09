@@ -72,7 +72,7 @@
                             :show-file-list="false"
                             :on-success="handleAvatarSuccess"
                             :before-upload="beforeAvatarUpload">
-                            <img   v-if="userInfoObj.avatarUrl" :src="userInfoObj.avatarUrl?userInfoObj.avatarUrl:'static/img/tou.jpg'"  :onerror="$store.state.errorImg" class="avatar">
+                            <img v-if="userInfoObj.avatar" :src="userInfoObj.avatar?userInfoObj.avatar:'static/img/tou.jpg'"  :onerror="$store.state.errorImg" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             <div slot="tip" class="el-upload__tip">点击上传头像，只能上传jpg/png文件，且不超过3mb</div>
                           </el-upload>
