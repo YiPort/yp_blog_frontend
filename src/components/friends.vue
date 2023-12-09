@@ -5,7 +5,7 @@
         <el-col :span="12" class="tf-item" v-for="(item,index) in friendslink" :key="'f'+index">
             <el-card style="padding-left: 80px; margin: 5px">
                 <a :href="item.address" target="_blank">
-                    <img :src="item.logo?item.logo:'static/img/tou.jpg'"  :onerror="$store.state.errorImg">
+                    <img :src="item.logo?item.logo:'/static/img/empty.png'"  :onerror="$store.state.errorImg">
                     <h4>{{item.name}}</h4>
                     <p>{{item.description}}</p>
                 </a>
