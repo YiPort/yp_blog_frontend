@@ -151,6 +151,18 @@ a {
     // overflow-x: hidden;
     // -webkit-overflow-x: hidden;
 }
+/*全局滚动条样式*/
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    // background-color: #6fb4f8;
+    border-radius: 10px;
+    background-color: #b6b6b6;
+}
+/*全局滚动条样式结束*/
 //时间和标题
 .s-round-date{
     position: absolute;
