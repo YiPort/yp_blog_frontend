@@ -49,7 +49,7 @@
                 <a :href="'#/Share?classId='+detailObj.categoryId">{{detailObj.categoryName}}</a>
             </div>
         </header>
-        <div id="article1" v-highlight class="article-content markdown-body" v-html="detailObj.content"></div>
+        <div id="article1" v-highlight class="article-content markdown-body" v-viewer v-html="detailObj.content"></div>
       </template>
     </el-skeleton>
       <!-- <div class="donate">
