@@ -11,7 +11,7 @@
                 bottom: 180px;
                 right: 40px;
                 box-shadow: #333;
-                z-index:9999;
+                z-index:2000;
             }
             ">up</div>
         </el-backtop>
@@ -144,7 +144,7 @@ import $ from 'jquery'
                 showLeft: false,   //是否显示按钮
                 isFixed: false,     //目录css样式选择
                 timeout: null,
-                isFullScreen: false     //是否全屏
+                isFullScreen: false,     //是否全屏
             }
         },
         watch: {
@@ -515,28 +515,28 @@ import $ from 'jquery'
     bottom: 107px;
 	left: 80px;
     box-shadow: #333;
-    z-index:9999;
+    z-index:2000;
 }
 .comment{
     position: fixed;
     bottom: 154px;
 	left: 80px;
     box-shadow: #333;
-    z-index:9999;
+    z-index:2000;
 }
 .full-screen{
     position: fixed;
     bottom: 201px;
 	left: 80px;
     box-shadow: #333;
-    z-index:9999;
+    z-index:2000;
 }
 .question{
     position: fixed;
     bottom: 60px;
 	left: 80px;
     box-shadow: #333;
-    z-index:9999;
+    z-index:2000;
 }
 .button1 {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
