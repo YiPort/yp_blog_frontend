@@ -469,6 +469,7 @@
 		width: 100%;
 	}
 	/* 搜索框 */
+  /* 初识状态/2-最终状态 */
 	.headBox .el-input__inner {
 		height: 30px;
 		border: none;
@@ -478,8 +479,25 @@
 		padding-right: 10px;
 		margin-top: 4px;
 		color: white;
+    opacity: 2;
+    transition: all .5s;
+    cursor: pointer;
+  }
+  /* 0-鼠标触碰 */
+  .headBox .el-input__inner:hover {
+    height: 30px;
+    border: none;
+    background: rgba(40, 42, 44, 0.178);
+    border: 2px solid #ffffff;
+    border-radius: 15px;
+    padding-right: 10px;
+    margin-top: 4px;
+    color: white;
+    opacity: 0;
+    transition: all .5s;
+    cursor: pointer;
 	}
-
+  /* 1-中间状态，获取焦点 */
 	.headBox .el-input__inner:focus {
 		height: 30px;
 		width: 270%;
@@ -489,9 +507,13 @@
 		border-radius: 15px;
 		padding-right: 10px;
 		margin: 4px;
+    visibility: visible !important;
+    opacity: 1;
+    cursor: pointer;
 	}
 
-	.headBox .el-input__inner:hover {
+  /* 0-1前段动画 */
+  .headBox .el-input__inner:hover, .el-autocomplete:hover+.headBox .el-input__inner:focus {
 		height: 30px;
 		width: 270%;
 		border: none;
@@ -500,6 +522,15 @@
 		border-radius: 15px;
 		padding-right: 10px;
 		margin: 4px;
+    visibility: visible !important;
+    opacity: 1;
+    cursor: pointer;
+  }
+  /* 1-2后段动画 */
+  .headBox .el-input__inner:focus, .el-autocomplete:hover+.headBox .el-input__inner {
+    visibility: visible !important;
+    opacity: 2;
+    cursor: pointer;
 	}
 
 	.headBox .userInfo {
