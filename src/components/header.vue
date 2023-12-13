@@ -14,7 +14,12 @@
 							</el-submenu>
 							<!-- <el-menu-item index="/Reward"><i class="fa fa-wa fa-cny"></i> 赞赏</el-menu-item> -->
 							<el-menu-item index="/Friendslink"><i class="fa fa-wa fa-users"></i>友链</el-menu-item>
-							<el-menu-item style="margin-right: 15px" index="/Write"><i class="fa fa-wa fa-users"></i>写博客</el-menu-item>
+              <el-submenu index="/System" v-show="isAdmin">
+                <template slot="title"><i class="fa fa-wa fa-archive"></i>管理</template>
+                <el-menu-item index="/System/Ip"><i class="el-icon-data-analysis"/>访问统计</el-menu-item>
+                <el-menu-item index="/System/Cache"><i class="el-icon-coin"/>缓存监控</el-menu-item>
+              </el-submenu>
+              <el-menu-item style="margin-right: 15px" index="/Write"><i class="fa fa-wa fa-users"></i>写博客</el-menu-item>
 							<el-autocomplete
 							v-model="inputState"
 							:fetch-suggestions="querySearchAsync"
@@ -93,6 +98,7 @@
 			return {
 				userInfo: '', //用户信息
 				haslogin: false, //是否已登录
+        isAdmin: false, //是否是管理员
         searchKey: '',//文章搜索关键字
 				activeIndex: '/', //当前选择的路由模块
 				// state: '', //icon点击状态
@@ -178,7 +184,8 @@
 						// 清除 userInfo
 						localStorage.removeItem('userInfo');
 						that.haslogin = false;
-						that.$message({
+            that.isAdmin = false;
+            that.$message({
 							type: 'success',
 							message: '退出成功!'
 						});
@@ -223,9 +230,11 @@
 				if (localStorage.getItem('userInfo')) { //存储用户信息
 					that.haslogin = true;
 					that.userInfo = JSON.parse(localStorage.getItem('userInfo'));
-					// console.log(that.userInfo);
+          that.isAdmin = that.userInfo.userRole === "1"?true:false;
+          // console.log(that.userInfo);
 				} else {
 					that.haslogin = false;
+          that.isAdmin = false;
 				}
 				//获取分类
 				// this.getCategoryList()
@@ -284,7 +293,10 @@
 			'$route': 'routeChange',
 			inputState(newValue) {	//保持搜索框不变
 				this.inputStateOld = newValue;
-			}
+			},
+      isAdmin(newValue) {
+        this.$store.commit('changeIsAdmin', newValue);
+      }
 		},
 		created() { //生命周期函数
 			//判断当前页面是否被隐藏
@@ -299,8 +311,10 @@
 					if (that.$route.path != '/DetailShare') {
 						if (localStorage.getItem('userInfo')) {
 							that.haslogin = true;
-						} else {
+              that.isAdmin = that.userInfo.userRole === "1"?true:false;
+            } else {
 							that.haslogin = false;
+              that.isAdmin = false;
 						}
 					}
 				}
@@ -362,6 +376,7 @@
 
 	.el-menu--horizontal>.el-submenu.is-active .el-submenu__title {
 		border-bottom: none!important;
+    color: #ffffff;
 	}
 
 	.headBox .el-menu {
