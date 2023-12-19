@@ -22,6 +22,9 @@ const mutations = {
   },
   changeCreateBy(state,response) {
     state.createBy = response
+  },
+  changeIsAdmin(state,response) {
+    state.isAdmin = response
   }
 }
 
@@ -36,6 +39,7 @@ export const state = {
   errorImg: "https://aiguider.top/wp-content/uploads/b0bdcfd3-334c-3dd3-9e42-f239d1f9ba84-jpg.webp",
   isMy: false,
   createBy: null,
+  isAdmin: false,//管理员
   baseURL:'http://127.0.0.1:10086/',
   resourceURL:'http://127.0.0.1:10086/resource/',
   SSOLogin:'http://127.0.0.1:10086/'
