@@ -102,6 +102,22 @@ export default new Router({
       name: 'Write'
     }, //写博客文章
     {
+      path: '/System/Ip',
+      component: resolve => require(['../pages/system/IpCount.vue'], resolve),
+      meta: {
+        auth: true
+      },
+      name: 'Ip'
+    }, //访问统计
+    {
+      path: '/System/Cache',
+      component: resolve => require(['../pages/system/Cache.vue'], resolve),
+      meta: {
+        auth: true
+      },
+      name: 'Cache'
+    }, //缓存监控
+    {
       path: '/404',
       component: resolve => require(['../pages/NotFound.vue'], resolve),
       meta: {
