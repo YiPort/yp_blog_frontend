@@ -4,7 +4,7 @@
         <div class="app-container">
             <el-row :gutter="10">
                 <el-col :span="24">
-                    <el-card
+                    <el-card 
                     v-loading.fullscreen.lock="fullscreenLoading"
                     v-loading="mapLoading"
                     element-loading-text="数据加载中...">
@@ -89,17 +89,19 @@ export default {
         };
     },
     created() {
-        if(this.$store.state.isAdmin){
-            this.fullscreenLoading = true;
-            this.getList();
-            this.openLoading();
-        }else{
-            Message({
-                type: 'error',
-                message: '无访问权限！'
-            })
-            this.$router.push({path: '/'})
-        }
+        this.$nextTick(() => {
+            if(this.$store.state.isAdmin){
+                this.fullscreenLoading = true;
+                this.getList();
+                this.openLoading();
+            }else{
+                Message({
+                    type: 'error',
+                    message: '无访问权限！'
+                })
+                this.$router.push({path: '/'})
+            }
+        })
     },
     methods: {
         /** 查缓存询信息 */
@@ -136,14 +138,14 @@ export default {
                         name: "峰值",
                         type: "gauge",
                         min: 0,
-                        max: 1000,
+                        max: this.cache.info.used_memory_human.substr(-1)==='M'?2:1000,
                         detail: {
                             formatter: this.cache.info.used_memory_human,
                         },
                         data: [
                             {
-                            value: parseFloat(this.cache.info.used_memory_human),
-                            name: "内存消耗",
+                                value: parseFloat(this.cache.info.used_memory_human),
+                                name: "内存消耗",
                             },
                         ],
                         },
