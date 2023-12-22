@@ -1,6 +1,6 @@
 <!-- 文章详情模块 -->
 <template>
-  <div class="detailBox tcommonBox" >
+ <div class="detailBox tcommonBox" >
     <el-skeleton :rows="20" animated :loading="loading">
       <template slot="template">
         <div style="padding: 14px;">
@@ -52,25 +52,9 @@
         <div id="article1" v-highlight class="article-content markdown-body" v-viewer v-html="detailObj.content"></div>
       </template>
     </el-skeleton>
-      <!-- <div class="donate">
-          <div class="donate-word">
-              <span @click="pdonate=!pdonate">赞赏</span>
-          </div>
-          <el-row :class="pdonate?'donate-body':'donate-body donate-body-show'" :gutter="30">
-              <el-col  :span="12"   class="donate-item">
-                  <div class="donate-tip">
-                      <img :src="detailObj.wechat_image?detailObj.wechat_image: 'static/img/wx_pay.png'" :onerror="$store.state.errorImg"/>
-                      <span>微信扫一扫，向我赞赏</span>
-                  </div>
-              </el-col>
-              <el-col :span="12"  class="donate-item">
-                  <div class="donate-tip">
-                      <img :src="detailObj.alipay_image?detailObj.alipay_image:'static/img/ali_pay.jpg'" :onerror="$store.state.errorImg"/>
-                      <span>支付宝扫一扫，向我赞赏</span>
-                  </div>
-              </el-col>
-          </el-row>
-      </div> -->
+    <div>
+      <p style="text-align: right; font-style: oblique; padding: 20px 10px 10px;">最后编辑时间：{{detailObj.updateTime}}</p>
+    </div>
   </div>
 </template>
 
@@ -95,6 +79,17 @@ export default {
           userInfo: null,
           isMy: false
       }
+  },
+  updated() {
+      //给每一串代码元素增加复制代码节点
+      let preList = $("pre");
+      for (let pre of preList) {
+          //给每个代码块增加上“复制代码”按钮
+          let btn = $("<span class=\"btn-pre-copy\" onclick=\"copyCode(this)\"><i class=\"el-icon-copy-document\"/><span>");
+          btn.prependTo(pre);
+      }
+  },
+  mounted() {
   },
   methods: { //事件处理器
       showInitDate:function(date,full){//年月日的编辑
@@ -168,6 +163,18 @@ export default {
       },
       editArticle() {
         window.localStorage.setItem('articleObj', JSON.stringify(this.articleObj));
+      },
+      copyCode(obj) {
+        let btn = $(obj);
+        let pre = btn.parent();
+        //执行复制
+        navigator.clipboard.writeText(pre.text()).then(() => {
+          this.$message({
+            type:'success',
+            message:'复制成功',
+            duration: 1000
+          })
+        });
       }
   },
   watch: {
@@ -194,12 +201,14 @@ export default {
 
   },
   created() { //生命周期函数
-      var that = this;
-
       this.routeChange();
+      window.copyCode= this.copyCode
   },
 
 }
+</script>
+
+
 </script>
 
 <style lang="less">
@@ -228,7 +237,8 @@ export default {
     border: 0;
     box-shadow: 4px 10px 3px rgba(0, 0, 0, 0.5);
 }
-/* pre .btn-pre-copy{
+/* 复制按钮样式 */
+pre .btn-pre-copy{
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -237,12 +247,30 @@ export default {
     position: absolute;
     top: 10px;
     right: 12px;
-    font-size: 12px;
+    font-size: 0;
     line-height: 1;
     cursor: pointer;
     color: hsla(0,0%,54.9%,.8);
     transition: color .1s;
-} */
+}
+pre:hover .btn-pre-copy{
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    color: hsla(0,0%,54.9%,.8);
+    transition: color .1s;
+}
+pre:hover .btn-pre-copy:active{
+  color:#22863a;
+}
 .detailBox .article-content img{
     max-width: 100%!important;
     height: auto!important;
