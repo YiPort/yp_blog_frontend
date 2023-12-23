@@ -7,7 +7,7 @@
                 <a :href="item.address" target="_blank">
                     <img :src="item.logo?item.logo:'/static/img/empty.png'"  :onerror="$store.state.errorImg">
                     <h4>{{item.name}}</h4>
-                    <p>{{item.description}}</p>
+                    <p style="white-space: pre-wrap;text-align: left;">{{item.description}}</p>
                 </a>
             </el-card>
         </el-col>

@@ -85,7 +85,7 @@ export default {
       let preList = $("pre");
       for (let pre of preList) {
           //给每个代码块增加上“复制代码”按钮
-          let btn = $("<span class=\"btn-pre-copy\" onclick=\"copyCode(this)\"><i class=\"el-icon-copy-document\"/><span>");
+          let btn = $("<span class=\"btn-pre-copy\" onclick=\"copyCode(this)\" title=\"复制\"><i class=\"el-icon-copy-document\"/><span>");
           btn.prependTo(pre);
       }
   },
