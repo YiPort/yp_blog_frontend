@@ -81,7 +81,21 @@
     </section>
     <section class="rs4">
       <el-skeleton :rows="10" animated :loading="loading">
-        <h2 class="ui label">热门文章</h2>
+        <h2 class="ui label">最新发布</h2>
+        <ul>
+          <li v-for="(item, index) in latestArticle" :key="'latestArticle' + index">
+            <a :href="'#/DetailArticle?aid=' + item.id" target="_blank">{{
+                item.title
+              }}</a>
+            —— {{ item.createTime }}
+          </li>
+        </ul>
+      </el-skeleton>
+    </section>
+    <section class="rs4">
+      <el-skeleton :rows="10" animated :loading="loading">
+
+      <h2 class="ui label">热门文章</h2>
         <ul>
           <li v-for="(item, index) in browseList" :key="'browseList' + index">
             <a :href="'#/DetailArticle?aid=' + item.id" target="_blank">{{
@@ -126,7 +140,7 @@
 
 
 <script>
-import { hotArticleList,getMyArticleTotal,getTotalView } from "../api/article";
+import { hotArticleList,latestArticleList,getMyArticleTotal,getTotalView } from "../api/article";
 import { getToken } from '../utils/auth'
 import countTo from 'vue-count-to';
 import moment from 'moment';
@@ -139,6 +153,7 @@ export default {
       gotoTop: false, //返回顶部
       going: false, //是否正在执行上滑动作
       browseList: "", //热门文章 浏览量最多
+      latestArticle: null, //最新文章列表
       artCommentList: "", //最新评论
       catchMeObj: {
         //个人信息
@@ -154,6 +169,8 @@ export default {
       articleTotal: 0,       //总文章
       myArticleTotal: 0,     //我发布的
       totalView: 0,     //总浏览
+      startDate: '2022-07-04',
+      endDate: '2022-07-10'
     };
   },
   computed: {
@@ -185,6 +202,12 @@ export default {
         }
       }, 30);
     },
+    async latestArticleList() {
+      await latestArticleList().then((response) => {
+        console.log(this.latestArticleList)
+        this.latestArticle = response;
+      });
+    },
     async getHotArticleList() {
       await hotArticleList().then((response) => {
         this.browseList = response;
@@ -206,6 +229,7 @@ export default {
       this.introduction = '晚上好';
     }
     //查询浏览量最多的10篇文章数据
+    this.latestArticleList();
     this.getHotArticleList();
     this.articleTotal = Number(window.localStorage.getItem('articleTotal'));
     const userInfo = window.localStorage.getItem('userInfo');
@@ -245,6 +269,9 @@ export default {
 </script>
 
 <style lang="less">
+.is-selected {
+  color: #1989FA;
+}
 .count-title {
   font-size: 1.5em;
   font-weight: bold;

@@ -200,3 +200,14 @@ export function getTotalView(id) {
     }
   })
 }
+
+// 查询最新文章
+export function latestArticleList() {
+  return request({
+    url: API_PREFIX +'/article/latestArticleList',
+    headers: {
+      isToken: false
+    },
+    method: 'get'
+  })
+}
