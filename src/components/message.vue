@@ -19,7 +19,7 @@
                         <span>OwO表情</span>
                     </div>
                     <div class="OwO-body">
-                        <ul class="OwO-items OwO-items-show">
+                      <li class="OwO-item" v-for="(oitem,index) in OwOlist" :key="'oitem'+index" :title="oitem.title" @click="choseEmoji(oitem.title,'children')">
                             <li class="OwO-item" v-for="(oitem,index) in OwOlist" :key="'oitem'+index" :title="oitem.title" @click="choseEmoji(oitem.title,'root')">
                                 <img
                                 style="width: 22px; height: 22px; margin-left: 0"
@@ -105,7 +105,7 @@
                                 </div>
                             </header>
                             <section>
-                                <p style="letter-spacing: 1px" v-html="analyzeEmoji(item.content)">{{analyzeEmoji(item.content)}}</p>
+                              <p style="letter-spacing: 1px" v-html="analyzeEmoji(item.filterContent)">{{analyzeEmoji(item.filterContent)}}</p>
                                 <div class="tmsg-replay-div">
                                     <span v-if="haslogin" class="tmsg-replay-span" @click="respondMsg(item.id,item.id,item.createBy)">
                                         回复
@@ -141,7 +141,7 @@
                                             </div>
                                     </header>
                                     <section>
-                                        <p style="letter-spacing: 1px" v-html="analyzeEmoji(citem.content)">{{citem.content}}</p>
+                                        <p style="letter-spacing: 1px" v-html="analyzeEmoji(citem.filterContent)">{{citem.filterContent}}</p>
                                         <!-- <div v-show="haslogin" class="tmsg-replay-div" @click="respondMsg(item.id,citem.id,citem.createBy)">
                                             回复
                                         </div> -->
@@ -320,12 +320,12 @@ export default {
             }
         },
         analyzeEmoji(cont){//编译表情替换成图片展示出来
-            console.log('cont',cont)
+            // console.log('cont',cont)
             var pattern1 = /\[[\u4e00-\u9fa5]+\]/g;
             var pattern2 = /\[[\u4e00-\u9fa5]+\]/;
             var urlRegex= /(https|http|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|](&nbsp;|<br\/>){1}/g;
             var content = cont.match(pattern1);
-            console.log('content', content);
+            // console.log('content', content);
             var str = cont;
             if(content){
                 for(var i=0;i<content.length;i++){
@@ -345,7 +345,7 @@ export default {
                 for(let i=0; i<url.length; i++) {
                     console.log(url[i]);
                     let endUrl = url[i].replace(/(&nbsp;|<br\/>){1}/, "")
-                    str = str.replace(urlRegex,'<a target="_blank" href=' + endUrl + '>' + endUrl + '</a>' + '&nbsp;');
+                  str = str.replace(urlRegex,'<img style="margin: 0" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02LjU4NTUxIDQuNDY1MDhDNS4yMTg2OCA1LjgzMTkxIDUuMjE4NjggOC4wNDc5OSA2LjU4NTUxIDkuNDE0ODNDNi44NzQ0NCA5LjcwMzc2IDcuMjAyMTkgOS45MzIxOSA3LjU1MjQ1IDEwLjA5OTRDNy44MDE2NiAxMC4yMTgzIDguMTAwMTEgMTAuMTEyNyA4LjIxOTA1IDkuODYzNDlDOC4zMzggOS42MTQyNyA4LjIzMjM5IDkuMzE1ODIgNy45ODMxOCA5LjE5Njg4QzcuOTI1ODIgOS4xNjk1IDcuODY5MjYgOS4xMzk4IDcuODEzNjUgOS4xMDc3NkM3LjYyNzcyIDkuMDAwNjQgNy40NTIzMSA4Ljg2NzQyIDcuMjkyNjIgOC43MDc3MkM2LjMxNjMxIDcuNzMxNDEgNi4zMTYzMSA2LjE0ODUgNy4yOTI2MiA1LjE3MjE5TDguOTQyNTMgMy41MjIyN0M5LjkxODg0IDIuNTQ1OTYgMTEuNTAxOCAyLjU0NTk2IDEyLjQ3ODEgMy41MjIyN0MxMy40NTQ0IDQuNDk4NTggMTMuNDU0MSA2LjA4MTcyIDEyLjQ3NzggNy4wNTgwM0wxMS40MTc4IDguMTE5NDRDMTEuMzg1IDguMTUyMjkgMTEuMzU3NyA4LjE4ODU1IDExLjMzNiA4LjIyNzA5QzExLjIyODMgOC40MTc4MyAxMS4yNTU3IDguNjY0MjEgMTEuNDE4MyA4LjgyNjU1QzExLjYxMzcgOS4wMjE2OCAxMS45MzAyIDkuMDIxNDggMTIuMTI1NCA4LjgyNjA5TDEzLjE4NTQgNy43NjQ2OEMxNC41NTIgNi4zOTc4MyAxNC41NTE5IDQuMTgxOTIgMTMuMTg1MiAyLjgxNTE2QzExLjgxODMgMS40NDgzMyA5LjYwMjI2IDEuNDQ4MzMgOC4yMzU0MyAyLjgxNTE2TDYuNTg1NTEgNC40NjUwOFpNMi44MTQxOSA4LjIzNjU3QzEuNDQ3MzUgOS42MDM0IDEuNDQ3MzUgMTEuODE5NSAyLjgxNDE5IDEzLjE4NjNDNC4xODEwMiAxNC41NTMxIDYuMzk3MSAxNC41NTMxIDcuNzYzOTQgMTMuMTg2M0w5LjQxMzg1IDExLjUzNjRDMTAuMjQ5OCAxMC43MDA0IDEwLjU3NDUgOS41NDY4NCAxMC4zODc5IDguNDY0MTNDMTAuMjY5NCA3Ljc3NjUzIDkuOTQ0NzQgNy4xMTc1MyA5LjQxMzg1IDYuNTg2NjVDOS4xMjU1MyA2LjI5ODMyIDguNzk4NTMgNi4wNzAyNCA4LjQ0OTEgNS45MDMxNkM4LjE5OTk3IDUuNzg0MDQgNy45MDE0NSA1Ljg4OTQ0IDcuNzgyMzMgNi4xMzg1N0M3LjY2MzIxIDYuMzg3NyA3Ljc2ODYxIDYuNjg2MjIgOC4wMTc3NCA2LjgwNTM0QzguMjY2MjggNi45MjQxOCA4LjQ5OTcxIDcuMDg2NzMgOC43MDY3NSA3LjI5Mzc2QzkuMTA0NjYgNy42OTE2NyA5LjM0MDM5IDguMTkwMzQgOS40MTM5NSA4LjcwNzY0QzkuNTIwODggOS40NTk1OSA5LjI4NTE1IDEwLjI1MDkgOC43MDY3NSAxMC44MjkzTDcuMDU2ODMgMTIuNDc5MkM2LjA4MDUyIDEzLjQ1NTUgNC40OTc2MSAxMy40NTU1IDMuNTIxMyAxMi40NzkyQzIuNTQ1MDIgMTEuNTAyOSAyLjU0NTA4IDkuOTE5OTkgMy41MjEzIDguOTQzNjdMNC41ODI0NyA3Ljg4Mzg4QzQuNzc3ODYgNy42ODg3NCA0Ljc3ODA3IDcuMzcyMTYgNC41ODI5MyA3LjE3Njc3QzQuMzg3OCA2Ljk4MTM4IDQuMDcxMjIgNi45ODExNyAzLjg3NTgzIDcuMTc2MzFMMi44MTQxOSA4LjIzNjU3WiIgZmlsbD0iIzJDOUNDOCIvPgo8L3N2Zz4K"><a target="_blank" href=' + endUrl + '>' + endUrl + '</a>' + '&nbsp;');
                     console.log('str2',str)
                 }
             }
@@ -435,7 +435,7 @@ export default {
                                 type:'success',
                                 message:'评论成功，精选后展示'
                             })
-                            that.textarea = '';
+                            that.cTextarea = '';
                             that.rootId = -1;
                             that.toCommentId = -1;
                             that.toCommentUserId=-1;
@@ -919,12 +919,14 @@ export default {
 }
 .tmsg-c-item article section p a{
     letter-spacing: 0;
-    color: #4582e3;
-    text-decoration: underline;
+    color: #47a8cf;
+    /* color: #008ac5; */
+    /* text-decoration: underline; */
 }
 .tmsg-c-item article section p a:hover{
     letter-spacing: 0;
-    color: #0363fc;
+    color: #40c5f1;
+    /* color: #0363fc; */
     text-decoration: underline;
 }
 .tmsg-c-item article section .tmsg-replay-div{
