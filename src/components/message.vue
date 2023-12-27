@@ -320,6 +320,10 @@ export default {
             }
         },
         analyzeEmoji(cont){//编译表情替换成图片展示出来
+            if (typeof cont !== 'string') {
+                console.error('Invalid input: cont must be a string');
+                return; // Exit the function if cont is not a string
+            }
             // console.log('cont',cont)
             var pattern1 = /\[[\u4e00-\u9fa5]+\]/g;
             var pattern2 = /\[[\u4e00-\u9fa5]+\]/;
