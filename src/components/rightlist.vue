@@ -21,20 +21,20 @@
           <el-col :span="8">
             <el-card style="border: 0;" shadow="hover">
               <h1 class="count-title">总文章</h1>
-              <countTo class="count-num" :startVal="0" :endVal="articleTotal" :duration="5000" />
+              <countTo class="count-num" :startVal="0" :endVal="Number(articleTotal)" :duration="5000" />
             </el-card>
           </el-col>
           <el-col :span="8">
             <el-card style="border: 0;" shadow="hover">
               <h1 class="count-title">我发布</h1>
-              <countTo class="count-num" v-show="isLogin" :startVal="0" :endVal="myArticleTotal" :duration="5000" />
+              <countTo class="count-num" v-show="isLogin" :startVal="0" :endVal="Number(myArticleTotal)" :duration="5000" />
               <span class="count-num" v-show="!isLogin" >- -</span>
             </el-card>
           </el-col>
           <el-col :span="8">
             <el-card style="border: 0;" shadow="hover">
               <h1 class="count-title">总浏览</h1>
-              <countTo class="count-num" v-show="isLogin" :startVal="0" :endVal="totalView" :duration="5000" />
+              <countTo class="count-num" v-show="isLogin" :startVal="0" :endVal="Number(totalView)" :duration="5000" />
               <span class="count-num" v-show="!isLogin" >- -</span>
             </el-card>
           </el-col>
@@ -169,8 +169,6 @@ export default {
       articleTotal: 0,       //总文章
       myArticleTotal: 0,     //我发布的
       totalView: 0,     //总浏览
-      startDate: '2022-07-04',
-      endDate: '2022-07-10'
     };
   },
   computed: {
