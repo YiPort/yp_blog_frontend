@@ -28,7 +28,7 @@ export function hotArticleList() {
 // 获取文章详情
 export function getArticle(articleId) {
   return request({
-    url: API_PREFIX + '/article/' + articleId,
+    url: API_PREFIX + '/article/articleDetail/' + articleId,
     headers: {
       isToken: false
     },
