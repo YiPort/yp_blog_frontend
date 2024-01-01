@@ -73,9 +73,9 @@ export function postArticle(articleId,userId,title,content,summary,status,isComm
 }
 
 // 获取草稿
-export function getDraft(createBy) {
+export function getDraft() {
   return request({
-    url: API_PREFIX + '/article/getDraft/' + createBy,
+    url: API_PREFIX + '/article/getDraft',
     headers: {
       isToken: true
     },
@@ -84,9 +84,9 @@ export function getDraft(createBy) {
 }
 
 // 获取编辑记录
-export function getEditHistory(createBy) {
+export function getEditHistory() {
   return request({
-    url: API_PREFIX + '/article/getEditHistory/' + createBy,
+    url: API_PREFIX + '/article/getEditHistory' ,
     headers: {
       isToken: true
     },
@@ -95,9 +95,9 @@ export function getEditHistory(createBy) {
 }
 
 // 删除草稿
-export function deleteDraft(createBy,articleId) {
+export function deleteDraft(articleId) {
   return request({
-    url: API_PREFIX + '/article/deleteDraft/' + createBy + '/' + articleId,
+    url: API_PREFIX + '/article/deleteDraft/'  + articleId,
     headers: {
       isToken: true
     },
@@ -106,9 +106,9 @@ export function deleteDraft(createBy,articleId) {
 }
 
 // 添加收藏
-export function addCollection(createBy,articleId) {
+export function addCollection(articleId) {
   return request({
-    url: API_PREFIX + '/collection/addCollection/' + createBy + '/' + articleId,
+    url: API_PREFIX + '/collection/addCollection/' + articleId,
     headers: {
       isToken: true
     },
@@ -119,9 +119,9 @@ export function addCollection(createBy,articleId) {
 
 
 // 获取收藏文章列表
-export function getCollectList(createBy) {
+export function getCollectList() {
   return request({
-    url: API_PREFIX + '/collection/getCollectList/' + createBy,
+    url: API_PREFIX + '/collection/getCollectList',
     headers: {
       isToken: true
     },
@@ -130,9 +130,9 @@ export function getCollectList(createBy) {
 }
 
 // 取消收藏文章
-export function deleteCollection(createBy,articleId) {
+export function deleteCollection(articleId) {
   return request({
-      url: API_PREFIX + '/collection/deleteCollection/' + createBy + '/' + articleId,
+      url: API_PREFIX + '/collection/deleteCollection/' +articleId,
       headers: {
         isToken: true
       },
@@ -142,7 +142,7 @@ export function deleteCollection(createBy,articleId) {
 
 
 // 提交文章问题
-export function postQuestion(articleId,userId,description) {
+export function postQuestion(articleId,description) {
   return request({
     url: API_PREFIX + '/question/postQuestion',
     method: 'post',
@@ -151,16 +151,15 @@ export function postQuestion(articleId,userId,description) {
     },
     data: {
       'articleId':articleId,
-      'createBy':userId,
       'questionDescription':description
     }
   })
 }
 
 // 获取反馈列表
-export function getQuestionList(userId) {
+export function getQuestionList() {
   return request({
-    url: API_PREFIX + '/question/getQuestionList/' + userId,
+    url: API_PREFIX + '/question/getQuestionList',
     method: 'get',
     headers: {
       isToken: true
@@ -169,9 +168,9 @@ export function getQuestionList(userId) {
 }
 
 // 删除文章问题
-export function deleteQuestion(userId,id) {
+export function deleteQuestion(id) {
   return request({
-    url: API_PREFIX + '/question/deleteQuestion/' + userId + '/' + id,
+    url: API_PREFIX + '/question/deleteQuestion/' + id,
     method: 'delete',
     headers: {
       isToken: true
@@ -180,9 +179,9 @@ export function deleteQuestion(userId,id) {
 }
 
 // 获取我发布的文章总数
-export function getMyArticleTotal(id) {
+export function getMyArticleTotal() {
   return request({
-    url: API_PREFIX + '/article/getMyArticleTotal/' + id,
+    url: API_PREFIX + '/article/getMyArticleTotal',
     method: 'get',
     headers: {
       isToken: true
@@ -191,9 +190,9 @@ export function getMyArticleTotal(id) {
 }
 
 // 获取我发布的文章总浏览量
-export function getTotalView(id) {
+export function getTotalView() {
   return request({
-    url: API_PREFIX +'/article/getTotalView/' + id,
+    url: API_PREFIX +'/article/getTotalView' ,
     method: 'get',
     headers: {
       isToken: true

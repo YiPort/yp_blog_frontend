@@ -194,7 +194,7 @@ import $ from 'jquery'
                 if(!id) {
                     this.loginMessage();
                 }else {
-                    addCollection(id, this.articleId).then(response => {
+                    addCollection(this.articleId).then(response => {
                         this.$message({
                             type:'success',
                             message:'收藏成功'
@@ -222,7 +222,7 @@ import $ from 'jquery'
                         message:'问题描述不能为空！'
                     })
                 }else{
-                    postQuestion(this.articleId,this.userInfo.id,this.form.description).then(response => {
+                    postQuestion(this.articleId,this.form.description).then(response => {
                         if(response) {
                             this.$message({
                                 type:'warning',

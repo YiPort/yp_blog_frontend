@@ -118,8 +118,8 @@
           <div v-show="!isEdit" class="tcommonBox">
               <header>
                   <h1>
-                          个人中心
-                      <span class="gotoEdit" @click="isEdit=!isEdit"><i class="fa fa-wa fa-edit"></i>编辑</span>
+                      个人中心
+                      <el-button class="gotoEdit" icon="el-icon-edit" @click="isEdit=!isEdit" round>编辑</el-button>
                   </h1>
 
               </header>
@@ -308,7 +308,7 @@ import axios from 'axios'
               })
               if(!this.userId) this.loginMessage();
               else {
-                  getCollectList(this.userId).then(response => {
+                  getCollectList().then(response => {
                   console.log(response)
                   this.collectionList =  response.filter(item => item !== null);
               })
@@ -316,7 +316,7 @@ import axios from 'axios'
               }
           },
           deleteCollection(articleId) {   //取消收藏文章
-              deleteCollection(this.userId,articleId).then(response => {
+              deleteCollection(articleId).then(response => {
                   this.getCollectList();
                   this.$message({
                       type: 'success',
@@ -332,7 +332,7 @@ import axios from 'axios'
                   })
                   return
               }
-              getQuestionList(this.userId).then(response => {
+                getQuestionList().then(response => {
                   this.questionList = response;
               })
               this.myQuestion = true;
@@ -361,7 +361,7 @@ import axios from 'axios'
               })
           },
           deleteQuestion(id) {    //删除文章问题
-              deleteQuestion(this.userId,id).then(response => {
+              deleteQuestion(id).then(response => {
                   this.$message({
                       type: 'success',
                       message: '删除成功'

@@ -53,7 +53,7 @@
       </template>
     </el-skeleton>
     <div>
-      <p style="text-align: right; font-style: oblique; padding: 20px 10px 10px;">最后编辑时间：{{detailObj.updateTime}}</p>
+      <p v-if="detailObj.updateTime" style="text-align: right; font-style: oblique; padding: 20px 10px 10px;">最后编辑时间：{{detailObj.updateTime}}</p>
     </div>
   </div>
 </template>
@@ -85,7 +85,7 @@ export default {
       let preList = $("pre");
       for (let pre of preList) {
           //给每个代码块增加上“复制代码”按钮
-          let btn = $("<span class=\"btn-pre-copy\" onclick=\"copyCode(this)\" title=\"复制\"><i class=\"el-icon-copy-document\"/><span>");
+          let btn = $("<span class=\"btn-pre-copy\" onclick=\"copyCode(this)\" title=\"复制代码\"><i class=\"el-icon-copy-document\"/><span>");
           btn.prependTo(pre);
       }
   },
@@ -185,8 +185,7 @@ export default {
         if(this.$store.state.loadingIndex) {  //为新发布和已编辑的文章创建索引
         // window.location.reload();
           this.tocAndCli();
-          const userId = JSON.parse(window.localStorage.getItem('userInfo')).id;
-          postArticleIndex(this.directoryIndex,userId);
+          postArticleIndex(this.directoryIndex);
         }
         this.$store.commit('loadingIndex',false);
       },

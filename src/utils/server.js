@@ -1,3 +1,4 @@
+import moment from 'moment';
 
 //初始化时间
 const initDate = (oldDate,full) => {
@@ -20,9 +21,32 @@ const initDate = (oldDate,full) => {
     }
 }
 
+/**
+ * @param {number} time
+ * @returns {string}
+ */
+const formatTime = (time) => {
+  if (('' + time).length === 10) {
+    time = parseInt(time) * 1000
+  } else {
+    time = +time
+  }
+  const d = new Date(time)
+  const now = Date.now()
 
+  const diff = (now - d) / 1000
+
+  if (diff < 30) {
+    return '刚刚'
+  } else if (diff < 3600) {
+    // less 1 hour
+    return Math.ceil(diff / 60) + '分钟前'
+  } else {
+    return moment(time).format('HH-MM-DD hh:mm');
+  }
+}
 
 export {
-        initDate//设置时间
-
-    }
+  initDate,   //设置时间
+  formatTime
+}

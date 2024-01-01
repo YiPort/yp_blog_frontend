@@ -471,7 +471,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 if(!id) {
                    this.loginMessage();
                 }else {
-                    getDraft(id).then((response) =>{
+                    getDraft().then((response) =>{
                         this.draftList = response;
                     })
                     this.drawer = true;
@@ -510,7 +510,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 if(!id) {
                    this.loginMessage();
                 }else {
-                    getEditHistory(id).then((response) =>{
+                    getEditHistory().then((response) =>{
                         this.activities = response;
                     })
                     this.historyDrawer = true;
@@ -522,11 +522,11 @@ import { addCategory,getCategoryList } from '../api/category'
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    deleteDraft(id,articleId).then((response) => {
+                    deleteDraft(articleId).then((response) => {
                         if(this.articleId === articleId) {  //将当前编辑的草稿id重置
                             this.articleId = null;
                         }
-                        getDraft(id).then((response) =>{   //重新获取草稿列表
+                        getDraft().then((response) =>{   //重新获取草稿列表
                             this.draftList = response;
                         })
                         this.$message({

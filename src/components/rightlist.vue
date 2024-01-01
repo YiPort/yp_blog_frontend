@@ -234,14 +234,13 @@ export default {
     // console.log(userInfo)
     if(getToken()) {
       this.username = JSON.parse(userInfo).username;
-      let userId = JSON.parse(userInfo).id;
-      await getMyArticleTotal(userId).then(response => {     //获取我发布的文章总数
+      await getMyArticleTotal().then(response => {     //获取我发布的文章总数
         // console.log(response);
         this.isLogin = true;
         this.myArticleTotal = response.myArticleTotal;
       })
-      await getTotalView(userId).then(response => {       // 获取我发布的文章总浏览量
-                                                          // console.log(response);
+      await getTotalView().then(response => {       // 获取我发布的文章总浏览量
+        // console.log(response);
         this.totalView = response.totalView;
       })
     }

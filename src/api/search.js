@@ -4,9 +4,9 @@ const API_PREFIX = '/search'
 
 
 // 提交文章目录索引
-export function postArticleIndex(directoryIndex,userId) {
+export function postArticleIndex(directoryIndex) {
   return request({
-      url: API_PREFIX + '/index/postArticleIndex/' + userId,
+      url: API_PREFIX + '/index/postArticleIndex',
       method: 'post',
       headers: {
           isToken: true
