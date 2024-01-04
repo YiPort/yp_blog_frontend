@@ -103,6 +103,14 @@
                           </template>
                       </li>
                       <li>
+                          <span class="leftTitle">修改密码：</span>
+                          <span class="">新密码：</span>
+                          <el-input v-model="userInfoObj.password" placeholder="新密码" clearable show-password></el-input>
+                          <el-divider direction="vertical"></el-divider>
+                          <span class="">再次输入密码：</span>
+                          <el-input v-model="userInfoObj.checkPassword" placeholder="再次输入密码" clearable show-password></el-input>
+                      </li>
+                      <li>
                           <span class="leftTitle">注册日期：</span>
                           <span>{{userInfoObj.createTime?userInfoObj.createTime:"无"}}</span>
                       </li>
@@ -186,7 +194,22 @@ import axios from 'axios'
               uploadURL:'',
               isEdit: false,
               userInfo:{},//本地存储的用户信
-              userInfoObj:'',//用户的信息
+              userInfoObj:{
+                  avatar: "",
+                  checkPassword: "",
+                  createTime: "",
+                  email: "",
+                  sex: "",
+                  head_start: 0,
+                  id: 0,
+                  phonenumber: "",
+                  uid: 0,
+                  userName: "",
+                  userPassword: "",
+                  userRole: 0,
+                  status: 0,
+                  nickName: "",
+              },//用户的信息
               myCollection: false,//是否显示收藏面板
               collectionList: [],//收藏列表
               myQuestion: false,//是否显示反馈面板
@@ -518,6 +541,7 @@ li:hover button{display: block;}
   display: inline-block;
   width:100px;
   padding: 10px 0;
+  font-weight: bold;
 }
 .userInfoBox .rightInner{
   display: inline-block;

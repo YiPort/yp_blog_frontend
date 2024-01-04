@@ -15,7 +15,7 @@
 							<!-- <el-menu-item index="/Reward"><i class="fa fa-wa fa-cny"></i> 赞赏</el-menu-item> -->
 							<el-menu-item index="/Friendslink"><i class="fa fa-wa fa-users"></i>友链</el-menu-item>
               <el-submenu index="/System" v-show="isAdmin">
-                <template slot="title"><i class="fa fa-wa fa-archive"></i>管理</template>
+                <template slot="title"><i class="fa fa-wa fa-archive"></i>系统监控</template>
                 <el-menu-item index="/System/Ip"><i class="el-icon-data-analysis"/>访问统计</el-menu-item>
                 <el-menu-item index="/System/Cache"><i class="el-icon-coin"/>缓存监控</el-menu-item>
               </el-submenu>
