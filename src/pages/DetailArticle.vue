@@ -282,6 +282,7 @@ import $ from 'jquery'
                         let dist = $('#' + item.id).offset().top;
 
                         this.catalogue.push({id, dist})
+                        console.log('catalogue:',this.catalogue)
                     }
                 })
             },
@@ -387,7 +388,7 @@ import $ from 'jquery'
             fullScreen() {
                 if(!this.isFullScreen) {
                     let el = document.documentElement
-                    console.log(el)
+                    // console.log(el)
                     let rfs = el.requestFullScreen ||
                                 el.webkitRequestFullScreen ||
                                 el.mozRequestFullScreen ||
@@ -427,13 +428,13 @@ import $ from 'jquery'
             },
             checkFull() {       //检查当前是否全屏
                 if (document.mozFullScreen) {
-                    console.log(1)
+                    // console.log(1)
                     return true;
                 } else if (document.webkitIsFullScreen) {
-                    console.log(2)
+                    // console.log(2)
                     return true;
                 } else if (document.msFullscreenElement) {
-                    console.log(3)
+                    // console.log(3)
                     return true;
                 }
                 return false;

@@ -327,12 +327,12 @@ import axios from 'axios'
                   url: '/ipJson.jsp?ip=140.210.69.133&json=true',
                   methods: 'get'
               }).then(res => {
-                  console.log(res)
+                  // console.log(res)
               })
               if(!this.userId) this.loginMessage();
               else {
                   getCollectList().then(response => {
-                  console.log(response)
+                  // console.log(response)
                   this.collectionList =  response.filter(item => item !== null);
               })
               this.myCollection = true;

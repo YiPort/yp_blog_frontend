@@ -8,7 +8,7 @@
                 <el-input
                   id="rootInput"
                   type="textarea"
-                  placeholder="文明评论，友善发言``"
+                  placeholder="文明评论，友善发言"
                   v-model="textarea"
                   @focus="checkLogin"
                   maxlength="300"
@@ -50,7 +50,7 @@
                   ref="childrenInput"
                   type="textarea"
                   :autosize="{ minRows: 2, maxRows: 6 }"
-                  placeholder="文明评论，友善发言``"
+                  placeholder="文明评论，友善发言"
                   v-model="cTextarea"
                   @focus="checkLogin"
                   maxlength="300"

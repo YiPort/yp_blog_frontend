@@ -186,7 +186,7 @@
 							message: '退出成功!'
 						});
 						if (that.$route.path === '/UserInfo') {
-							console.log(that.$route.path)
+							// console.log(that.$route.path)
 							that.$router.push({
 								path: '/Home'
 							});

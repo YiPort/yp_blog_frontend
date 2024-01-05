@@ -202,7 +202,7 @@ export default {
     },
     async latestArticleList() {
       await latestArticleList().then((response) => {
-        console.log(this.latestArticleList)
+        // console.log(this.latestArticleList)
         this.latestArticle = response;
       });
     },

@@ -69,7 +69,7 @@ export default {
       return {
           aid:'',//文章ID
           pdonate:true,//打开赞赏控制,
-          detailObj:null,//返回详情数据
+          detailObj:{},//返回详情数据
           articleObj:{},//保存文章原始数据
           haslogin:false,//是否已经登录
           userId:null,//用户id

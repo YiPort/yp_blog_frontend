@@ -135,7 +135,7 @@
       var self     = this,
           defaults = {
             experience: .6,
-            voice:      function (newValue, newChar, prevChar, str) { console.log(newValue); },
+            voice:      function (newValue, newChar, prevChar, str) {/*  console.log(newValue); */ },
             type:       "function",
             model:      ""
           };

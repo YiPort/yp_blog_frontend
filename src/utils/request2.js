@@ -49,7 +49,7 @@ service.interceptors.request.use(config => {
   }
   return config
 }, error => {
-  console.log(error)
+  // console.log(error)
   Promise.reject(error)
 })
 
@@ -96,7 +96,7 @@ service.interceptors.response.use(res => {
     }
   },
   error => {
-    console.log('err' + error)
+    // console.log('err' + error)
     let { message } = error
     if (message === 'Network Error') {
       message = '后端接口连接异常'
