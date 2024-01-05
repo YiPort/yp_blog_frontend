@@ -4,7 +4,7 @@
         <div class="tmsg-respond"  ref="respondBox">
             <h3>发表评论
             <small v-show="textarea" class="tcolorm" @click="textarea=''">清空</small></h3>
-            <form class=""  >
+            <form class="">
                 <el-input
                   id="rootInput"
                   type="textarea"
@@ -15,15 +15,15 @@
                   show-word-limit>
                 </el-input>
                 <div :class="pBody?'OwO':'OwO OwO-open'">
-                    <div class="OwO-logo" @click="pBody=!pBody;focus()">
+                    <div class="OwO-logo" @click="pBody=!pBody">
                         <span>OwO表情</span>
                     </div>
                     <div class="OwO-body">
                         <ul class="OwO-items OwO-items-show">
                             <li class="OwO-item" v-for="(oitem,index) in OwOlist" :key="'oitem'+index" :title="oitem.title" @click="choseEmoji(oitem.title,'root')">
-                                <img 
-                                style="width: 22px; height: 22px; margin-left: 0" 
-                                :src="'static/img/emot/image/'+oitem.url" 
+                                <img
+                                style="width: 22px; height: 22px; margin-left: 0"
+                                :src="'static/img/emot/image/'+oitem.url"
                                 :alt="oitem.title">
                             </li>
                         </ul>
@@ -57,13 +57,13 @@
                   show-word-limit>
                 </el-input>
                 <div :class="cpBody?'OwO':'OwO OwO-open'">
-                    <div class="OwO-logo" @click="cpBody=!cpBody;focus()">
+                    <div class="OwO-logo" @click="cpBody=!cpBody">
                         <span>OwO表情</span>
                     </div>
                     <div class="OwO-body">
                         <ul class="OwO-items OwO-items-show">
                             <li class="OwO-item" v-for="(oitem,index) in OwOlist" :key="'oitem'+index" :title="oitem.title" @click="choseEmoji(oitem.title,'children')">
-                                <img style="width: 22px; height: 22px" 
+                                <img style="width: 22px; height: 22px"
                                 :src="'static/img/emot/image/'+oitem.url"
                                 :alt="oitem.title">
                             </li>
@@ -82,15 +82,15 @@
                 </el-row>
             </form>
         </div>
-        <div class="tmsg-comments"  ref="listDom">
-            <a class="tmsg-comments-tip">精选评论 {{total}} 条</a>
+        <div class="tmsg-comments" ref="listDom">
+            <a class="tmsg-comments-tip">评论 {{total}} 条</a>
             <div class="tmsg-commentshow">
                 <ul class="tmsg-commentlist">
                     <li class="tmsg-c-item" v-for="(item,index) in commentList" :key="'common'+index">
                         <article class="">
                             <header>
-                                <img  
-                                :src="item.avatarUrl?item.avatarUrl:$store.state.errorImg"
+                                <img
+                                :src="item.avatar?item.avatar:$store.state.errorImg"
                                 >
                                 <div class="i-name">
                                     {{item.createNick}}
@@ -106,7 +106,7 @@
                                 </div>
                             </header>
                             <section>
-                                <p style="letter-spacing: 1px" v-html="analyzeEmoji(item.filterContent)">{{analyzeEmoji(item.filterContent)}}</p>
+                              <p style="letter-spacing: 1px" v-html="analyzeEmoji(item.filterContent)"></p>
                                 <div class="tmsg-replay-div">
                                     <span v-if="haslogin" class="tmsg-replay-span" @click="respondMsg(item.id,item.id,item.createBy)">
                                         回复
@@ -117,19 +117,22 @@
                                     <span v-if="$store.state.isMy && item.label==='1'" class="tmsg-replay-span" @click="handleTop(item.id,'0')">
                                         取消置顶
                                     </span>
+                                    <span v-if="isAdmin" class="tmsg-replay-span" @click="deleteComment(item.id)">
+                                        删除
+                                    </span>
                                 </div>
                             </section>
                         </article>
-                        <ul v-show="item.children" :class="item.children.length?'tmsg-commentlist-children':'tmsg-commentlist'">
+                        <ul v-if="item.children" :class="item.children.length?'tmsg-commentlist-children':'tmsg-commentlist'">
                             <li class="tmsg-c-item" v-for="(citem,cindex) in item.children" :key="'citem'+cindex">
                                 <article class="">
                                     <header>
-                                            <img 
-                                            style="width: 40px; height: 40px" 
-                                            :src="citem.avatarUrl?citem.avatarUrl:$store.state.errorImg"  
+                                            <img
+                                            style="width: 40px; height: 40px"
+                                            :src="citem.avatar?citem.avatar:$store.state.errorImg"
                                             >
                                             <div class="i-name">
-                                                <span>{{citem.createBy === userId ? '' : citem.createNick}}</span> 
+                                                <span>{{citem.createBy === userId ? '' : citem.createNick}}</span>
                                                 <span style="cursor: default">回复</span>
                                                 <span>{{item.createNick}}</span>
                                             </div>
@@ -141,10 +144,15 @@
                                             </div>
                                     </header>
                                     <section>
-                                        <p style="letter-spacing: 1px" v-html="analyzeEmoji(citem.filterContent)">{{citem.filterContent}}</p>
-                                        <!-- <div v-show="haslogin" class="tmsg-replay-div" @click="respondMsg(item.id,citem.id,citem.createBy)">
-                                            回复
-                                        </div> -->
+                                          <p style="letter-spacing: 1px" v-html="analyzeEmoji(citem.filterContent)"></p>
+                                          <div class="tmsg-replay-div">
+                                                <span v-if="isAdmin" class="tmsg-replay-span" @click="deleteComment(citem.id)">
+                                                    删除
+                                                </span>
+                                          <!-- <div v-show="haslogin" class="tmsg-replay-div" @click="respondMsg(item.id,citem.id,citem.createBy)">
+                                              回复
+                                          </div> -->
+                                        </div>
                                     </section>
                                 </article>
                             </li>
@@ -159,11 +167,10 @@
 </template>
 
 <script>
-import {sendComment,getArticleComment,getLinkComment,setTop} from '../api/comment.js'
+import {sendComment,getArticleComment,getLinkComment,setTop,deleteComment} from '../api/comment.js'
 import { getToken } from '../utils/auth.js'
 import { MessageBox } from 'element-ui'
 import router from '@/router'
-import { getUserInfo } from '../api/user.js'
 export default {
     data() { //选项 / 数据
         return {
@@ -188,6 +195,8 @@ export default {
             hasMore:false,
             haslogin:false,
             userId:'',//用户id
+            isAdmin:false,
+            userInfo:{},
             type:0,//回复评论的当前的commentId
             leavePid:'',//赞赏等其他模块的分类id
             pid:'',//回复评论的一级commentId
@@ -307,7 +316,7 @@ export default {
                 //加载更多
                 this.commentList = this.commentList.concat(msg);
             }
-            
+
             this.hasMore = result.total>this.commentList.length
             },
         //选择表情包
@@ -331,6 +340,7 @@ export default {
             var content = cont.match(pattern1);
             // console.log('content', content);
             var str = cont;
+            str = this.preText(str);
             if(content){
                 for(var i=0;i<content.length;i++){
                     for(var j=0;j<this.OwOlist.length;j++){
@@ -340,17 +350,14 @@ export default {
                         }
                     }
                     str = str.replace(pattern2,'<img src="static/img/emot/image/'+src+'"/>');
-                    console.log('str1',str)
 
                 }
             }
-            const url = str.match(urlRegex)
+            var url = str.match(urlRegex)
             if(url) {
                 for(let i=0; i<url.length; i++) {
-                    console.log(url[i]);
                     let endUrl = url[i].replace(/(&nbsp;|<br\/>){1}/, "")
-                    str = str.replace(urlRegex,'<img style="margin: 0" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02LjU4NTUxIDQuNDY1MDhDNS4yMTg2OCA1LjgzMTkxIDUuMjE4NjggOC4wNDc5OSA2LjU4NTUxIDkuNDE0ODNDNi44NzQ0NCA5LjcwMzc2IDcuMjAyMTkgOS45MzIxOSA3LjU1MjQ1IDEwLjA5OTRDNy44MDE2NiAxMC4yMTgzIDguMTAwMTEgMTAuMTEyNyA4LjIxOTA1IDkuODYzNDlDOC4zMzggOS42MTQyNyA4LjIzMjM5IDkuMzE1ODIgNy45ODMxOCA5LjE5Njg4QzcuOTI1ODIgOS4xNjk1IDcuODY5MjYgOS4xMzk4IDcuODEzNjUgOS4xMDc3NkM3LjYyNzcyIDkuMDAwNjQgNy40NTIzMSA4Ljg2NzQyIDcuMjkyNjIgOC43MDc3MkM2LjMxNjMxIDcuNzMxNDEgNi4zMTYzMSA2LjE0ODUgNy4yOTI2MiA1LjE3MjE5TDguOTQyNTMgMy41MjIyN0M5LjkxODg0IDIuNTQ1OTYgMTEuNTAxOCAyLjU0NTk2IDEyLjQ3ODEgMy41MjIyN0MxMy40NTQ0IDQuNDk4NTggMTMuNDU0MSA2LjA4MTcyIDEyLjQ3NzggNy4wNTgwM0wxMS40MTc4IDguMTE5NDRDMTEuMzg1IDguMTUyMjkgMTEuMzU3NyA4LjE4ODU1IDExLjMzNiA4LjIyNzA5QzExLjIyODMgOC40MTc4MyAxMS4yNTU3IDguNjY0MjEgMTEuNDE4MyA4LjgyNjU1QzExLjYxMzcgOS4wMjE2OCAxMS45MzAyIDkuMDIxNDggMTIuMTI1NCA4LjgyNjA5TDEzLjE4NTQgNy43NjQ2OEMxNC41NTIgNi4zOTc4MyAxNC41NTE5IDQuMTgxOTIgMTMuMTg1MiAyLjgxNTE2QzExLjgxODMgMS40NDgzMyA5LjYwMjI2IDEuNDQ4MzMgOC4yMzU0MyAyLjgxNTE2TDYuNTg1NTEgNC40NjUwOFpNMi44MTQxOSA4LjIzNjU3QzEuNDQ3MzUgOS42MDM0IDEuNDQ3MzUgMTEuODE5NSAyLjgxNDE5IDEzLjE4NjNDNC4xODEwMiAxNC41NTMxIDYuMzk3MSAxNC41NTMxIDcuNzYzOTQgMTMuMTg2M0w5LjQxMzg1IDExLjUzNjRDMTAuMjQ5OCAxMC43MDA0IDEwLjU3NDUgOS41NDY4NCAxMC4zODc5IDguNDY0MTNDMTAuMjY5NCA3Ljc3NjUzIDkuOTQ0NzQgNy4xMTc1MyA5LjQxMzg1IDYuNTg2NjVDOS4xMjU1MyA2LjI5ODMyIDguNzk4NTMgNi4wNzAyNCA4LjQ0OTEgNS45MDMxNkM4LjE5OTk3IDUuNzg0MDQgNy45MDE0NSA1Ljg4OTQ0IDcuNzgyMzMgNi4xMzg1N0M3LjY2MzIxIDYuMzg3NyA3Ljc2ODYxIDYuNjg2MjIgOC4wMTc3NCA2LjgwNTM0QzguMjY2MjggNi45MjQxOCA4LjQ5OTcxIDcuMDg2NzMgOC43MDY3NSA3LjI5Mzc2QzkuMTA0NjYgNy42OTE2NyA5LjM0MDM5IDguMTkwMzQgOS40MTM5NSA4LjcwNzY0QzkuNTIwODggOS40NTk1OSA5LjI4NTE1IDEwLjI1MDkgOC43MDY3NSAxMC44MjkzTDcuMDU2ODMgMTIuNDc5MkM2LjA4MDUyIDEzLjQ1NTUgNC40OTc2MSAxMy40NTU1IDMuNTIxMyAxMi40NzkyQzIuNTQ1MDIgMTEuNTAyOSAyLjU0NTA4IDkuOTE5OTkgMy41MjEzIDguOTQzNjdMNC41ODI0NyA3Ljg4Mzg4QzQuNzc3ODYgNy42ODg3NCA0Ljc3ODA3IDcuMzcyMTYgNC41ODI5MyA3LjE3Njc3QzQuMzg3OCA2Ljk4MTM4IDQuMDcxMjIgNi45ODExNyAzLjg3NTgzIDcuMTc2MzFMMi44MTQxOSA4LjIzNjU3WiIgZmlsbD0iIzJDOUNDOCIvPgo8L3N2Zz4K"><a target="_blank" href=' + endUrl + '>' + endUrl + '</a>' + '&nbsp;');
-                    console.log('str2',str)
+                    str = str.replace(endUrl,'<img style="margin: 0" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02LjU4NTUxIDQuNDY1MDhDNS4yMTg2OCA1LjgzMTkxIDUuMjE4NjggOC4wNDc5OSA2LjU4NTUxIDkuNDE0ODNDNi44NzQ0NCA5LjcwMzc2IDcuMjAyMTkgOS45MzIxOSA3LjU1MjQ1IDEwLjA5OTRDNy44MDE2NiAxMC4yMTgzIDguMTAwMTEgMTAuMTEyNyA4LjIxOTA1IDkuODYzNDlDOC4zMzggOS42MTQyNyA4LjIzMjM5IDkuMzE1ODIgNy45ODMxOCA5LjE5Njg4QzcuOTI1ODIgOS4xNjk1IDcuODY5MjYgOS4xMzk4IDcuODEzNjUgOS4xMDc3NkM3LjYyNzcyIDkuMDAwNjQgNy40NTIzMSA4Ljg2NzQyIDcuMjkyNjIgOC43MDc3MkM2LjMxNjMxIDcuNzMxNDEgNi4zMTYzMSA2LjE0ODUgNy4yOTI2MiA1LjE3MjE5TDguOTQyNTMgMy41MjIyN0M5LjkxODg0IDIuNTQ1OTYgMTEuNTAxOCAyLjU0NTk2IDEyLjQ3ODEgMy41MjIyN0MxMy40NTQ0IDQuNDk4NTggMTMuNDU0MSA2LjA4MTcyIDEyLjQ3NzggNy4wNTgwM0wxMS40MTc4IDguMTE5NDRDMTEuMzg1IDguMTUyMjkgMTEuMzU3NyA4LjE4ODU1IDExLjMzNiA4LjIyNzA5QzExLjIyODMgOC40MTc4MyAxMS4yNTU3IDguNjY0MjEgMTEuNDE4MyA4LjgyNjU1QzExLjYxMzcgOS4wMjE2OCAxMS45MzAyIDkuMDIxNDggMTIuMTI1NCA4LjgyNjA5TDEzLjE4NTQgNy43NjQ2OEMxNC41NTIgNi4zOTc4MyAxNC41NTE5IDQuMTgxOTIgMTMuMTg1MiAyLjgxNTE2QzExLjgxODMgMS40NDgzMyA5LjYwMjI2IDEuNDQ4MzMgOC4yMzU0MyAyLjgxNTE2TDYuNTg1NTEgNC40NjUwOFpNMi44MTQxOSA4LjIzNjU3QzEuNDQ3MzUgOS42MDM0IDEuNDQ3MzUgMTEuODE5NSAyLjgxNDE5IDEzLjE4NjNDNC4xODEwMiAxNC41NTMxIDYuMzk3MSAxNC41NTMxIDcuNzYzOTQgMTMuMTg2M0w5LjQxMzg1IDExLjUzNjRDMTAuMjQ5OCAxMC43MDA0IDEwLjU3NDUgOS41NDY4NCAxMC4zODc5IDguNDY0MTNDMTAuMjY5NCA3Ljc3NjUzIDkuOTQ0NzQgNy4xMTc1MyA5LjQxMzg1IDYuNTg2NjVDOS4xMjU1MyA2LjI5ODMyIDguNzk4NTMgNi4wNzAyNCA4LjQ0OTEgNS45MDMxNkM4LjE5OTk3IDUuNzg0MDQgNy45MDE0NSA1Ljg4OTQ0IDcuNzgyMzMgNi4xMzg1N0M3LjY2MzIxIDYuMzg3NyA3Ljc2ODYxIDYuNjg2MjIgOC4wMTc3NCA2LjgwNTM0QzguMjY2MjggNi45MjQxOCA4LjQ5OTcxIDcuMDg2NzMgOC43MDY3NSA3LjI5Mzc2QzkuMTA0NjYgNy42OTE2NyA5LjM0MDM5IDguMTkwMzQgOS40MTM5NSA4LjcwNzY0QzkuNTIwODggOS40NTk1OSA5LjI4NTE1IDEwLjI1MDkgOC43MDY3NSAxMC44MjkzTDcuMDU2ODMgMTIuNDc5MkM2LjA4MDUyIDEzLjQ1NTUgNC40OTc2MSAxMy40NTU1IDMuNTIxMyAxMi40NzkyQzIuNTQ1MDIgMTEuNTAyOSAyLjU0NTA4IDkuOTE5OTkgMy41MjEzIDguOTQzNjdMNC41ODI0NyA3Ljg4Mzg4QzQuNzc3ODYgNy42ODg3NCA0Ljc3ODA3IDcuMzcyMTYgNC41ODI5MyA3LjE3Njc3QzQuMzg3OCA2Ljk4MTM4IDQuMDcxMjIgNi45ODExNyAzLjg3NTgzIDcuMTc2MzFMMi44MTQxOSA4LjIzNjU3WiIgZmlsbD0iIzJDOUNDOCIvPgo8L3N2Zz4K"><a target="_blank" href=' + endUrl + '>' + endUrl + '</a>' + '&nbsp;');
                 }
             }
             return str;
@@ -377,22 +384,21 @@ export default {
         sendMsg(value){//留言
             var that = this;
             if(value === 'root') {
-                if(that.textarealength > 100) {
+                if(that.textarealength > 300) {
                     this.$message({
                         type:'warning',
-                        message:'评论不得超过100字'
+                        message:'评论不得超过300字'
                     })
                 }
                 if(that.textarea){
                     if(getToken()){
                         that.sendTip = '咻~~';
                         var info = JSON.parse(localStorage.getItem('userInfo'));
-                        var createBy = info.id?info.id:-1;
-                        const textarea = that.preText(that.textarea) + "&nbsp;";
-                        sendComment(that.type,that.aid,that.rootId,that.toCommentId,that.toCommentUserId,createBy,textarea,info.username,info.avatarUrl).then((response)=>{
+                        const textarea = that.textarea + "&nbsp;";
+                        sendComment(that.type,that.aid,that.rootId,that.toCommentId,that.toCommentUserId,textarea,info.nickName,info.avatar).then((response)=>{
                             this.$message({
                                 type:'success',
-                                message:'评论成功，精选后展示'
+                                message:'评论成功'
                             })
                             that.textarea = '';
                             that.rootId = -1;
@@ -428,16 +434,21 @@ export default {
                 }
             }
             if(value === 'children') {
+                if(that.cTextarea.length > 300) {
+                    this.$message({
+                        type:'warning',
+                        message:'评论不得超过300字'
+                    })
+                }
                 if(that.cTextarea){
                     if(getToken()){
                         that.cSendTip = '咻~~';
                         var info = JSON.parse(localStorage.getItem('userInfo'));
-                        var createBy = info.id?info.id:-1;
-                        const cTextarea = that.preText(that.cTextarea);
-                        sendComment(that.type,that.aid,that.rootId,that.toCommentId,that.toCommentUserId,createBy,cTextarea,info.username,info.avatarUrl).then((response)=>{
+                        const cTextarea = that.cTextarea + "&nbsp;";
+                        sendComment(that.type,that.aid,that.rootId,that.toCommentId,that.toCommentUserId,cTextarea,info.nickName,info.avatar).then((response)=>{
                             this.$message({
                                 type:'success',
-                                message:'评论成功，精选后展示'
+                                message:'评论成功'
                             })
                             that.cTextarea = '';
                             that.rootId = -1;
@@ -495,7 +506,7 @@ export default {
                 dom.appendChild(this.$refs.respondBox1);
                 this.showRespondBox1 = true;
             }else{
-                that.$confirm('登录后即可点赞和收藏，是否前往登录页面?', '提示', {
+                that.$confirm('登录后即可评论，是否前往登录页面?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
@@ -525,14 +536,12 @@ export default {
                 that.haslogin = true;
                 that.userInfo = JSON.parse(localStorage.getItem('userInfo'));
                 that.userId = that.userInfo.id;
-                console.log(that.userInfo.id,that.detailObj)
+                // console.log(that.userInfo.id,that.detailObj)
                 // console.log(that.userInfo);
             }else{
                 that.haslogin = false;
             }
-
             //公用设置数据方法
-
             if(that.$route.name=='DetailArticle'){//文章列表的评论
                 that.type = 0;
                 getArticleComment(that.queryParams).then((response)=>{
@@ -552,9 +561,24 @@ export default {
             this.showCommentList(false);
         },
         routeChange(){    //重新加载
-            var that = this;
             this.queryParams.pageNum = 1
             this.showCommentList(true);
+          this.isAdmin = this.userId === "1"?true:false;
+        },
+        deleteComment(id){
+            MessageBox.confirm('确定要删除评论吗？且该评论下的回复也一并会被删除', '系统提示', {
+                confirmButtonText: '删除',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                deleteComment(id).then((response) => {
+                    this.$message({
+                        type:'success',
+                        message:'删除成功'
+                    })
+                    this.routeChange();
+                })
+            })
         }
     },
     components: { //定义组件
@@ -914,7 +938,7 @@ export default {
 } */
 .tmsg-c-item article header .i-class{
     display: inline-block;
-    margin-left:10px;
+    margin-left:5px;
     background-color: #c0e8af;
     color: #2a632b;
     padding: 1px 5px;
@@ -935,7 +959,7 @@ export default {
 } */
 .tmsg-c-item article header .m-class{
     display: inline-block;
-    margin-left:10px;
+    margin-left:5px;
     background-color: #FBD54E;
     color: #B72025;
     padding: 1px 5px;
