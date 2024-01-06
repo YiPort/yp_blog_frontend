@@ -133,7 +133,7 @@ export default {
           let aArr = []
 
           aArr1.forEach(item => {
-            if (item.id) {
+            if (item.id && $(item).attr("id").indexOf('_') !== -1) {
               aArr.push(item)
             }
           })
