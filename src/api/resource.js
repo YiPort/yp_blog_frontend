@@ -15,3 +15,16 @@ export function uploadImage(formData) {
     }
   })
 }
+
+// 上传头像
+export function uploadAvatar(formData) {
+  return request({
+    url: API_PREFIX+'/uploadAvatar',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Dispositon': 'inline', //设置应答方式为内联
+      isToken: true
+    }
+  })
+}

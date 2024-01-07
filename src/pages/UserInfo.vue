@@ -71,6 +71,7 @@
                             :action="uploadURL"
                             :show-file-list="false"
                             :on-success="handleAvatarSuccess"
+                            :headers="headers"
                             :before-upload="beforeAvatarUpload">
                             <img v-if="userInfoObj.avatar" :src="userInfoObj.avatar?userInfoObj.avatar:'static/img/tou.jpg'"  :onerror="$store.state.errorImg" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -235,6 +236,11 @@ import axios from 'axios'
               }else {
                   return false;
               }
+          },
+          headers(){
+              return{
+                'token': getToken()
+              }
           }
       },
       methods: { //事件处理器
@@ -316,19 +322,6 @@ import axios from 'axios'
                           return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
           },
           getCollectList() {  //获取收藏文章列表
-          // 创建 axios实例
-              const service = axios.create({
-                  // axios中请求配置有baseURL选项，表示请求URL公共部分
-                  baseURL: 'http://whois.pconline.com.cn',
-                  // 超时
-                  timeout: 2 * 5000
-              })
-              service({
-                  url: '/ipJson.jsp?ip=140.210.69.133&json=true',
-                  methods: 'get'
-              }).then(res => {
-                  // console.log(res)
-              })
               if(!this.userId) this.loginMessage();
               else {
                   getCollectList().then(response => {
