@@ -110,6 +110,14 @@ export default new Router({
       name: 'Ip'
     }, //访问统计
     {
+      path: '/System/Comment',
+      component: resolve => require(['../pages/system/Comment.vue'], resolve),
+      meta: {
+        auth: true
+      },
+      name: 'Comment'
+    }, //评论管理
+    {
       path: '/System/Cache',
       component: resolve => require(['../pages/system/Cache.vue'], resolve),
       meta: {

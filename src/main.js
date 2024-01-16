@@ -13,7 +13,10 @@ import 'mavon-editor/dist/css/index.css'
 import Highlight from './utils/highlight'; // from 路径是highlight.js的路径，纯属自定义
 import VueViewer, { directive as viewerDirective } from 'v-viewer';
 import 'viewerjs/dist/viewer.css'; // 图片预览器的样式
+// 分页组件
+import Pagination from "./components/pagination.vue";
 
+Vue.component('Pagination', Pagination)
 Vue.use(Highlight);
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
