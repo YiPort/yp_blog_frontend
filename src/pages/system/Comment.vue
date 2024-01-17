@@ -44,7 +44,7 @@
         </el-table-column>
         <el-table-column label="是否根评论" align="center">
             <template slot-scope="scope">
-                <el-tag :type="scope.row.rootId===-1?'success':'danger'">{{scope.row.rootId===-1?'是':'否'}}</el-tag>
+                <el-tag :type="scope.row.rootId==='-1'?'success':'danger'">{{scope.row.rootId==='-1'?'是':'否'}}</el-tag>
             </template>
         </el-table-column>
         <el-table-column label="评论内容" align="center" :show-overflow-tooltip="true">

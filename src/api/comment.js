@@ -69,7 +69,7 @@ export function deleteComment(id) {
 // 管理员查询评论
 export function allCommentList(query) {
   return request({
-    url: '/comment/allCommentList',
+    url: API_PREFIX+'/comment/allCommentList',
     method: 'get',
     headers: {
       isToken: true
