@@ -68,3 +68,15 @@ export function savaUserInfo(userinfo) {
     data: userinfo
   })
 }
+
+
+//  获取其他用户信息
+export function getOtherUser(userId) {
+  return request ({
+    url: '/user/getOtherUser/' + userId,
+    method: 'get',
+    headers: {
+      isToken: true
+    }
+  })
+}

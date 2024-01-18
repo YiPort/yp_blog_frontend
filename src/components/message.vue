@@ -83,16 +83,49 @@
             </form>
         </div>
         <div class="tmsg-comments" ref="listDom">
-            <a class="tmsg-comments-tip">评论 {{total}} 条</a>
+            <a class="tmsg-comments-tip">全部评论 {{total}}</a>
             <div class="tmsg-commentshow">
                 <ul class="tmsg-commentlist">
                     <li class="tmsg-c-item" v-for="(item,index) in commentList" :key="'common'+index">
                         <article class="">
                             <header>
+                              <el-popover
+                                :open-delay="500"
+                                @show="handleShow()"
+                                @after-enter="handleAfterEnter(item.createBy)"
+                                @hide="handleHide"
+                                placement="top-start"
+                                title=""
+                                width="250"
+                                transition="el-zoom-in-bottom"
+                                trigger="hover">
+                                <img
+                                  slot="reference"
+                                  :src="item.avatar?item.avatar:$store.state.errorImg"
+                                >
+                                <slot>
                                 <img
                                 :src="item.avatar?item.avatar:$store.state.errorImg"
                                 >
-                                <div class="i-name">
+                                <template v-if="loading">
+                                    <p style="font-size:1.5em;font-weight:bolder;margin-bottom:5px">-- --&nbsp;--</p>
+                                    <el-avatar style="font-size: 10px;width: 28px;height: 15px;line-height: 16px;" shape="square" size="small">UID</el-avatar>
+                                    <em style="font-size:1.3em;">--</em>
+                                    <p>已加入 <em style="font-size:1.5em">--</em>天</p>
+                                </template>
+                                <template v-else>
+                                    <p style="font-size:1.5em;font-weight:bolder;margin-bottom:5px">{{otherUserInfo.username}}&nbsp;
+                                        <i v-show="otherUserInfo.sex!=null"
+                                            :class="otherUserInfo.sex==='0'?'el-icon-male':'el-icon-female'"
+                                            :style="otherUserInfo.sex==='0'?'color:#409eff':'color:#fb7299'" /></p>
+                                    <el-avatar style="font-size: 10px;width: 28px;height: 15px;line-height: 16px;" shape="square" size="small">UID</el-avatar>
+                                    <em style="font-size:1.3em;">&nbsp;{{otherUserInfo.uid}}</em>
+                                    <p>已加入 <em style="font-size:1.5em">{{otherUserInfo.totalDay}}</em>天</p>
+                                </template>
+                                </slot>
+                                </el-popover>
+
+                              <div class="i-name">
                                     {{item.createNick}}
                                 </div>
                                 <div v-if="item.createBy===$store.state.createBy" class="m-class">
@@ -127,21 +160,54 @@
                             <li class="tmsg-c-item" v-for="(citem,cindex) in item.children" :key="'citem'+cindex">
                                 <article class="">
                                     <header>
+                                        <el-popover
+                                            :open-delay="500"
+                                            @show="handleShow()"
+                                            @after-enter="handleAfterEnter(citem.createBy)"
+                                            @hide="handleHide"
+                                            placement="top-start"
+                                            title=""
+                                            width="250"
+                                            transition="el-zoom-in-bottom"
+                                            trigger="hover">
                                             <img
-                                            style="width: 40px; height: 40px"
+                                                slot="reference"
+                                                style="width: 40px; height: 40px"
+                                                :src="citem.avatar?citem.avatar:$store.state.errorImg"
+                                            >
+                                            <slot>
+                                            <img
                                             :src="citem.avatar?citem.avatar:$store.state.errorImg"
                                             >
-                                            <div class="i-name">
-                                                <span>{{citem.createBy === userId ? '' : citem.createNick}}</span>
-                                                <span style="cursor: default">回复</span>
-                                                <span>{{item.createNick}}</span>
-                                            </div>
-                                            <div v-if="citem.createBy===$store.state.createBy" class="m-class">
-                                                博主
-                                            </div>
-                                            <div class="i-time">
-                                                <time>{{citem.createTime}}</time>
-                                            </div>
+                                            <template v-if="loading">
+                                                <p style="font-size:1.5em;font-weight:bolder;margin-bottom:5px">-- --&nbsp;--</p>
+                                                <el-avatar style="font-size: 10px;width: 28px;height: 15px;line-height: 16px;" shape="square" size="small">UID</el-avatar>
+                                                <em style="font-size:1.3em;">--</em>
+                                                <p>已加入 <em style="font-size:1.5em">--</em>天</p>
+                                            </template>
+                                            <template v-else>
+                                                <p style="font-size:1.5em;font-weight:bolder;margin-bottom:5px">{{otherUserInfo.username}}&nbsp;
+                                                    <i v-show="otherUserInfo.sex!=null"
+                                                     :class="otherUserInfo.sex===0?'el-icon-male':'el-icon-female'"
+                                                     :style="otherUserInfo.sex===0?'color:#409eff':'color:#fb7299'" /></p>
+                                                <el-avatar style="font-size: 10px;width: 28px;height: 15px;line-height: 16px;" shape="square" size="small">UID</el-avatar>
+                                                <em style="font-size:1.3em;">&nbsp;{{otherUserInfo.uid}}</em>
+                                                <p>已加入 <em style="font-size:1.5em">{{otherUserInfo.totalDay}}</em>天</p>
+                                            </template>
+                                            </slot>
+                                        </el-popover>
+                                        <div class="i-name">
+                                            <span>{{citem.createBy === userId ? '' : citem.createNick}}</span>
+                                            <span style="cursor: default">回复</span>
+                                            <span>{{item.createNick}}</span>
+                                          </div>
+                                          <div v-if="citem.createBy===$store.state.createBy" class="m-class">
+                                            博主
+                                          </div>
+                                          <div class="i-time">
+                                            <time>{{citem.createTime}}</time>
+                                          </div>
+
                                     </header>
                                     <section>
                                           <p style="letter-spacing: 1px" v-html="analyzeEmoji(citem.filterContent)"></p>
@@ -160,7 +226,7 @@
                     </li>
                 </ul>
                 <h1 v-show='hasMore' class="tcolors-bg" @click="addMoreFun" >查看更多</h1>
-                <h1 v-show='!hasMore' class="tcolors-bg" >没有更多</h1>
+                <h1 v-show='!hasMore' class="tcolors-bg" >到底了~</h1>
             </div>
         </div>
     </div>
@@ -169,6 +235,7 @@
 <script>
 import {sendComment,getArticleComment,getLinkComment,setTop,deleteComment} from '../api/comment.js'
 import { getToken } from '../utils/auth.js'
+import { getOtherUser } from '../api/user.js'
 import { MessageBox } from 'element-ui'
 import router from '@/router'
 export default {
@@ -181,7 +248,7 @@ export default {
             queryParams: {
                 pageNum: 1,
                 pageSize: 10,
-                articleId: 0
+                articleId: -1
             },
             total: 0,
             showRespondBox1: false,
@@ -200,7 +267,7 @@ export default {
             type:0,//回复评论的当前的commentId
             leavePid:'',//赞赏等其他模块的分类id
             pid:'',//回复评论的一级commentId
-            rootId:-1,//根评论id，如果是针对文字评论直接用-1表示
+            rootId:"-1",//根评论id，如果是针对文字评论直接用-1表示
             toCommentId:-1,//所回复评论的id
             toCommentUserId:-1,//所评论的用户id
             sendTip:'发送~',
@@ -297,10 +364,24 @@ export default {
                 {'title':'允悲','url':'d_yunbei.png'},
                 {'title':'抓狂','url':'d_zhuakuang.png'},
                 {'title':'猪头','url':'d_zhutou.png'}
-            ]
+            ],
+            otherUserInfo:'',
+            loading: false
         }
     },
     methods: { //事件处理器
+        handleShow(){
+            this.loading = true;
+        },
+        handleAfterEnter(userId){
+            getOtherUser(userId).then(res => {
+                this.otherUserInfo = res
+                this.loading = false;
+            })
+        },
+        handleHide(){
+            this.otherUserInfo = '';
+        },
         preText(pretext) {
             return pretext.replace(/\r\n/g, '<br/>')
                         .replace(/\n/g, '<br/>')
@@ -312,12 +393,16 @@ export default {
             if(initData){
                 //刷新列表
                 this.commentList = msg;
+                this.hasMore = result.total>this.commentList.length
             }else{
                 //加载更多
-                this.commentList = this.commentList.concat(msg);
+                if(msg.length !== 0){
+                    this.commentList = this.commentList.concat(msg);
+                    this.hasMore = result.total>this.commentList.length;
+                }
+                else this.hasMore = false;
             }
 
-            this.hasMore = result.total>this.commentList.length
             },
         //选择表情包
         choseEmoji(inner,value){
@@ -401,9 +486,9 @@ export default {
                                 message:'评论成功'
                             })
                             that.textarea = '';
-                            that.rootId = -1;
-                            that.toCommentId = -1;
-                            that.toCommentUserId=-1;
+                            that.rootId = "-1";
+                            that.toCommentId = "-1";
+                            that.toCommentUserId="-1";
 
                             that.routeChange();
                             that.removeRespond();
@@ -451,9 +536,9 @@ export default {
                                 message:'评论成功'
                             })
                             that.cTextarea = '';
-                            that.rootId = -1;
-                            that.toCommentId = -1;
-                            that.toCommentUserId=-1;
+                            that.rootId = "-1";
+                            that.toCommentId = "-1";
+                            that.toCommentUserId="-1";
 
                             that.routeChange();
                             that.removeRespond();
@@ -522,14 +607,14 @@ export default {
         removeRespond(){      //取消回复留言
             this.isRespond = false;
             this.showRespondBox1 = false;
-            this.rootId = -1;
-            this.toCommentId = -1;
-            this.toCommentUserId=-1;
+            this.rootId = "-1";
+            this.toCommentId = "-1";
+            this.toCommentUserId="-1";
             this.$refs.tmsgBox.insertBefore(this.$refs.respondBox,this.$refs.listDom);
         },
         showCommentList(initData){      //评论列表
             var that = this;
-            that.aid = that.$route.query.aid==undefined?1:parseInt(that.$route.query.aid);//获取传参的aid
+            that.aid = that.$route.query.aid==undefined?-1:parseInt(that.$route.query.aid);//获取传参的aid
             that.queryParams.articleId = that.aid
             //判断当前用户是否登录
             if(localStorage.getItem('userInfo')){
@@ -608,6 +693,9 @@ export default {
 </script>
 
 <style>
+.el-popover, .el-radio-button:first-child:last-child .el-radio-button__inner {
+  border-radius: 7px;
+}
 .tmsgBox{
     position: relative;
     background: #fff;
@@ -897,13 +985,20 @@ export default {
     -webkit-transition: all .4s ease-in-out;
     margin-right: 15px;
     object-fit: cover;
-}
-.tmsg-c-item article header img:hover{
-    transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
     cursor: pointer;
 }
-/* .tmsg-c-item-children article header img{
+.el-popover img{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    float: left;
+    transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    margin-right: 15px;
+    object-fit: cover;
+    cursor: pointer;
+}
+/* .tmsg-c-item article header img:hover{
     width: 45px;
     height: 45px;
     border-radius: 50%;
