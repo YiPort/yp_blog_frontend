@@ -76,7 +76,7 @@ import { getCache } from '../../api/system';
 import * as echarts from 'echarts';
 
 export default {
-    name: "Server",
+    name: "Cache",
     data() {
         return {
             // 统计命令信息
@@ -138,7 +138,7 @@ export default {
                         name: "峰值",
                         type: "gauge",
                         min: 0,
-                        max: this.cache.info.used_memory_human.substr(-1)==='M'?2:1000,
+                        max: this.cache.info.used_memory_human.substr(-1)==='M'?5:1000,
                         detail: {
                             formatter: this.cache.info.used_memory_human,
                         },

@@ -114,7 +114,7 @@
                                     <p>已加入 <em style="font-size:1.5em">--</em>天</p>
                                 </template>
                                 <template v-else>
-                                    <p style="font-size:1.5em;font-weight:bolder;margin-bottom:5px">{{otherUserInfo.username}}&nbsp;
+                                    <p style="font-size:1.5em;font-weight:bolder;margin-bottom:5px">{{otherUserInfo.nickName}}&nbsp;
                                         <i v-show="otherUserInfo.sex!=null"
                                             :class="otherUserInfo.sex==='0'?'el-icon-male':'el-icon-female'"
                                             :style="otherUserInfo.sex==='0'?'color:#409eff':'color:#fb7299'" /></p>
@@ -186,7 +186,7 @@
                                                 <p>已加入 <em style="font-size:1.5em">--</em>天</p>
                                             </template>
                                             <template v-else>
-                                                <p style="font-size:1.5em;font-weight:bolder;margin-bottom:5px">{{otherUserInfo.username}}&nbsp;
+                                                <p style="font-size:1.5em;font-weight:bolder;margin-bottom:5px">{{otherUserInfo.nickName}}&nbsp;
                                                     <i v-show="otherUserInfo.sex!=null"
                                                      :class="otherUserInfo.sex===0?'el-icon-male':'el-icon-female'"
                                                      :style="otherUserInfo.sex===0?'color:#409eff':'color:#fb7299'" /></p>

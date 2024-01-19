@@ -1,4 +1,4 @@
-import request from '@/utils/request2'
+import request from '@/utils/requestUser'
 
 // 登录
 export function userLogin(username,password,captcha,uuid) {
