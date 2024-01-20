@@ -77,3 +77,27 @@ export function allCommentList(query) {
     params: query
   })
 }
+
+
+// 用户删除评论
+export function deleteMyComment(id) {
+  return request({
+      url: API_PREFIX+'/comment/deleteMyComment/' + id,
+      method: 'delete',
+      headers: {
+          isToken: true
+      }
+  })
+}
+
+// 更新评论用户信息
+export function updateComment(comment) {
+  return request({
+      url: API_PREFIX+'/comment/updateComment',
+      method: 'put',
+      headers: {
+          isToken: true
+      },
+      data: comment
+  })
+}
