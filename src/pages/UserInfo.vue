@@ -184,6 +184,7 @@ import header from '../components/header.vue'
 import {getUserInfo,savaUserInfo} from '../api/user.js'//获取用户信息，保存用户信息
 import store from '../store'
 import { getCollectList,deleteCollection,getQuestionList,deleteQuestion } from '../api/article'
+import { updateComment } from '../api/comment'
 import { MessageBox } from 'element-ui'
 import { getToken } from '../utils/auth'
 import router from '@/router'
@@ -248,6 +249,8 @@ import axios from 'axios'
               if(res.code == 200){
                   this.userInfoObj.avatar = res.data;
                   this.userInfoObj.head_start = 1;
+                  updateComment({createBy: this.userInfoObj.id, avatarUrl: res.data})
+                    
               }else{
                   this.$message.error('上传图片失败');
               }
