@@ -186,7 +186,7 @@ import store from '../store'
 import { getCollectList,deleteCollection,getQuestionList,deleteQuestion } from '../api/article'
 import { updateComment } from '../api/comment'
 import { MessageBox } from 'element-ui'
-import { getToken } from '../utils/auth'
+import {getToken, setToken} from '../utils/auth'
 import router from '@/router'
 import axios from 'axios'
   export default {
@@ -207,7 +207,7 @@ import axios from 'axios'
                   phonenumber: "",
                   uid: 0,
                   userName: "",
-                  userPassword: "",
+                  password: "",
                   userRole: 0,
                   status: 0,
                   nickName: "",
@@ -250,7 +250,7 @@ import axios from 'axios'
                   this.userInfoObj.avatar = res.data;
                   this.userInfoObj.head_start = 1;
                   updateComment({createBy: this.userInfoObj.id, avatarUrl: res.data})
-                    
+
               }else{
                   this.$message.error('上传图片失败');
               }
@@ -296,6 +296,7 @@ import axios from 'axios'
               await savaUserInfo(that.userInfoObj).then((response)=>{//保存信息接口，返回展示页
                   that.$message.success( '修改成功！');
                   that.isEdit = false;
+                  setToken(response.data.token)
                   that.routeChange();
               })
           },
