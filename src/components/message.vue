@@ -96,7 +96,7 @@
                                 @hide="handleHide"
                                 placement="top-start"
                                 title=""
-                                width="250"
+                                width="260"
                                 transition="el-zoom-in-bottom"
                                 trigger="hover">
                                 <img
@@ -126,7 +126,7 @@
                                 </el-popover>
 
                               <div class="i-name">
-                                    {{item.createNick}}
+                                    <span :style="item.createBy === userId?'color:#fb7299':''" >{{item.createNick}}</span>
                                 </div>
                                 <div v-if="item.createBy===$store.state.createBy" class="m-class">
                                     博主
@@ -150,7 +150,8 @@
                                     <span v-if="$store.state.isMy && item.label==='1'" class="tmsg-replay-span" @click="handleTop(item.id,'0')">
                                         取消置顶
                                     </span>
-                                    <span v-if="isAdmin" class="tmsg-replay-span" @click="deleteComment(item.id)">
+                                    <span v-if="isAdmin||item.createBy === userId" class="tmsg-replay-span" 
+                                    @click="item.createBy !== userId?deleteComment(item.id):deleteMyComment(item.id)">
                                         删除
                                     </span>
                                 </div>
@@ -167,7 +168,7 @@
                                             @hide="handleHide"
                                             placement="top-start"
                                             title=""
-                                            width="250"
+                                            width="260"
                                             transition="el-zoom-in-bottom"
                                             trigger="hover">
                                             <img
@@ -197,9 +198,7 @@
                                             </slot>
                                         </el-popover>
                                         <div class="i-name">
-                                            <span>{{citem.createBy === userId ? '' : citem.createNick}}</span>
-                                            <span style="cursor: default">回复</span>
-                                            <span>{{item.createNick}}</span>
+                                            <span :style="citem.createBy === userId?'color:#fb7299':''" >{{citem.createNick}}</span> 
                                           </div>
                                           <div v-if="citem.createBy===$store.state.createBy" class="m-class">
                                             博主
@@ -212,7 +211,8 @@
                                     <section>
                                           <p style="letter-spacing: 1px" v-html="analyzeEmoji(citem.filterContent)"></p>
                                           <div class="tmsg-replay-div">
-                                                <span v-if="isAdmin" class="tmsg-replay-span" @click="deleteComment(citem.id)">
+                                                <span v-if="isAdmin||citem.createBy === userId" class="tmsg-replay-span" 
+                                                @click="citem.createBy !== userId?deleteComment(citem.id):deleteMyComment(citem.id)">
                                                     删除
                                                 </span>
                                           <!-- <div v-show="haslogin" class="tmsg-replay-div" @click="respondMsg(item.id,citem.id,citem.createBy)">
@@ -233,7 +233,7 @@
 </template>
 
 <script>
-import {sendComment,getArticleComment,getLinkComment,setTop,deleteComment} from '../api/comment.js'
+import {sendComment,getArticleComment,getLinkComment,setTop,deleteComment,deleteMyComment} from '../api/comment.js'
 import { getToken } from '../utils/auth.js'
 import { getOtherUser } from '../api/user.js'
 import { MessageBox } from 'element-ui'
@@ -657,6 +657,21 @@ export default {
                 type: 'warning'
             }).then(() => {
                 deleteComment(id).then((response) => {
+                    this.$message({
+                        type:'success',
+                        message:'删除成功'
+                    })
+                    this.routeChange();
+                })
+            })
+        },
+        deleteMyComment(id){
+            MessageBox.confirm('确定要删除评论吗？且该评论下的回复也一并会被删除', '系统提示', {
+                confirmButtonText: '删除',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                deleteMyComment(id).then((response) => {
                     this.$message({
                         type:'success',
                         message:'删除成功'
