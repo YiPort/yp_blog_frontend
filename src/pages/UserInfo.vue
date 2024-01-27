@@ -92,7 +92,8 @@
                       </li>
                       <li>
                           <span class="leftTitle">邮箱：</span>
-                          <el-input v-model="userInfoObj.email" placeholder="邮箱" clearable></el-input>
+                          <el-button v-show="!editMail" type="primary" @click="editEmail" plain>{{userInfoObj.email?'修改邮箱':'绑定邮箱'}}</el-button>
+                          <span>{{userInfoObj.email?userInfoObj.email:"无"}}</span>
                       </li>
                       <li>
                           <span class="leftTitle">性别：</span>
@@ -115,8 +116,6 @@
                           <span class="leftTitle">注册日期：</span>
                           <span>{{userInfoObj.createTime?userInfoObj.createTime:"无"}}</span>
                       </li>
-
-
                   </ul>
                   <div class="saveInfobtn">
                       <a class="tcolors-bg"  href="javascript:void(0);" @click="back">返 回</a>
@@ -128,7 +127,7 @@
               <header>
                   <h1>
                       个人中心
-                      <el-button class="gotoEdit" icon="el-icon-edit" @click="isEdit=!isEdit" round>编辑</el-button>
+                      <el-button class="gotoEdit" type="primary" icon="el-icon-edit" @click="isEdit=!isEdit" round>编辑</el-button>
                   </h1>
 
               </header>
@@ -155,6 +154,7 @@
                       </li>
                       <li>
                           <span class="leftTitle">邮箱：</span>
+                          <el-button v-show="!editMail" type="primary" @click="editEmail" plain>{{userInfoObj.email?'修改邮箱':'绑定邮箱'}}</el-button>
                           <span>{{userInfoObj.email?userInfoObj.email:"无"}}</span>
                       </li>
                       <li>
@@ -169,6 +169,34 @@
                   </ul>
               </section>
           </div>
+            
+          <el-dialog :title="userInfoObj.email?'修改邮箱':'绑定邮箱'" :visible.sync="editMail" center destroy-on-close>
+            <el-form label-width="250px" ref="dynamicValidateForm" :model="form">
+                <el-form-item label="邮箱" prop="email" :rules="[
+                    { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                    { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+                    ]">
+                    <el-input v-model="form.email" 
+                    style="width:50%" 
+                    :disabled="sengCaptcha" 
+                    placeholder="请输入邮箱" 
+                    clearable></el-input>
+                </el-form-item>
+                <el-form-item label="验证码" prop="captcha">
+                    <el-input 
+                    v-model="form.captcha" 
+                    style="width:50%" 
+                    :disabled="!sengCaptcha" 
+                    placeholder="请输入验证码" 
+                    clearable></el-input>
+                    <el-button type="primary" :loading="sendLoading" @click="sendMailCaptcha()">发送验证码</el-button>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="editMail = false,sengCaptcha = false">取 消</el-button>
+                <el-button type="primary" @click="verifyMail()">确 定</el-button>
+            </div>
+            </el-dialog>
           </div>
       </template>
       <div class="footer">
@@ -181,7 +209,7 @@
 
 <script>
 import header from '../components/header.vue'
-import {getUserInfo,savaUserInfo} from '../api/user.js'//获取用户信息，保存用户信息
+import {getUserInfo,savaUserInfo,sendMailCaptcha,verifyMail} from '../api/user.js'//获取用户信息，保存用户信息
 import store from '../store'
 import { getCollectList,deleteCollection,getQuestionList,deleteQuestion } from '../api/article'
 import { updateComment } from '../api/comment'
@@ -192,35 +220,42 @@ import axios from 'axios'
   export default {
       name: 'UserInfo',
       data() { //选项 / 数据
-          return {
-              uploadURL:'',
-              isEdit: false,
-              userInfo:{},//本地存储的用户信
-              userInfoObj:{
-                  avatar: "",
-                  checkPassword: "",
-                  createTime: "",
-                  email: "",
-                  sex: "",
-                  head_start: 0,
-                  id: 0,
-                  phonenumber: "",
-                  uid: 0,
-                  userName: "",
-                  password: "",
-                  userRole: 0,
-                  status: 0,
-                  nickName: "",
-              },//用户的信息
-              myCollection: false,//是否显示收藏面板
-              collectionList: [],//收藏列表
-              myQuestion: false,//是否显示反馈面板
-              questionList: [],//反馈列表
-              description: '',//问题描述
-              isLoading: false,
-              haslogin: false,
-              ip: ''
-          }
+            return {
+                sendLoading: false,
+                sengCaptcha: false,
+                editMail: false,
+                uploadURL:'',
+                isEdit: false,
+                userInfo:{},//本地存储的用户信
+                userInfoObj:{
+                    avatar: "",
+                    checkPassword: "",
+                    createTime: "",
+                    email: "",
+                    sex: "",
+                    head_start: 0,
+                    id: 0,
+                    phonenumber: "",
+                    uid: 0,
+                    userName: "",
+                    password: "",
+                    userRole: 0,
+                    status: 0,
+                    nickName: "",
+                },//用户的信息
+                myCollection: false,//是否显示收藏面板
+                collectionList: [],//收藏列表
+                myQuestion: false,//是否显示反馈面板
+                questionList: [],//反馈列表
+                description: '',//问题描述
+                isLoading: false,
+                haslogin: false,
+                ip: '',
+                form: {
+                    email: '',
+                    captcha: ''
+                }
+            }
       },
       computed: {
           userId: {
@@ -245,7 +280,47 @@ import axios from 'axios'
           }
       },
       methods: { //事件处理器
-          handleAvatarSuccess(res, file) {//上传头像
+            sendMailCaptcha(){  //发送邮箱验证码
+                    this.$refs["dynamicValidateForm"].validate((valid) => {
+                            if (valid) {
+                                this.sendLoading = true;
+                                this.sengCaptcha = true;
+                                sendMailCaptcha({email:this.form.email}).then(res => {
+                                    this.sendLoading = false;
+                                    this.$message.success("验证码已发送到邮箱，注意查收");
+                                })
+                            } else {
+                                return false;
+                            }
+                        });
+                },
+            verifyMail(){   //验证邮箱
+                if(!this.form.captcha){
+                    this.$message.error("请填写验证码");
+                    return;
+                }
+                this.$refs["dynamicValidateForm"].validate((valid) => {
+                    if (valid) {
+                        verifyMail({email:this.form.email,captcha:this.form.captcha}).then(res => {
+                            this.editMail = false;
+                            this.sengCaptcha = false;
+                            this.form.captcha = '';
+                            this.$message.success("邮箱修改成功");
+                            this.routeChange();
+                        })
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            editEmail(){
+                this.form = {
+                    email: '',
+                    captcha: ''
+                }
+                this.editMail = !this.editMail;
+            },
+            handleAvatarSuccess(res, file) {//上传头像
               if(res.code == 200){
                   this.userInfoObj.avatar = res.data;
                   this.userInfoObj.head_start = 1;

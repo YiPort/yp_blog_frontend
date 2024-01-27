@@ -80,3 +80,27 @@ export function getOtherUser(userId) {
     }
   })
 }
+
+//  发送邮箱验证码
+export function sendMailCaptcha(query) {
+  return request ({
+    url: '/mail/sendMailCaptcha',
+    method: 'get',
+    headers: {
+      isToken: true
+    },
+    params: query
+  })
+}
+
+//  邮箱验证
+export function verifyMail(query) {
+  return request ({
+    url: '/mail/verifyMail',
+    method: 'post',
+    headers: {
+      isToken: true
+    },
+    params: query
+  })
+}
