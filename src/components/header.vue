@@ -22,6 +22,8 @@
               </el-submenu>
               <el-menu-item style="margin-right: 15px" index="/Write"><i class="fa fa-wa fa-users"></i>写博客</el-menu-item>
 							<el-autocomplete
+              :readonly="readonly"
+              autocomplete="off"
 							v-model="inputState"
 							:fetch-suggestions="querySearchAsync"
 							placeholder="搜索标题|侧边按钮搜索内容"
@@ -41,7 +43,10 @@
 									<el-dropdown-menu slot="dropdown">
 										<a href="#/UserInfo">
 											<el-dropdown-item icon="el-icon-user">个人中心</el-dropdown-item>
-										</a>
+                    </a>
+                    <a href="#/Help">
+                      <el-dropdown-item icon="el-icon-service">帮助中心</el-dropdown-item>
+                    </a>
 										<el-dropdown-item divided icon="el-icon-switch-button" command="userlogout">退出登录</el-dropdown-item>
 									</el-dropdown-menu>
 									</el-dropdown>
@@ -74,9 +79,11 @@
 				<div><span id="luke"></span></div>
 			</div>
 			<div class="h-information">
-        <img :src="this.$store.state.themeObj.head_portrait?this.$store.state.themeObj.head_portrait:'static/img/tou.png'" alt="">
-				<h2 class="h-description">
-          {{this.$store.state.themeObj.autograph?this.$store.state.themeObj.autograph:"三更灯火五更鸡，正是男儿读书时"}}
+        <a :href="userInfo?'#/UserInfo':'#/'">
+          <img style="cursor: pointer;" :src="userInfo.avatar?userInfo.avatar:'static/img/tou.png'" alt="">
+        </a>
+        <h2 class="h-description">
+          {{this.$store.state.themeObj.autograph?this.$store.state.themeObj.autograph:''}}
         </h2>
 			</div>
 		</div>
@@ -93,6 +100,7 @@
 	export default {
 		data() { //选项 / 数据
 			return {
+        readonly: true,
 				userInfo: '', //用户信息
 				haslogin: false, //是否已登录
         isAdmin: false, //是否是管理员
@@ -249,6 +257,7 @@
 				}
 			},
 			getArticleIndex() {	//获取文章索引数据
+        this.readonly = false;
 				getArticleIndex().then(response => {
 					//为这个数组中每一个对象加一个value字段, autocomplete只识别value字段并在下拉列中显示
 					/* for(let i of response){
@@ -271,15 +280,20 @@
 				};
 			},
 			handleSelectTitle(item) {	//处理选中菜单
+        this.readonly = false;
 				this.inputState = this.inputStateOld;	//保持搜索框不变
 				const articleId = item.articleId;
 				router.push({
 					path: '/DetailArticle?aid=' + articleId
 				});
-				if(item.indexPosition) {		//如果是二级标题则定位到标题位置
-					let position = item.indexPosition;
-					$("html,body").animate({ scrollTop: position - 35 }, 500);
-				}
+        this.$nextTick(() => {
+          setTimeout(() => {
+            if(item.indexPosition) {		//如果是二级标题则定位到标题位置
+              let position = item.indexPosition;
+              $("html,body").animate({ scrollTop: position - 35 }, 500);
+            }
+          }, 600);
+				})
 			},
 		},
 		components: { //定义组件

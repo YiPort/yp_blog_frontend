@@ -75,8 +75,6 @@ export default new Router({
 			},
 			name: 'FriendsLink'
 		}, //友链
-
-
 		{
 			path: '/Login',
 			component: resolve => require(['../pages/Login.vue'], resolve),
@@ -101,6 +99,14 @@ export default new Router({
       },
       name: 'Write'
     }, //写博客文章
+    {
+      path: '/Help',
+      component: resolve => require(['../pages/Help.vue'], resolve),
+      meta: {
+        auth: true
+      },
+      name: 'Help'
+    }, //帮助中心
     {
       path: '/System/Ip',
       component: resolve => require(['../pages/system/IpCount.vue'], resolve),

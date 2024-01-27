@@ -1,6 +1,6 @@
 <template>
     <div>
-    <sg-navbar></sg-navbar>
+    <yp-navbar></yp-navbar>
     <div style="margin: 20px">
         <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" label-width="68px">
         <el-form-item label="评论类型" prop="status">
@@ -324,7 +324,7 @@ export default {
         },
     },
     components: {
-        'sg-navbar':header,
+        'yp-navbar':header,
     }
 }
 </script>

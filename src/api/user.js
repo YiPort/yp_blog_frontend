@@ -84,7 +84,7 @@ export function getOtherUser(userId) {
 //  发送邮箱验证码
 export function sendMailCaptcha(query) {
   return request ({
-    url: '/mail/sendMailCaptcha',
+    url: '/mail/sendVerifyMailCaptcha',
     method: 'get',
     headers: {
       isToken: true
@@ -100,6 +100,42 @@ export function verifyMail(query) {
     method: 'post',
     headers: {
       isToken: true
+    },
+    params: query
+  })
+}
+
+//  发送找回账号验证码
+export function sendRetrieveAccountCaptcha(query) {
+  return request ({
+    url: '/mail/sendRetrieveAccountCaptcha',
+    method: 'get',
+    headers: {
+      isToken: false
+    },
+    params: query
+  })
+}
+
+//  找回账号
+export function retrieveAccount(query) {
+  return request ({
+    url: '/mail/retrieveAccount',
+    method: 'get',
+    headers: {
+      isToken: false
+    },
+    params: query
+  })
+}
+
+//  发送忘记密码验证码
+export function sendUpdatePasswordCaptcha(query) {
+  return request ({
+    url: '/mail/sendUpdatePasswordCaptcha',
+    method: 'get',
+    headers: {
+      isToken: false
     },
     params: query
   })
