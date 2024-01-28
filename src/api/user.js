@@ -140,3 +140,15 @@ export function sendUpdatePasswordCaptcha(query) {
     params: query
   })
 }
+
+//  修改密码
+export function updatePasswordByMail(data) {
+  return request ({
+    url: '/mail/updatePasswordByMail',
+    method: 'post',
+    headers: {
+      isToken: false
+    },
+    data: data
+  })
+}
