@@ -1,6 +1,6 @@
 <template>
     <div>
-        <wbc-nav></wbc-nav>
+        <yp-nav></yp-nav>
         <el-card class="box-card">
         <div>
             <el-collapse accordion>
@@ -24,25 +24,27 @@
         </div>
         </el-card>
         <el-dialog title="找回账号" :visible.sync="accountDialog" center destroy-on-close :close-on-click-modal="false">
-        <el-form v-if="showForm" label-width="250px" ref="dynamicValidateForm" :model="accountForm">
+        <el-form v-if="showForm" status-icon label-width="250px" ref="dynamicValidateForm" :model="accountForm">
             <el-form-item label="邮箱" prop="email" :rules="[
                 { required: true, message: '请输入邮箱地址', trigger: 'blur' },
                 { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
                 ]">
-                <el-input v-model="accountForm.email"
-                style="width:50%"
-                placeholder="请输入账号绑定的邮箱"
-                clearable></el-input>
+                <el-input v-model="accountForm.email" 
+                style="width:50%" 
+                placeholder="请输入账号绑定的邮箱" 
+                clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-message" />
+                </el-input>
             </el-form-item>
             <el-form-item label="验证码" prop="captcha">
-                <el-input
-                v-model="accountForm.captcha"
-                style="width:50%"
-                :disabled="!sengCaptcha"
+                <el-input 
+                v-model="accountForm.captcha" 
+                style="width:50%" 
+                :disabled="!sengCaptcha" 
                 placeholder="请输入验证码"
                 @keyup.enter.native="sendForm('account')"
-                clearable></el-input>
-                <el-button type="primary" :loading="sendLoading" @click="sendMailCaptcha('account')">发送验证码</el-button>
+                clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-chat-line-round" />
+                </el-input>
+                <time-button :reset="reset" @click.native="sendMailCaptcha('account')" content="发送验证码"/>
             </el-form-item>
         </el-form>
         <div v-else>
@@ -56,41 +58,49 @@
         </el-dialog>
 
         <el-dialog title="修改密码" :visible.sync="passwordDialog" center destroy-on-close :close-on-click-modal="false">
-        <el-form label-width="250px" status-icon ref="dynamicValidateForm" :rules="rules" :model="passwordForm">
+        <el-form label-width="250px" status-icon ref="dynamicValidateForm1" :rules="rules" :model="passwordForm">
             <el-form-item label="邮箱" prop="email">
-                <el-input
+                <el-input 
                 v-model="passwordForm.email"
                 style="width:50%"
                 autocomplete="off"
                 placeholder="请输入账号绑定的邮箱"
-                clearable></el-input>
+                clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-message" />
+                </el-input>
             </el-form-item>
             <el-form-item label="新密码" prop="password">
-                <el-input
-                v-model="passwordForm.password"
-                style="width:50%"
+                <el-input 
+                type="password"
+                v-model="passwordForm.password" 
+                style="width:50%" 
                 placeholder="请输入新密码"
-                autocomplete="off"
-                clearable></el-input>
+                show-password
+                autocomplete="new-password">
+                <i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-lock" />
+                </el-input>
             </el-form-item>
             <el-form-item label="再次输入密码" prop="checkPassword">
                 <el-input
-                v-model="passwordForm.checkPassword"
+                type="password"
+                v-model="passwordForm.checkPassword" 
                 style="width:50%"
-                placeholder="请输入再次输入密码"
-                autocomplete="off"
-                @keyup.enter.native="sendForm('password')"
-                clearable></el-input>
+                placeholder="请再次输入新密码"
+                show-password
+                autocomplete="new-password"
+                @keyup.enter.native="sendForm('password')">
+                <i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-lock" />
+                </el-input>
             </el-form-item>
             <el-form-item label="验证码" prop="captcha">
-                <el-input
-                v-model="passwordForm.captcha"
-                style="width:50%"
-                :disabled="!sengCaptcha"
-                placeholder="请输入验证码"
+                <el-input 
+                v-model="passwordForm.captcha" 
+                style="width:50%" 
+                :disabled="!sengCaptcha" 
+                placeholder="请输入验证码" 
                 @keyup.enter.native="sendForm('password')"
-                clearable></el-input>
-                <el-button type="primary" :loading="sendLoading" @click="sendMailCaptcha('password')">发送验证码</el-button>
+                clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-chat-line-round" />
+                </el-input>
+                <time-button :reset="reset" @click.native="sendMailCaptcha('password')" content="发送验证码"/>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -104,17 +114,19 @@
 <script>
 import header from '../components/header.vue'
 import { sendRetrieveAccountCaptcha,retrieveAccount,sendUpdatePasswordCaptcha,updatePasswordByMail } from '../api/user.js'
+import timeButton from '../components/timeButton.vue'
 
 export default {
     data() {
         var validatePass = (rule, value, callback) => {
+            let passwordRegexp = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$\%\^\&\*])[0-9a-zA-Z!@#$\%\^\&\*]{8,16}/;
             if (value === '') {
                 callback(new Error('请输入密码'));
-            } else if (value.length < 8 || value.length > 16 ) {
-                callback(new Error('密码为8~16位'));
+            } else if (!passwordRegexp.test(value)) {
+                callback(new Error('密码必须包含[数字][英文字母][!@#$%^&*]且长度在8-16之间'));
             }else {
-                if (this.passwordForm.password !== '') {
-                    this.$refs.dynamicValidateForm.validateField('checkPassword');
+                if (this.passwordForm.checkPassword !== '') {
+                    this.$refs.dynamicValidateForm1.validateField('checkPassword');
                 }
                 callback();
             }
@@ -129,14 +141,14 @@ export default {
             }
         };
         return {
-            email: 'blog@yiport.top',
+            email: 'ultima_ink@163.com',
             accountDialog: false,
             passwordDialog: false,
             accountForm: {
                 email: '',
                 captcha: ''
             },
-            sendLoading: false,
+            reset: false,
             sengCaptcha: false,
             showForm: true,
             myAccount: '',
@@ -165,34 +177,45 @@ export default {
     },
     methods: {
         sendMailCaptcha(flag){  //发送邮箱验证码
-            this.$refs["dynamicValidateForm"].validate((valid) => {
-                if (valid) {
-                    this.sendLoading = true;
-                    setTimeout(() => {
-                        this.sendLoading = false;
-                    }, 5000);
-                    this.sengCaptcha = true;
-                    if(flag==='account'){
+            if(flag==='account'){
+                this.$refs["dynamicValidateForm"].validate((valid) => {
+                    if (valid) {
+                        this.reset = false;
+                        this.sengCaptcha = true;
                         sendRetrieveAccountCaptcha({email:this.accountForm.email}).then(res => {
-                            this.sendLoading = false;
                             this.$message.success("验证码已发送到邮箱，注意查收");
+                        }).catch(() => {
+                            this.reset = true;
+                            this.sengCaptcha = true;
                         })
+                    } else {
+                        this.reset = true;
+                        return false;
                     }
-                    if(flag==='password'){
+                });
+            }
+            if(flag==='password'){
+                this.$refs["dynamicValidateForm1"].validate((valid) => {
+                    if (valid) {
+                        this.reset = false;
+                        this.sengCaptcha = true;
                         sendUpdatePasswordCaptcha({email:this.passwordForm.email}).then(res => {
-                            this.sendLoading = false;
                             this.$message.success("验证码已发送到邮箱，注意查收");
+                        }).catch(() => {
+                            this.reset = true;
+                            this.sengCaptcha = true;
                         })
+                    } else {
+                        this.reset = true;
+                        return false;
                     }
-                } else {
-                    return false;
-                }
-            });
+                });
+            }
         },
-        sendForm(flag){   //找回账号
-            this.$refs["dynamicValidateForm"].validate((valid) => {
-                if (valid) {
-                    if(flag==='account'){
+        sendForm(flag){   //表单提交
+            if(flag==='account'){
+                this.$refs["dynamicValidateForm"].validate((valid) => {
+                    if (valid) {
                         if(!this.accountForm.captcha){
                             this.$message.warning("请填写验证码");
                             return;
@@ -201,8 +224,14 @@ export default {
                             this.showForm = false;
                             this.myAccount = res;
                         })
+                    } else {
+                        return false;
                     }
-                    if(flag==='password'){
+                });
+            };
+            if(flag==='password'){
+                this.$refs["dynamicValidateForm1"].validate((valid) => {
+                    if (valid) {
                         if(!this.passwordForm.captcha){
                             this.$message.warning("请填写验证码");
                             return;
@@ -211,11 +240,11 @@ export default {
                             this.$message.success("密码修改成功");
                             this.passwordDialog = false;
                         })
+                    } else {
+                        return false;
                     }
-                } else {
-                    return false;
-                }
-            });
+                });
+            }
         },
         getAccount(){
             this.accountForm = {
@@ -223,7 +252,7 @@ export default {
                 captcha: ''
             }
             this.myAccount = '';
-            this.sendLoading = false;
+            this.reset = false;
             this.showForm = true;
             this.sengCaptcha = false;
             this.accountDialog = !this.accountDialog;
@@ -235,7 +264,7 @@ export default {
                 password: '',
                 checkPassword: ''
             }
-            this.sendLoading = false;
+            this.reset = false;
             this.sengCaptcha = false;
             this.passwordDialog = !this.passwordDialog;
         },
@@ -250,7 +279,8 @@ export default {
         }
     },
     components: { //定义组件
-        'wbc-nav':header,
+        'yp-nav':header,
+        'time-button':timeButton
     },
 }
 </script>

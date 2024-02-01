@@ -1,7 +1,7 @@
 <!-- 写博客 -->
 <template>
     <div>
-        <wbc-nav></wbc-nav>
+        <yp-nav></yp-nav>
         <div class="container">
             <!-- 回到顶部 -->
             <el-backtop :bottom="185" class="back-top" :visibility-height="2000">
@@ -563,7 +563,7 @@ import { addCategory,getCategoryList } from '../api/category'
             },
         },
         components: { //定义组件
-            'wbc-nav':header,
+            'yp-nav':header,
         },
         watch: {
             // 如果路由有变化，会再次执行该方法
