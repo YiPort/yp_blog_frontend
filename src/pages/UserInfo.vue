@@ -1,7 +1,7 @@
 <!-- 用户中心 -->
 <template>
   <div>
-      <wbc-nav></wbc-nav>
+      <yp-nav></yp-nav>
       <el-tooltip class="item" effect="dark" content="查看收藏" placement="left" :hide-after="1000">
           <el-button
           type="primary"
@@ -168,28 +168,28 @@
 
                   </ul>
               </section>
-          </div>
-            
-          <el-dialog :title="userInfoObj.email?'修改邮箱':'绑定邮箱'" :visible.sync="editMail" center destroy-on-close>
-            <el-form label-width="250px" ref="dynamicValidateForm" :model="form">
+            </div>
+
+            <el-dialog :title="userInfoObj.email?'修改邮箱':'绑定邮箱'" :visible.sync="editMail" center destroy-on-close>
+            <el-form label-width="250px" status-icon ref="dynamicValidateForm" :model="form">
                 <el-form-item label="邮箱" prop="email" :rules="[
                     { required: true, message: '请输入邮箱地址', trigger: 'blur' },
                     { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
                     ]">
-                    <el-input v-model="form.email" 
-                    style="width:50%" 
-                    :disabled="sengCaptcha" 
-                    placeholder="请输入邮箱" 
+                    <el-input v-model="form.email"
+                    style="width:50%"
+                    placeholder="请输入邮箱"
                     clearable></el-input>
                 </el-form-item>
                 <el-form-item label="验证码" prop="captcha">
-                    <el-input 
-                    v-model="form.captcha" 
-                    style="width:50%" 
-                    :disabled="!sengCaptcha" 
-                    placeholder="请输入验证码" 
+                    <el-input
+                    v-model="form.captcha"
+                    style="width:50%"
+                    :disabled="!sengCaptcha"
+                    placeholder="请输入验证码"
+                    @keyup.enter.native="verifyMail()"
                     clearable></el-input>
-                    <el-button type="primary" :loading="sendLoading" @click="sendMailCaptcha()">发送验证码</el-button>
+                    <time-button :reset="reset" @click.native="sendMailCaptcha()" content="发送验证码"/>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -217,16 +217,18 @@ import { MessageBox } from 'element-ui'
 import {getToken, setToken} from '../utils/auth'
 import router from '@/router'
 import axios from 'axios'
+import timeButton from '../components/timeButton.vue'
+
   export default {
       name: 'UserInfo',
       data() { //选项 / 数据
             return {
-                sendLoading: false,
+                reset: false,
                 sengCaptcha: false,
                 editMail: false,
                 uploadURL:'',
                 isEdit: false,
-                userInfo:{},//本地存储的用户信
+                userInfo:{},//本地存储的用户信息
                 userInfoObj:{
                     avatar: "",
                     checkPassword: "",
@@ -282,25 +284,28 @@ import axios from 'axios'
       methods: { //事件处理器
             sendMailCaptcha(){  //发送邮箱验证码
                     this.$refs["dynamicValidateForm"].validate((valid) => {
-                            if (valid) {
-                                this.sendLoading = true;
+                        if (valid) {
+                            this.reset = false;
+                            this.sengCaptcha = true;
+                            sendMailCaptcha({email:this.form.email}).then(res => {
+                                this.$message.success("验证码已发送到邮箱，注意查收");
+                            }).catch(() => {
+                                this.reset = true;
                                 this.sengCaptcha = true;
-                                sendMailCaptcha({email:this.form.email}).then(res => {
-                                    this.sendLoading = false;
-                                    this.$message.success("验证码已发送到邮箱，注意查收");
-                                })
-                            } else {
-                                return false;
-                            }
-                        });
+                            })
+                        } else {
+                            this.reset = true;
+                            return false;
+                        }
+                    });
                 },
             verifyMail(){   //验证邮箱
-                if(!this.form.captcha){
-                    this.$message.error("请填写验证码");
-                    return;
-                }
                 this.$refs["dynamicValidateForm"].validate((valid) => {
                     if (valid) {
+                        if(!this.form.captcha){
+                            this.$message.warning("请填写验证码");
+                            return;
+                        }
                         verifyMail({email:this.form.email,captcha:this.form.captcha}).then(res => {
                             this.editMail = false;
                             this.sengCaptcha = false;
@@ -318,6 +323,7 @@ import axios from 'axios'
                     email: '',
                     captcha: ''
                 }
+                this.reset = false;
                 this.editMail = !this.editMail;
             },
             handleAvatarSuccess(res, file) {//上传头像
@@ -394,9 +400,7 @@ import axios from 'axios'
                       type: 'warning'
                     }).then(() => {
                           localStorage.setItem('logUrl', router.currentRoute.fullPath);
-                          router.push({
-                              path: '/Login?login=1'
-                          });
+                          this.$router.push({path: '/Login?login=1'})
                        }).catch(() => { })
                           return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
           },
@@ -474,15 +478,23 @@ import axios from 'axios'
           }
       },
       components: { //定义组件
-          'wbc-nav':header,
+          'yp-nav':header,
+          'time-button':timeButton
       },
       watch: {
          // 如果路由有变化，会再次执行该方法
          '$route':'routeChange'
        },
       created() { //生命周期函数
-          this.routeChange();
           this.uploadURL = store.state.resourceURL+'upload'
+          this.$nextTick(() => {
+            if(localStorage.getItem('userInfo')){
+                this.routeChange();
+            }else{
+                this.$message.warning('请先登录！')
+                this.$router.push({path: '/Login?login=1'})
+            }
+        })
       }
   }
 </script>
