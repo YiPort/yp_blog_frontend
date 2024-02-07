@@ -50,14 +50,18 @@
         <el-table-column label="评论内容" align="center" :show-overflow-tooltip="true">
             <template slot-scope="scope">
             <router-link :to="scope.row.type==='0'?'/DetailArticle?aid=' + scope.row.articleId:'/Friendslink'" class="link-type">
-                <span class="comment-table" style="color: #409EFF;">{{ scope.row.content }}</span>
-            </router-link>
+                <p style="color: #409EFF;" class="comment-table" 
+                @click="filterContentDetail(scope.row.filterContent,scope.row.avatar,scope.row.createNick)">
+                {{formatter(scope.row.filterContent)}}</p>
+             </router-link>
             </template>
         </el-table-column>
         <el-table-column label="过滤后的评论" align="center">
             <template slot-scope="scope">
-                <p style="color: #409EFF;" class="comment-table" @click="filterContentDetail(scope.row.filterContent)">{{formatter(scope.row.filterContent)}}</p>
-            </template>
+                <p style="color: #409EFF;" class="comment-table" 
+                @click="filterContentDetail(scope.row.filterContent,scope.row.avatar,scope.row.createNick)">
+                {{formatter(scope.row.filterContent)}}</p>
+             </template>
         </el-table-column>
         <el-table-column label="状态" align="center" prop="status">
             <template slot-scope="scope">
@@ -82,7 +86,9 @@
         :visible.sync="dialogVisible"
         width="30%"
         center>
-        <p class="comment-table" v-html="analyzeEmoji(filterContent)" />
+        <img class="avatar-img" :src="avatar?avatar:$store.state.errorImg">
+        <p style="font-size:1.5em;font-weight:bolder;margin-bottom:5px">{{createNick}}</p>
+        <p style="margin-left: 60px;" class="comment-table" v-html="analyzeEmoji(filterContent)" />
         <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="dialogVisible = false">确定</el-button>
         </div>
@@ -107,6 +113,8 @@ export default {
         return {
             loading: false,
             filterContent: '',
+            avatar: '',
+            createNick: '',
             dialogVisible: false,
             // 总条数
             total: 0,
@@ -229,7 +237,7 @@ export default {
             if(this.$store.state.isAdmin){
                 this.getList();
             }else{
-                Message({
+                this.$message({
                     type: 'error',
                     message: '无访问权限！'
                 })
@@ -293,8 +301,10 @@ export default {
             }
             return str;
         },
-        filterContentDetail(filterContent){
+        filterContentDetail(filterContent,avatar,createNick){
             this.filterContent = filterContent;
+            this.avatar=avatar;
+            this.createNick=createNick;
             this.dialogVisible = true;
         },
         handleDelete(row){
@@ -320,6 +330,14 @@ export default {
         /** 重置按钮操作 */
         resetQuery() {
             this.dateRange = [];
+            this.queryParams = {
+                pageNum: 1,
+                pageSize: 10,
+                type: undefined,
+                articleId: undefined,
+                startTime: undefined,
+                endTime: undefined
+            },
             this.handleQuery();
         },
     },
@@ -342,5 +360,16 @@ export default {
 .comment-table a{
     letter-spacing: 0;
     color: #47a8cf;
+}
+.avatar-img{
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    float: left;
+    transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    margin-right: 15px;
+    object-fit: cover;
+    cursor: pointer;
 }
 </style>
