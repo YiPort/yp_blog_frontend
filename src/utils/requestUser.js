@@ -13,7 +13,7 @@ const service = axios.create({
   //baseURL: store.state.SSOLogin,
   baseURL: store.state.SSOLogin,
   // 超时
-  timeout: 2 * 5000
+  timeout: 4 * 5000
 })
 
 // request登录拦截器
@@ -75,6 +75,8 @@ service.interceptors.response.use(res => {
 
       }).catch(() => { })
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+    } else if (code === 404) {
+      router.push({path: '/404'});
     } else if (code === 500) {
       Message({
         message: msg,
@@ -88,7 +90,7 @@ service.interceptors.response.use(res => {
       })
       return Promise.reject('error')
     } else {
-      if(res.data.data.token) {     //返回token则存储token
+      if(res.data.data && res.data.data.token) {     //返回token则存储token
         setToken(res.data.data.token);
         return res.data.data.userInfo;
       }
