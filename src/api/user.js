@@ -1,14 +1,14 @@
 import request from '@/utils/requestUser'
 
 // 登录
-export function userLogin(username,password,captcha,uuid) {
+export function userLogin(data) {
   return request({
-    url: '/user/login',
-    method: 'post',
-    headers: {
-      isToken: false
-    },
-    data: {"username":username,'password':password,'captcha':captcha,'uuid':uuid}
+      url: '/user/login',
+      method: 'post',
+      headers: {
+          isToken: false
+        },
+      data: data
   })
 }
 
