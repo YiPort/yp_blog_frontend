@@ -150,7 +150,7 @@
                                     <span v-if="$store.state.isMy && item.label==='1'" class="tmsg-replay-span" @click="handleTop(item.id,'0')">
                                         取消置顶
                                     </span>
-                                    <span v-if="isAdmin||item.createBy === userId" class="tmsg-replay-span" 
+                                    <span v-if="isAdmin||item.createBy === userId" class="tmsg-replay-span"
                                     @click="item.createBy !== userId?deleteComment(item.id):deleteMyComment(item.id)">
                                         删除
                                     </span>
@@ -198,7 +198,7 @@
                                             </slot>
                                         </el-popover>
                                         <div class="i-name">
-                                            <span :style="citem.createBy === userId?'color:#fb7299':''" >{{citem.createNick}}</span> 
+                                            <span :style="citem.createBy === userId?'color:#fb7299':''" >{{citem.createNick}}</span>
                                           </div>
                                           <div v-if="citem.createBy===$store.state.createBy" class="m-class">
                                             博主
@@ -211,7 +211,7 @@
                                     <section>
                                           <p style="letter-spacing: 1px" v-html="analyzeEmoji(citem.filterContent)"></p>
                                           <div class="tmsg-replay-div">
-                                                <span v-if="isAdmin||citem.createBy === userId" class="tmsg-replay-span" 
+                                                <span v-if="isAdmin||citem.createBy === userId" class="tmsg-replay-span"
                                                 @click="citem.createBy !== userId?deleteComment(citem.id):deleteMyComment(citem.id)">
                                                     删除
                                                 </span>
@@ -419,8 +419,8 @@ export default {
                 return; // Exit the function if cont is not a string
             }
             // console.log('cont',cont)
-            var pattern1 = /\[[\u4e00-\u9fa5]+\]/g;
-            var pattern2 = /\[[\u4e00-\u9fa5]+\]/;
+            var pattern1 = /\[[a-z0-9\u4e00-\u9fa5]+\]/g;
+            var pattern2 = /\[[a-z0-9\u4e00-\u9fa5]+\]/;
             var urlRegex= /(https|http|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|](&nbsp;|<br\/>){1}/g;
             var content = cont.match(pattern1);
             // console.log('content', content);
