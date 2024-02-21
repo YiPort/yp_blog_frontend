@@ -2,15 +2,29 @@
 <template>
     <div>
         <div class="container" style="min-height: 86.5vh">
-            <div v-if="login==0||login==2" style="margin: auto;width: 50%;padding-top: 5px">
+            <div v-if="login==0||login==2||registerLo==0" style="margin: auto;width: 50%;padding-top: 5px">
                 <el-steps :active="active" finish-status="success">
                     <el-step title="注册"></el-step>
+                    <el-step title="登录"></el-step>
                     <el-step title="绑定邮箱"></el-step>
                 </el-steps>
             </div>
+            <el-result v-if="login==3" :icon="hasRegister?'success':'info'" :title="hasRegister?'注册成功！':''" subTitle="请根据提示进行操作">
+            <template slot="extra">
+                <el-button @click="$router.push({path:'/UserInfo'})" type="primary" size="medium"><i class="el-icon-user"/> 个人中心</el-button>
+                <el-button @click="$router.push({path:'/Home'})" type="primary" size="medium"><i class="el-icon-d-arrow-left"/> 去首页</el-button>
+                <el-button v-if="!hasRegister" @click="$router.push({path:'/Login?login=0'})" type="primary" size="medium"><i class="el-icon-refresh"/> 重新注册</el-button>
+                <el-button v-if="hasLogin&&!hasMail" @click="$router.push({path:'/Login?login=2'})" type="primary" size="medium"><i class="el-icon-message"/> 绑定邮箱</el-button>
+                <el-button v-if="!hasLogin" @click="$router.push({path:'/Login?login=1'})" type="primary" size="medium"><i class="el-icon-finished"/> 登录</el-button>
+            </template>
+            </el-result>
             <div v-if="login==2" class="mailBox">
                 <div class="lr-title">
-                        <h1>绑定邮箱</h1>
+                        <h1>绑定邮箱
+                            <el-tooltip style="cursor: pointer;" effect="dark" content="建议绑定邮箱" placement="top-start">
+                                <i class="el-icon-info" />
+                            </el-tooltip>
+                        </h1>
                     </div>
                 <el-form status-icon ref="dynamicValidateForm1" :model="mailForm">
                     <el-form-item prop="email" :rules="[
@@ -39,11 +53,14 @@
                 </div>
                 <div class="lr-title">
                 <p>
-                    <a href="#/Login?login=1" class="tcolors" >跳过<i class="el-icon-d-arrow-right"></i></a>
+                    <a href="#/Login?login=3" class="tcolors" >跳过<i class="el-icon-d-arrow-right"></i></a>
                 </p>
                 </div>
+                <div class="lr-title"  style="text-align: center;color: red;">
+                    <em>绑定邮箱后可以通过邮箱找回账号、修改密码</em>
+                </div>
             </div>
-            <div v-if="login==1" class="loginTitle"/>
+            <div v-if="login==1&&registerLo==undefined" class="loginTitle"/>
             <!-- 登录 -->
             <div>
                 <div v-if="login==1" class="loginBox">
@@ -82,7 +99,7 @@
                         <img v-else style="float:right;cursor:pointer;" :src="loCaptchaImage" alt="请稍后再试" @click="handleClickImge(1)" title="看不清？点击刷新" />
                     </el-form-item>
                     </el-form>
-                    <div class="lr-title">
+                    <div v-if="registerLo==undefined" class="lr-title">
                     <p style="left: 0;">
                         <a class="tcolors" href="#/Help">忘记账号密码？</a>
                     </p>
@@ -93,7 +110,7 @@
                     </div>
                     <div class="lr-btn tcolors-bg" @click="gotoHome">登 录</div>
                     <div class="lr-title">
-                    <p><a class="tcolors"  href="#/Home">暂不登录<i class="el-icon-d-arrow-right"></i></a></p>
+                    <p><a class="tcolors" href="#/Home">暂不登录<i class="el-icon-d-arrow-right"></i></a></p>
                     </div>
                     <div class="otherLogin" >
                     </div>
@@ -153,7 +170,7 @@
                         <a class="tcolors" href="#/Help">注册遇到问题？</a>
                     </p>
                     <p>
-                        <a href="javascript:void(0);" @click="goLogin()" class="tcolors" >登录</a>
+                        有账号？去<a href="javascript:void(0);" @click="goLogin()" class="tcolors" >登录</a>
                     </p>
                     </div>
                     <div class="lr-btn tcolors-bg" @click="newRegister">注 册</div>
@@ -257,21 +274,24 @@ export default {
             loCaptchaImage: undefined,//登录图片验证码
             reCaptchaImage: undefined,//注册图片验证码
             login: 0,//是否已经登录
-            urlstate: 0,//重新注册
+            registerLo: undefined,//注册登录
             active: 0,
+            hasRegister: false,
+            hasMail: false,
+            hasLogin: false,
             userInfoObj: {
                 password: '',
                 checkPassword: ''
             },
             reRules: {
                 userName: [
-                    { required: true, validator: validateAcco, trigger: 'blur' }
+                    { required: true, validator: validateAcco, trigger: ['blur', 'change'] }
                 ],
                 password: [
-                    { required: true, validator: validatePass, trigger: 'blur' }
+                    { required: true, validator: validatePass, trigger: ['blur', 'change'] }
                 ],
                 checkPassword: [
-                    { required: true, validator: validatePass2, trigger: 'blur' }
+                    { required: true, validator: validatePass2, trigger: ['blur', 'change'] }
                 ],
                 captcha: [
                     { required: true, validator: validateCaptcha, trigger: 'blur' }
@@ -279,10 +299,10 @@ export default {
             },
             loRules: {
                 userName: [
-                    { required: true, validator: validateAcco, trigger: 'blur' }
+                    { required: true, validator: validateAcco, trigger: ['blur', 'change'] }
                 ],
                 password: [
-                    { required: true, validator: validatePass3, trigger: 'blur' }
+                    { required: true, validator: validatePass3, trigger: ['blur', 'change'] }
                 ],
                 captcha: [
                     { required: true, validator: validateCaptcha, trigger: 'blur' }
@@ -293,7 +313,8 @@ export default {
     methods: { //事件处理器
         routeChange(){
             this.login = this.$route.query.login==undefined?1:parseInt(this.$route.query.login);//获取传参的login
-            this.urlstate = this.$route.query.urlstate==undefined?0:this.$route.query.urlstate;//获取传参的usrlstate状态码
+            this.registerLo = this.$route.query.registerLo==undefined?undefined:this.$route.query.registerLo;//获取传参的registerLo状态码
+            this.hasLogin = localStorage.getItem('token')?true:false;
         },
         // 点击获取验证码
         handleClickImge(flag){
@@ -316,10 +337,16 @@ export default {
                         localStorage.setItem("userInfo",JSON.stringify(response));
                         // 登录成功提示
                         this.$message.success('登录成功!');
-                        if(localStorage.getItem('logUrl')){
-                            this.$router.push({path:localStorage.getItem('logUrl')});
-                        }else{
-                            this.$router.push({path:'/'});
+                        if(this.registerLo===undefined){
+                            if(localStorage.getItem('logUrl')){
+                                this.$router.push({path:localStorage.getItem('logUrl')});
+                            }else{
+                                this.$router.push({path:'/'});
+                            }
+                        }
+                        if(this.registerLo==0){
+                            this.active = 2;
+                            this.goMail();
                         }
                     })
                 }
@@ -331,7 +358,8 @@ export default {
                     userRegister(this.registerForm).then((res) => {
                         this.$message.success('注册成功!');
                         this.active = 1;
-                        this.goMail();
+                        this.hasRegister = true;
+                        this.goReLogin();
                     })
                 }else {
                     return false;
@@ -366,9 +394,10 @@ export default {
                         this.editMail = false;
                         this.sengCaptcha = false;
                         this.mailForm.captcha = '';
-                        this.active = 2;
+                        this.hasMail = true;
+                        this.active = 3;
                         this.$message.success("邮箱绑定成功");
-                        this.goLogin();
+                        this.$router.push({path: '/Login?login=3'})
                     })
                 } else {
                     return false;
@@ -395,6 +424,16 @@ export default {
             };
             this.reCaptchaImage = undefined;
             this.$router.push({path:'/Login?login=0'});
+        },
+        goReLogin(){//去登陆
+            this.loginForm = {
+                userName: '',
+                password: '',
+                captcha: '',
+                uuid: ''
+            };
+            this.loCaptchaImage = undefined;
+            this.$router.push({path:'/Login?login=1&registerLo=0'});
         },
         goMail(){//去绑定邮箱
             this.mailForm = {

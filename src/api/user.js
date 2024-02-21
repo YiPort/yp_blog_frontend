@@ -24,14 +24,14 @@ export function getCaptchaImage() {
 }
 
  // 用户注册
-export function userRegister(username,nickName,email,password) {
+export function userRegister(data) {
     return request({
         url: '/user/register',
         method: 'post',
         headers: {
             isToken :false
         },
-        data: {"username":username,"nickName":nickName,"email":email,"password":password}
+        data: data
     })
 }
 
