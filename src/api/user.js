@@ -152,3 +152,74 @@ export function updatePasswordByMail(data) {
     data: data
   })
 }
+
+// 修改密码
+export function updatePassword(data) {
+  return request({
+    url: '/user/updatePassword',
+    method: 'put',
+    headers: {
+      isToken: true
+    },
+    data: data
+  })
+}
+
+
+//  发送忘记密码验证码
+export function sendLoginMailCaptcha(query) {
+  return request ({
+    url: '/mail/sendLoginByMailCaptcha',
+    method: 'get',
+    headers: {
+      isToken: false
+    },
+    params: query
+  })
+}
+
+// 管理员分页查询用户
+export function selectPageUser(query) {
+  return request({
+      url: '/user/system/searchList',
+      method: 'get',
+      headers: {
+          isToken: true
+      },
+      params: query
+  })
+}
+
+// 管理员删除用户
+export function deleteUserById(id) {
+  return request({
+      url: '/user/system/delete/' + id,
+      method: 'delete',
+      headers: {
+          isToken: true
+      }
+  })
+}
+
+// 管理员分页查询访问信息
+export function selectPageLoginInfo(query) {
+  return request({
+      url: '/user/system/loginInfo/searchList',
+      method: 'get',
+      headers: {
+          isToken: true
+      },
+      params: query
+  })
+}
+
+// 管理员删除访问信息
+export function deleteLoginInfo(id) {
+  return request({
+      url: '/user/system/loginInfo/deleteLoginInfo/' + id,
+      method: 'delete',
+      headers: {
+          isToken: true
+      }
+  })
+}

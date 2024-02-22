@@ -108,6 +108,14 @@ export default new Router({
       name: 'Help'
     }, //帮助中心
     {
+      path: '/System/User',
+      component: resolve => require(['../pages/system/User.vue'], resolve),
+      meta: {
+        auth: true
+      },
+      name: 'User'
+    }, //用户管理
+    {
       path: '/System/Ip',
       component: resolve => require(['../pages/system/IpCount.vue'], resolve),
       meta: {
@@ -123,6 +131,14 @@ export default new Router({
       },
       name: 'Comment'
     }, //评论管理
+    {
+      path: '/System/LoginInfo',
+      component: resolve => require(['../pages/system/LoginInfo.vue'], resolve),
+      meta: {
+        auth: true
+      },
+      name: 'Comment'
+    }, //用户访问信息管理
     {
       path: '/System/Cache',
       component: resolve => require(['../pages/system/Cache.vue'], resolve),
