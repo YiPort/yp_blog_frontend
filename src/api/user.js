@@ -1,14 +1,26 @@
 import request from '@/utils/requestUser'
 
-// 登录
-export function userLogin(data) {
+// 登录-账号密码登录
+export function loginByAccount(data) {
   return request({
-      url: '/user/login',
+      url: '/user/login/account',
       method: 'post',
       headers: {
           isToken: false
         },
       data: data
+  })
+}
+
+// 登录-邮箱验证码登录
+export function loginByEmail(data) {
+  return request({
+    url: '/user/login/email',
+    method: 'post',
+    headers: {
+      isToken: false
+    },
+    data: data
   })
 }
 

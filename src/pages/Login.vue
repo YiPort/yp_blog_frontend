@@ -57,7 +57,7 @@
                 </p>
                 </div>
                 <div class="lr-title"  style="text-align: center;color: red;">
-                    <em>绑定邮箱后可以通过邮箱找回账号、修改密码</em>
+                    <em>绑定邮箱后可以使用邮箱登录、找回账号、修改密码</em>
                 </div>
             </div>
             <div v-if="login==1&&registerLo==undefined" class="loginTitle"/>
@@ -91,12 +91,12 @@
                         <el-input
                         style="width:200px"
                         placeholder="请输入验证码"
-                        @keyup.enter.native="gotoHome"
+                        @keyup.enter.native="userLogin"
                         v-model="loginForm.captcha"
                         clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-chat-line-round" />
                         </el-input>
                         <el-button v-if="!loCaptchaImage" type="primary" @click="handleClickImge(1)">获取验证码</el-button>
-                        <img v-else style="float:right;cursor:pointer;" :src="loCaptchaImage" alt="请稍后再试" @click="handleClickImge(1)" title="看不清？点击刷新" />
+                        <img v-else class="codeImage" style="float:right;cursor:pointer;" :src="loCaptchaImage" alt="请稍后再试" @click="handleClickImge(1)" title="看不清？点击刷新" />
                     </el-form-item>
                     </el-form>
                     <div v-if="registerLo==undefined" class="lr-title">
@@ -108,11 +108,16 @@
                         <!-- 没有账号？<a href="https://user.ultima.ink/#/Register?origin=ultima.ink%2F%23%2FLogin%3Flogin%3D1" class="tcolors" >用户中心注册</a> -->
                     </p>
                     </div>
-                    <div class="lr-btn tcolors-bg" @click="gotoHome">登 录</div>
-                    <div class="lr-title">
+                    <div class="lr-btn tcolors-bg" @click="userLogin">登 录</div>
+                    <div class="lr-title" style="margin-bottom: 15px;">
                     <p><a class="tcolors" href="#/Home">暂不登录<i class="el-icon-d-arrow-right"></i></a></p>
                     </div>
-                    <div class="otherLogin" >
+                    <div v-if="registerLo==undefined" class="mail-login" >
+                        <a href="javascript:void(0)">
+                            <el-tooltip style="cursor:pointer;" effect="dark" content="邮箱登录" placement="top">
+                                <i @click="loginByMail=!loginByMail" class="el-icon-message" />
+                            </el-tooltip>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -162,7 +167,7 @@
                         clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-chat-line-round" />
                         </el-input>
                         <el-button v-if="!reCaptchaImage" type="primary" @click="handleClickImge(0)">获取验证码</el-button>
-                        <img v-else style="float:right;cursor:pointer;" :src="reCaptchaImage" alt="请稍后再试" @click="handleClickImge(0)" title="看不清？点击刷新" />
+                        <img v-else class="codeImage" style="float:right;cursor:pointer;" :src="reCaptchaImage" alt="请稍后再试" @click="handleClickImge(0)" title="看不清？点击刷新" />
                     </el-form-item>
                     </el-form>
                     <div class="lr-title">
@@ -177,10 +182,37 @@
                     <div class="lr-title">
                     <p><a class="tcolors"  href="#/Home">暂不注册<i class="el-icon-d-arrow-right"></i></a></p>
                     </div>
-                    <div class="otherLogin" >
-                    </div>
                 </div>
             </div>
+            <el-dialog title="邮箱登录" :visible.sync="loginByMail" center destroy-on-close :close-on-click-modal="false">
+                <el-form label-width="250px" status-icon ref="dynamicValidateForm1" :model="loginMailForm">
+                    <el-form-item prop="email" :rules="[
+                        { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                        { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+                        ]">
+                        <el-input v-model="loginMailForm.email"
+                        style="width:50%"
+                        placeholder="请输入邮箱"
+                        clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-message" />
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item prop="captcha">
+                        <el-input
+                        v-model="loginMailForm.captcha"
+                        :disabled="!sengCaptcha"
+                        style="width:50%"
+                        placeholder="请输入验证码"
+                        @keyup.enter.native="loginByEmail()"
+                        clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-chat-line-round" />
+                        </el-input>
+                        <time-button :reset="reset" @click.native="sendLoginMailCaptcha()" content="发送验证码"/>
+                    </el-form-item>
+                    </el-form>
+                <div slot="footer" class="dialog-footer">
+                <el-button @click="loginByMail=false;">关 闭</el-button>
+                <el-button type="primary" @click="loginByEmail()">登 录</el-button>
+            </div>
+            </el-dialog>
         </div>
         <div style="text-align: center;">
             <a>备案号：</a>
@@ -191,8 +223,8 @@
 </template>
 
 <script>
-import {userLogin,getCaptchaImage,userRegister} from '../api/user.js'
-import {sendMailCaptcha,verifyMail} from '../api/user.js'
+import {loginByAccount,loginByEmail,getCaptchaImage,userRegister} from '../api/user.js'
+import {sendMailCaptcha,verifyMail,sendLoginMailCaptcha} from '../api/user.js'
 import timeButton from '../components/timeButton.vue'
 
 export default {
@@ -252,9 +284,15 @@ export default {
             }
         };
         return {
+            loginByMail: false,
             mailForm: {
                 email: '',
                 captcha: ''
+            },
+            loginMailForm: {
+                email: '',
+                captcha: '',
+                type: '1'
             },
             reset: false,
             sengCaptcha: false,
@@ -262,7 +300,8 @@ export default {
                 userName: '',
                 password: '',
                 captcha: '',
-                uuid: ''
+                uuid: '',
+                type: '0'
             },
             registerForm: {
                 userName: '',
@@ -329,10 +368,10 @@ export default {
                 }
             })
         },
-        gotoHome(){//用户登录
+        userLogin(){//用户登录
             this.$refs["dynamicValidateForm"].validate((valid) => {
                 if (valid) {
-                    userLogin(this.loginForm).then((response)=>{
+                    loginByAccount(this.loginForm).then((response)=>{
                         // 存储用户信息
                         localStorage.setItem("userInfo",JSON.stringify(response));
                         // 登录成功提示
@@ -366,7 +405,7 @@ export default {
                 }
             });
         },
-        sendMailCaptcha(){  //发送邮箱验证码
+        sendMailCaptcha(){  //发送绑定邮箱验证码
             this.$refs["dynamicValidateForm1"].validate((valid) => {
                 if (valid) {
                     this.reset = false;
@@ -390,8 +429,7 @@ export default {
                         this.$message.warning("请填写验证码");
                         return;
                     }
-                    verifyMail({email:this.mailForm.email,captcha:this.mailForm.captcha}).then(res => {
-                        this.editMail = false;
+                    verifyMail(this.mailForm).then(res => {
                         this.sengCaptcha = false;
                         this.mailForm.captcha = '';
                         this.hasMail = true;
@@ -404,12 +442,55 @@ export default {
                 }
             });
         },
+        sendLoginMailCaptcha(){  //发送邮箱验证码
+            this.$refs["dynamicValidateForm1"].validate((valid) => {
+                if (valid) {
+                    this.reset = false;
+                    this.sengCaptcha = true;
+                    sendLoginMailCaptcha({email:this.loginMailForm.email}).then(res => {
+                        this.$message.success("验证码已发送到邮箱，注意查收");
+                    }).catch(() => {
+                        this.reset = true;
+                        this.sengCaptcha = false;
+                    })
+                } else {
+                    this.reset = true;
+                    return false;
+                }
+            });
+        },
+        loginByEmail(){   //邮箱登录
+            this.$refs["dynamicValidateForm1"].validate((valid) => {
+                if (valid) {
+                    if(!this.loginMailForm.captcha){
+                        this.$message.warning("请填写验证码");
+                        return;
+                    }
+                    loginByEmail(this.loginMailForm).then(res => {
+                        this.sengCaptcha = false;
+                        this.loginByMail = false;
+                        // 存储用户信息
+                        localStorage.setItem("userInfo",JSON.stringify(res));
+                        // 登录成功提示
+                        this.$message.success('登录成功!');
+                        if(localStorage.getItem('logUrl')){
+                            this.$router.push({path:localStorage.getItem('logUrl')});
+                        }else{
+                            this.$router.push({path:'/'});
+                        }
+                    })
+                } else {
+                    return false;
+                }
+            });
+        },
         goLogin(){//去登陆
             this.loginForm = {
                 userName: '',
                 password: '',
                 captcha: '',
-                uuid: ''
+                uuid: '',
+                type: '0'
             };
             this.loCaptchaImage = undefined;
             this.$router.push({path:'/Login?login=1'});
@@ -430,7 +511,8 @@ export default {
                 userName: '',
                 password: '',
                 captcha: '',
-                uuid: ''
+                uuid: '',
+                type: '0'
             };
             this.loCaptchaImage = undefined;
             this.$router.push({path:'/Login?login=1&registerLo=0'});
@@ -541,6 +623,27 @@ export default {
     color:#fff;
     margin: 0 10px;
 }
+.loginBox .mail-login {
+    text-align: center;
+    padding-bottom: 20px;
+}
+.loginBox .mail-login a:hover i{
+  color: #fff;
+  background: #409EFF;
+}
+.loginBox .mail-login a i{
+  display: inline-block;
+  font-size: 18px;
+  width: 42px;
+  height: 42px;
+  line-height: 42px;
+  border-radius: 42px;
+  color: #56b6e7;
+  background: rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  font-style: normal;
+  margin: 0 3.2px;
+}
 .loginBox .otherLogin a i.fa-wechat{
     background: #7bc549;
 }
@@ -584,8 +687,8 @@ export default {
 }
 /* 图片校验码 */
 .codeImage {
-width: 110px;
-height: 34px;
-border: 1px solid #007ACC;
+    width: 110px;
+    height: 37px;
+    border: 1px solid #007ACC;
 }
 </style>
