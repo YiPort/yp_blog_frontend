@@ -403,7 +403,7 @@ import timeButton from '../components/timeButton.vue'
                 }
             },
             isAdmin() { //是否是管理员
-                if(this.userInfo.userRole === 1) {
+                if(this.userInfo.userRole === "1") {
                     return true;
                 }else {
                     return false;
@@ -562,10 +562,11 @@ import timeButton from '../components/timeButton.vue'
                 if(!this.userId) this.loginMessage();
                 else {
                     getCollectList().then(response => {
-                    // console.log(response)
-                    this.collectionList = response
-                })
-                this.myCollection = true;
+                        // console.log(response)
+                        const filteredResponse = response.filter(item => item !== null);
+                        this.collectionList = filteredResponse.length > 0 ? filteredResponse : [];
+                    })
+                    this.myCollection = true;
                 }
             },
             deleteCollection(articleId) {   //取消收藏文章
