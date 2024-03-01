@@ -16,6 +16,18 @@ export function uploadImage(formData) {
   })
 }
 
+// 删除文章图片
+export function deleteImage(url) {
+  return request({
+    url: API_PREFIX+'/deleteImage',
+    method: 'delete',
+    params: url,
+    headers: {
+      isToken: true
+    }
+  })
+}
+
 // 上传头像
 export function uploadAvatar(formData) {
   return request({

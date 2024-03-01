@@ -105,8 +105,7 @@
                     </p>
                     <p>
                         没有账号？<a href="javascript:void(0);" @click="goRegister()" class="tcolors" >注册</a>
-                        <!-- 没有账号？<a href="https://user.ultima.ink/#/Register?origin=ultima.ink%2F%23%2FLogin%3Flogin%3D1" class="tcolors" >用户中心注册</a> -->
-                    </p>
+                         </p>
                     </div>
                     <div class="lr-btn tcolors-bg" @click="userLogin">登 录</div>
                     <div class="lr-title" style="margin-bottom: 15px;">

@@ -210,3 +210,16 @@ export function latestArticleList() {
     method: 'get'
   })
 }
+
+
+// 获取文章编辑详情
+export function getArticleEditRecord(recordId) {
+  return request({
+    url: API_PREFIX +'/article/getArticleEditRecord',
+    method: 'get',
+    headers: {
+      isToken: true
+    },
+    params: recordId
+  })
+}

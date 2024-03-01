@@ -29,17 +29,17 @@
                 { required: true, message: '请输入邮箱地址', trigger: 'blur' },
                 { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
                 ]">
-                <el-input v-model="accountForm.email" 
-                style="width:50%" 
-                placeholder="请输入账号绑定的邮箱" 
+                <el-input v-model="accountForm.email"
+                style="width:50%"
+                placeholder="请输入账号绑定的邮箱"
                 clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-message" />
                 </el-input>
             </el-form-item>
             <el-form-item label="验证码" prop="captcha">
-                <el-input 
-                v-model="accountForm.captcha" 
-                style="width:50%" 
-                :disabled="!sengCaptcha" 
+                <el-input
+                v-model="accountForm.captcha"
+                style="width:50%"
+                :disabled="!sengCaptcha"
                 placeholder="请输入验证码"
                 @keyup.enter.native="sendForm('account')"
                 clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-chat-line-round" />
@@ -60,7 +60,7 @@
         <el-dialog title="修改密码" :visible.sync="passwordDialog" center destroy-on-close :close-on-click-modal="false">
         <el-form label-width="250px" status-icon ref="dynamicValidateForm1" :rules="rules" :model="passwordForm">
             <el-form-item label="邮箱" prop="email">
-                <el-input 
+                <el-input
                 v-model="passwordForm.email"
                 style="width:50%"
                 autocomplete="off"
@@ -69,10 +69,10 @@
                 </el-input>
             </el-form-item>
             <el-form-item label="新密码" prop="password">
-                <el-input 
+                <el-input
                 type="password"
-                v-model="passwordForm.password" 
-                style="width:50%" 
+                v-model="passwordForm.password"
+                style="width:50%"
                 placeholder="请输入新密码"
                 show-password
                 autocomplete="new-password">
@@ -82,7 +82,7 @@
             <el-form-item label="再次输入密码" prop="checkPassword">
                 <el-input
                 type="password"
-                v-model="passwordForm.checkPassword" 
+                v-model="passwordForm.checkPassword"
                 style="width:50%"
                 placeholder="请再次输入新密码"
                 show-password
@@ -92,11 +92,11 @@
                 </el-input>
             </el-form-item>
             <el-form-item label="验证码" prop="captcha">
-                <el-input 
-                v-model="passwordForm.captcha" 
-                style="width:50%" 
-                :disabled="!sengCaptcha" 
-                placeholder="请输入验证码" 
+                <el-input
+                v-model="passwordForm.captcha"
+                style="width:50%"
+                :disabled="!sengCaptcha"
+                placeholder="请输入验证码"
                 @keyup.enter.native="sendForm('password')"
                 clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-chat-line-round" />
                 </el-input>
@@ -141,7 +141,7 @@ export default {
             }
         };
         return {
-            email: 'ultima_ink@163.com',
+            email: 'blog@yiport.top',
             accountDialog: false,
             passwordDialog: false,
             accountForm: {

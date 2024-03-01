@@ -187,7 +187,8 @@
                     ref="md"
                     v-model="content"
                     @save="saveFile"
-                    @imgAdd="handleImgAdd">
+                    @imgAdd="handleImgAdd"
+                    @imgDel="handleImgDel">
                         <template v-slot:left-toolbar-after>
                             <button
                             type="button"
@@ -215,9 +216,9 @@
 <script>
 import header from '../components/header.vue'
 import store from '../store'
-import { postArticle,getDraft,getEditHistory,deleteDraft } from '../api/article'
+import { postArticle,getDraft,getEditHistory,deleteDraft,getArticleEditRecord } from '../api/article'
+import {uploadImage,deleteImage} from  '../api/resource.js'
 import { MessageBox } from 'element-ui'
-import { uploadImage } from '../api/resource'
 import router from '@/router'
 import { getUserInfo } from '../api/user'
 import { addCategory,getCategoryList } from '../api/category'
@@ -307,7 +308,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 formdata.append('img', file);
                 uploadImage(formdata).then(res => {
                     this.$message.success('上传成功！');
-                    let url = res;
+                    let url = res.data;
                     let name = file.name;
                     let content = this.content;
                     // 将返回的url替换到文本原位置![file.name](1) -> ![file.name](url)
@@ -322,6 +323,14 @@ import { addCategory,getCategoryList } from '../api/category'
                         this.content = insertStr(str, index, nStr);
                         this.imgArray[pos] = url;
                     }
+                })
+            },
+            handleImgDel(pos) {    // 删除上传的文章图片
+                console.log('pos',pos);
+                console.log('url',`![${pos[1].name}](${this.imgArray[pos[0]]})`);
+                this.content = this.content.replace(`![${pos[1].name}](${this.imgArray[pos[0]]})`, '');
+                deleteImage({url:this.imgArray[pos[0]]}).then(res => {
+                    this.imgArray[pos[0]] = undefined;
                 })
             },
             saveFile(text) {    // 将文章保存到本地
@@ -346,7 +355,7 @@ import { addCategory,getCategoryList } from '../api/category'
             },
             handleSelectActivity(active) {     // 获取文章详情历史记录
                 if(active.recordId) {
-                    getEditHistory({recordId:active.recordId}).then(res => {
+                    getArticleEditRecord({recordId:active.recordId}).then(res => {
                         this.reloadArticle(res);
                         this.historyDrawer = false;
                     })
@@ -357,7 +366,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 if(localStorage.getItem('userInfo')){
                     that.haslogin = true;
                     that.userInfo = JSON.parse(localStorage.getItem('userInfo'));
-                    getUserInfo(that.userId).then((response)=>{
+                    getUserInfo().then((response)=>{
                         that.userInfoObj = response;
                         that.userInfoObj.head_start = 0;
                     })
@@ -401,7 +410,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 const userId = JSON.parse(userInfo).id;
                 postArticle(this.articleId,userId,this.title,this.content,this.summary,this.status,this.isComment,this.id,this.thumbnail,this.viewCount)
                         .then((response) => {
-                            if(this.status==="0"){
+                            if(this.status===0){
                                 this.$message({
                                     type:'success',
                                     message:'提交成功'
