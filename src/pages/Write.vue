@@ -283,7 +283,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 let formData = new FormData();
                 formData.append('img', params.file);
                 uploadImage(formData).then(res => {
-                    this.thumbnail = res.data;
+                    this.thumbnail = res;
                     this.$message.success('上传成功！');
                 })
             },
@@ -308,7 +308,7 @@ import { addCategory,getCategoryList } from '../api/category'
                 formdata.append('img', file);
                 uploadImage(formdata).then(res => {
                     this.$message.success('上传成功！');
-                    let url = res.data;
+                    let url = res;
                     let name = file.name;
                     let content = this.content;
                     // 将返回的url替换到文本原位置![file.name](1) -> ![file.name](url)
