@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Notification, MessageBox, Message } from 'element-ui'
+import { Notification, Message } from 'element-ui'
 import router from '@/router'
 import store from '../store'
 import { getToken, removeToken, setToken } from '@/utils/auth'
@@ -62,6 +62,7 @@ service.interceptors.response.use(res => {
     if (code === 401) {
       removeToken();
       localStorage.removeItem('userInfo');
+      store.commit('changeReloadUserInfo', true);
       MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
           confirmButtonText: '重新登录',
           cancelButtonText: '取消',
