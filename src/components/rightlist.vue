@@ -12,7 +12,7 @@
           alt=""
         />
         <h1 v-if="this.$store.state.themeObj.user_start != 0">
-          <p>{{username}}</p>
+          <p>{{nickName}}</p>
           <span>{{introduction}}</span>
         </h1>
       </div>
@@ -164,7 +164,7 @@ export default {
       },
       loading: true, //是否显示骨架屏
       isLogin: false,
-      username: '游客',
+      nickName: '游客',
       introduction: '穷则变，变则通，通则久',
       articleTotal: 0,       //总文章
       myArticleTotal: 0,     //我发布的
@@ -172,15 +172,24 @@ export default {
     };
   },
   computed: {
+    reloadUserInfo() { //刷新userInfo
+      return this.$store.state.reloadUserInfo;
+    },
   },
   watch: {
     browseList() {
       this.loading = false;
+    },
+    async reloadUserInfo(newValue) {
+      if(newValue){
+        await this.routeChange();
+        this.$store.commit('changeReloadUserInfo', false);
+      }
     }
   },
   methods: {
     //事件处理器
-    toTopfun: function (e) {
+    toTopfun(e) {
       var that = this;
       this.gotoTop = false;
       this.going = true;
@@ -200,6 +209,38 @@ export default {
         }
       }, 30);
     },
+    async routeChange() {
+      let hour = Number(moment().format('HH'));
+      // console.log(hour);
+      if(hour < 12 && hour > 5) {
+        this.introduction = '上午好';
+      }else if (hour > 11 && hour < 19) {
+        this.introduction = '下午好';
+      }else {
+        this.introduction = '晚上好';
+      }
+      //查询浏览量最多的10篇文章数据
+      this.latestArticleList();
+      this.getHotArticleList();
+      this.articleTotal = Number(window.localStorage.getItem('articleTotal'));
+      const userInfo = window.localStorage.getItem('userInfo');
+      // console.log(userInfo)
+      if(getToken()) {
+        this.nickName = JSON.parse(userInfo).nickName;
+        await getMyArticleTotal().then(response => {     //获取我发布的文章总数
+          // console.log(response);
+          this.isLogin = true;
+          this.myArticleTotal = response.myArticleTotal;
+        })
+        await getTotalView().then(response => {       // 获取我发布的文章总浏览量
+          // console.log(response);
+          this.totalView = response.totalView;
+        })
+      }else {
+        this.nickName = '';
+        this.isLogin = false;
+      }
+    },
     async latestArticleList() {
       await latestArticleList().then((response) => {
         // console.log(this.latestArticleList)
@@ -216,35 +257,8 @@ export default {
     countTo
   },
   async created() {
-    //生命周期函数
-    let hour = Number(moment().format('HH'));
-    // console.log(hour);
-    if(hour < 12 && hour > 5) {
-      this.introduction = '上午好';
-    }else if (hour > 11 && hour < 19) {
-      this.introduction = '下午好';
-    }else {
-      this.introduction = '晚上好';
-    }
-    //查询浏览量最多的10篇文章数据
-    this.latestArticleList();
-    this.getHotArticleList();
-    this.articleTotal = Number(window.localStorage.getItem('articleTotal'));
-    const userInfo = window.localStorage.getItem('userInfo');
-    // console.log(userInfo)
-    if(getToken()) {
-      this.username = JSON.parse(userInfo).username;
-      await getMyArticleTotal().then(response => {     //获取我发布的文章总数
-        // console.log(response);
-        this.isLogin = true;
-        this.myArticleTotal = response.myArticleTotal;
-      })
-      await getTotalView().then(response => {       // 获取我发布的文章总浏览量
-        // console.log(response);
-        this.totalView = response.totalView;
-      })
-    }
-    var that = this;
+    this.routeChange();
+    let that = this;
     window.onscroll = function () {
       var t = document.documentElement.scrollTop || document.body.scrollTop;
       if (!that.going) {

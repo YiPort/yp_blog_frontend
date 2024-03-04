@@ -400,7 +400,8 @@ const Typeit = (isAimee,emId) =>{
          ***/
         let userInfoString = window.localStorage.getItem('userInfo');
         let userInfo = userInfoString ? JSON.parse(userInfoString) : null;
-        let nickName = userInfo ? userInfo.nickName : null;var world = nickName !== null && nickName !== ""  &&nickName!==undefined ? nickName : "YiPort"
+        let nickName = userInfo ? userInfo.nickName : null;
+        var world = nickName !== null && nickName !== ""  &&nickName!==undefined ? nickName : "YiPort"
         theater.describe("Luke", .9, emId);
         // conosle.log()
         theater.on("*", function (eventName, originalEvent, sceneName, arg) {//做点什么
