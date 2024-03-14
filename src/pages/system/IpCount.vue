@@ -1,7 +1,7 @@
 <template>
     <div>
         <yp-navbar></yp-navbar>
-    <el-row :gutter="[10,10]">
+    <el-row :gutter="10">
         <el-col :sm="24" :md="14">
             <el-card style="margin: 10px;"
             v-loading="mapLoading"
@@ -76,7 +76,7 @@ export default {
                 //左侧小导航图标
                 visualMap: {
                     min: 0,
-                    max: 1000,
+                    max: 2000,
                     text: ['高', '低'],
                     realtime: false,
                     calculable: true,

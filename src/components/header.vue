@@ -16,8 +16,13 @@
 							<el-menu-item index="/Friendslink"><i class="fa fa-wa fa-users"></i>友链</el-menu-item>
               <el-submenu index="/System" v-show="isAdmin">
                 <template slot="title"><i class="fa fa-wa fa-archive"></i>系统管理</template>
+                <el-menu-item index="/System/User"><i class="el-icon-user"/>用户管理</el-menu-item>
                 <el-menu-item index="/System/Comment"><i class="el-icon-chat-line-round"/>评论管理</el-menu-item>
-                <el-menu-item index="/System/Ip"><i class="el-icon-data-analysis"/>访问统计</el-menu-item>
+                <el-submenu index="/LoginInfo">
+                  <template slot="title"><i class="el-icon-setting"></i>访问管理</template>
+                  <el-menu-item index="/System/LoginInfo"><i class="el-icon-postcard"/>用户访问管理</el-menu-item>
+                  <el-menu-item index="/System/Ip"><i class="el-icon-data-analysis"/>访问统计</el-menu-item>
+                </el-submenu>
                 <el-menu-item index="/System/Cache"><i class="el-icon-coin"/>缓存监控</el-menu-item>
               </el-submenu>
               <el-menu-item style="margin-right: 15px" index="/Write"><i class="fa fa-wa fa-users"></i>写博客</el-menu-item>
@@ -34,7 +39,8 @@
 								<div class="userInfo">
 								<div v-show="!haslogin" class="nologin">
 									<a href="javascript:void(0);" @click="logoinFun(1)">登录&nbsp;</a><!--|<a href="javascript:void(0);" @click="logoinFun(0)">&nbsp;注册</a>-->
-								</div>
+                  <a href="javascript:void(0);" @click="logoinFun(0)">&nbsp;注册</a>
+                </div>
 								<div v-show="haslogin" class="haslogin avatarClass">
 									<el-dropdown @command="commandHandle">
 									<div>

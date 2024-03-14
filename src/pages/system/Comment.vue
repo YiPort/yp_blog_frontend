@@ -35,7 +35,7 @@
         </el-form-item>
         </el-form>
 
-        <el-table v-loading="loading" :data="dataList" stripe border>
+        <el-table v-loading="loading" ref="commentTable" :data="dataList" stripe border>
         <el-table-column label="ID" align="center" prop="id" />
         <el-table-column label="评论类型" align="center" prop="type">
             <template slot-scope="scope">
@@ -50,7 +50,7 @@
         <el-table-column label="评论内容" align="center" :show-overflow-tooltip="true">
             <template slot-scope="scope">
             <router-link :to="scope.row.type==='0'?'/DetailArticle?aid=' + scope.row.articleId:'/Friendslink'" class="link-type">
-                <p style="color: #409EFF;" class="comment-table" 
+                <p style="color: #409EFF;" class="comment-table"
                 @click="filterContentDetail(scope.row.filterContent,scope.row.avatar,scope.row.createNick)">
                 {{formatter(scope.row.filterContent)}}</p>
              </router-link>
@@ -58,7 +58,7 @@
         </el-table-column>
         <el-table-column label="过滤后的评论" align="center">
             <template slot-scope="scope">
-                <p style="color: #409EFF;" class="comment-table" 
+                <p style="color: #409EFF;" class="comment-table"
                 @click="filterContentDetail(scope.row.filterContent,scope.row.avatar,scope.row.createNick)">
                 {{formatter(scope.row.filterContent)}}</p>
              </template>
@@ -257,7 +257,7 @@ export default {
                 this.total = res.total;
                 this.dataList = res.rows;
                 this.$nextTick(() => {
-                    this.$refs.table.doLayout()
+                  this.$refs.commentTable.doLayout()
                 })
             })
         },
@@ -275,8 +275,8 @@ export default {
             return str;
         },
         analyzeEmoji(cont){//编译表情替换成图片展示出来
-            var pattern1 = /\[[\u4e00-\u9fa5]+\]/g;
-            var pattern2 = /\[[\u4e00-\u9fa5]+\]/;
+            var pattern1 = /\[[a-z0-9\u4e00-\u9fa5]+\]/g;
+            var pattern2 = /\[[a-z0-9\u4e00-\u9fa5]+\]/;
             var urlRegex= /(https|http|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|](&nbsp;|<br\/>){1}/g;
             var content = cont.match(pattern1);
             var str = cont;
@@ -337,7 +337,7 @@ export default {
                 articleId: undefined,
                 startTime: undefined,
                 endTime: undefined
-            },
+            };
             this.handleQuery();
         },
     },

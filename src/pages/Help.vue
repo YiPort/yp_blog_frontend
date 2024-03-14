@@ -160,14 +160,14 @@ export default {
             },
             rules: {
                 email: [
-                    { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                    { required: true, message: '请输入邮箱地址', trigger: ['blur', 'change'] },
                     { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
                 ],
                 password: [
-                    { required: true, validator: validatePass, trigger: 'blur' }
+                    { required: true, validator: validatePass, trigger: ['blur', 'change'] }
                 ],
                 checkPassword: [
-                    { required: true, validator: validatePass2, trigger: 'blur' }
+                    { required: true, validator: validatePass2, trigger: ['blur', 'change'] }
                 ]
             }
         }
