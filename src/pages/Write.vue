@@ -280,12 +280,16 @@ import { addCategory,getCategoryList } from '../api/category'
         },
         methods: { //事件处理器
             handleThumbnailSuccess(params) {   // 上传缩略图
+              if(this.haslogin) {
                 let formData = new FormData();
                 formData.append('img', params.file);
                 uploadImage(formData).then(res => {
                     this.thumbnail = res;
                     this.$message.success('上传成功！');
                 })
+              }else {
+                this.loginMessage();
+              }
             },
             async beforeThumbnailUpload(file) {    //判断缩略图大小
                 const isJPG = file.type == 'image/png'||file.type=='image/jpg'||file.type=='image/jpeg';
@@ -304,26 +308,34 @@ import { addCategory,getCategoryList } from '../api/category'
                 return true;
             },
             handleImgAdd(pos, file) {    // 上传文章图片
-                let formdata = new FormData();
-                formdata.append('img', file);
-                uploadImage(formdata).then(res => {
-                    this.$message.success('上传成功！');
-                    let url = res;
-                    let name = file.name;
-                    let content = this.content;
-                    // 将返回的url替换到文本原位置![file.name](1) -> ![file.name](url)
-                    if (content.includes(name)) {
-                        let oStr = `(${pos})`;
-                        let nStr = `(${url})`;
-                        let index = content.indexOf(oStr);
-                        let str = content.replace(oStr, '');
-                        let insertStr = (soure, start, newStr) => {
-                          return soure.slice(0, start) + newStr + soure.slice(Math.max(start, 0));
-                        };
-                        this.content = insertStr(str, index, nStr);
-                        this.imgArray[pos] = url;
-                    }
-                })
+                if(this.haslogin) {
+                    let formdata = new FormData();
+                    formdata.append('img', file);
+                    uploadImage(formdata).then(res => {
+                        this.$message.success('上传成功！');
+                        setTimeout(() => {
+                            let url = res;
+                            // let name = file.name;
+                            let content = this.content;
+                            // 将返回的url替换到文本原位置![file.name](1) -> ![file.name](url)
+                            // if (content.includes(name)) {    // 文件名含有“-”时“-”会被去除，会导致url替换不成功
+                                let oStr = `(${pos})`;
+                                let nStr = `(${url})`;
+                                let index = content.indexOf(oStr);
+                                let str = content.replace(oStr, '');
+                                let insertStr = (soure, start, newStr) => {
+                                    return soure.slice(0, start) + newStr + soure.slice(start);
+                                }
+                                console.log("preContent:", this.content)
+                                this.content = insertStr(str, index, nStr);
+                                console.log("nowContent:", this.content)
+                                this.imgArray[pos] = url;
+                            // }
+                        }, 500);
+                    })
+                }else {
+                    this.loginMessage();
+                }
             },
             handleImgDel(pos) {    // 删除上传的文章图片
                 console.log('pos',pos);
