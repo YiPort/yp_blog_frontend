@@ -1,7 +1,7 @@
 <template>
     <div>
     <yp-navbar></yp-navbar>
-    <div style="margin: 20px">
+    <div style="margin: 20px" v-viewer>
         <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" label-width="68px">
         <el-form-item label="性别:" prop="gender">
             <el-select
@@ -95,11 +95,11 @@
         </el-form>
 
         <el-table v-loading="loading" ref="userTable" :data="dataList" stripe border>
-        <el-table-column label="ID" align="center" prop="id" />
-        <el-table-column label="UID" align="center" prop="uid" />
+        <el-table-column label="ID" align="center" prop="id"  width="80"/>
+        <el-table-column label="UID" align="center" prop="uid"  width="100" />
         <el-table-column label="用户账号" align="center" prop="nickName" />
         <el-table-column label="用户昵称" align="center" prop="nickName" />
-        <el-table-column label="用户头像" align="center">
+        <el-table-column label="用户头像" align="center" width="100">
             <template slot-scope="scope" style="text-align: center;">
                 <img class="user-avatar" :src="scope.row.avatar||$store.state.errorImg" >
             </template>

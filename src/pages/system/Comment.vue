@@ -36,8 +36,8 @@
         </el-form>
 
         <el-table v-loading="loading" ref="commentTable" :data="dataList" stripe border>
-        <el-table-column label="ID" align="center" prop="id" />
-        <el-table-column label="评论类型" align="center" prop="type">
+        <el-table-column label="ID" align="center" prop="id" width="80" />
+        <el-table-column label="评论类型" align="center" prop="type" width="100">
             <template slot-scope="scope">
                 <el-tag :type="scope.row.type==='0'?'':'info'">{{scope.row.type==='0'?'文章':'友链'}}</el-tag>
             </template>

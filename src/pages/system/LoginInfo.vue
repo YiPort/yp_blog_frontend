@@ -83,7 +83,6 @@
         </el-table>
 
         <pagination
-        v-show="total>0"
         :total="total"
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
@@ -116,7 +115,99 @@ export default {
             },
             // 日期范围
             dateRange: [],
-            dataList: null,
+            dataList: [
+                {
+                    "infoId": 1,
+                    "userAccount": "...",
+                    "loginLocation": "... ...",
+                    "browser": "...",
+                    "os": "........",
+                    "status": "0",
+                    "msg": ".....",
+                    "loginTime": "...... ......"
+                },{
+                    "infoId": 1,
+                    "userAccount": "...",
+                    "loginLocation": "... ...",
+                    "browser": "...",
+                    "os": "........",
+                    "status": "0",
+                    "msg": ".....",
+                    "loginTime": "...... ......"
+                },{
+                    "infoId": 1,
+                    "userAccount": "...",
+                    "loginLocation": "... ...",
+                    "browser": "...",
+                    "os": "........",
+                    "status": "0",
+                    "msg": ".....",
+                    "loginTime": "...... ......"
+                },{
+                    "infoId": 1,
+                    "userAccount": "...",
+                    "loginLocation": "... ...",
+                    "browser": "...",
+                    "os": "........",
+                    "status": "0",
+                    "msg": ".....",
+                    "loginTime": "...... ......"
+                },{
+                    "infoId": 1,
+                    "userAccount": "...",
+                    "loginLocation": "... ...",
+                    "browser": "...",
+                    "os": "........",
+                    "status": "0",
+                    "msg": ".....",
+                    "loginTime": "...... ......"
+                },{
+                    "infoId": 1,
+                    "userAccount": "...",
+                    "loginLocation": "... ...",
+                    "browser": "...",
+                    "os": "........",
+                    "status": "0",
+                    "msg": ".....",
+                    "loginTime": "...... ......"
+                },{
+                    "infoId": 1,
+                    "userAccount": "...",
+                    "loginLocation": "... ...",
+                    "browser": "...",
+                    "os": "........",
+                    "status": "0",
+                    "msg": ".....",
+                    "loginTime": "...... ......"
+                },{
+                    "infoId": 1,
+                    "userAccount": "...",
+                    "loginLocation": "... ...",
+                    "browser": "...",
+                    "os": "........",
+                    "status": "0",
+                    "msg": ".....",
+                    "loginTime": "...... ......"
+                },{
+                    "infoId": 1,
+                    "userAccount": "...",
+                    "loginLocation": "... ...",
+                    "browser": "...",
+                    "os": "........",
+                    "status": "0",
+                    "msg": ".....",
+                    "loginTime": "...... ......"
+                },{
+                    "infoId": 1,
+                    "userAccount": "...",
+                    "loginLocation": "... ...",
+                    "browser": "...",
+                    "os": "........",
+                    "status": "0",
+                    "msg": ".....",
+                    "loginTime": "...... ......"
+                }
+            ],
             options: [{
                 value: '0',
                 label: '成功'
@@ -143,15 +234,18 @@ export default {
         getList(){
             this.loading = true;
             if(this.dateRange){
-                this.queryParams.startTime = this.dateRange[0]
-                this.queryParams.endTime = this.dateRange[1]
-            }
+                this.queryParams.startTime = this.dateRange[0];
+                this.queryParams.endTime = this.dateRange[1];
+            }else {
+                this.queryParams.startTime = undefined;
+                this.queryParams.endTime = undefined;
+          }
             selectPageLoginInfo(this.queryParams).then(res => {
                 this.loading = false;
                 this.total = res.total;
                 this.dataList = res.rows;
                 this.$nextTick(() => {
-                    this.$refs.infoTable.doLayout()
+                    this.$refs.infoTable.doLayout();
                 })
             })
         },
