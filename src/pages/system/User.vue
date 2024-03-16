@@ -3,24 +3,24 @@
     <yp-navbar></yp-navbar>
     <div style="margin: 20px" v-viewer>
         <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" label-width="68px">
-        <el-form-item label="性别:" prop="gender">
+        <el-form-item label="性别:" prop="sex">
             <el-select
-            v-model="queryParams.gender"
+            v-model="queryParams.sex"
             placeholder="性别"
             clearable
             style="width: 100px"
             >
             <el-option
-                v-for="item in genderOptions"
+                v-for="item in sexOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
             />
             </el-select>
         </el-form-item>
-        <el-form-item label="状态:" prop="userStatus">
+        <el-form-item label="状态:" prop="status">
             <el-select
-            v-model="queryParams.userStatus"
+            v-model="queryParams.status"
             placeholder="用户状态"
             clearable
             style="width: 110px"
@@ -104,11 +104,11 @@
                 <img class="user-avatar" :src="scope.row.avatar||$store.state.errorImg" >
             </template>
         </el-table-column>
-        <el-table-column label="性别" align="center" prop="gender" >
+        <el-table-column label="性别" align="center" prop="sex" >
             <template slot-scope="scope">
-                <i v-show="scope.row.gender!=null"
-                :class="scope.row.gender===0?'el-icon-male':'el-icon-female'"
-                :style="scope.row.gender===0?'color:#409eff':'color:#fb7299'" />
+                <i v-show="scope.row.sex!=null"
+                :class="scope.row.sex==='0'?'el-icon-male':'el-icon-female'"
+                :style="scope.row.sex==='0'?'color:#409eff':'color:#fb7299'" />
             </template>
         </el-table-column>
         <el-table-column label="邮箱" align="center" prop="email" >
@@ -117,15 +117,15 @@
                 <i v-show="scope.row.email" style="cursor: pointer;" @click="copyMail(scope.row.email)" class="el-icon-copy-document"/>
             </template>
         </el-table-column>
-        <el-table-column label="用户状态" align="center" prop="userStatus">
+        <el-table-column label="用户状态" align="center" prop="status">
             <template slot-scope="scope">
-                <el-tag :type="scope.row.userStatus===0?'success':'danger'">{{scope.row.userStatus===0?'正常':'封禁'}}</el-tag>
+                <el-tag :type="scope.row.status==='0'?'success':'danger'">{{scope.row.status==='0'?'正常':'封禁'}}</el-tag>
             </template>
         </el-table-column>
         <el-table-column label="注册时间" align="center" prop="createTime" width="180" />
         <el-table-column label="用户角色" align="center" prop="userRole">
             <template slot-scope="scope">
-                <el-tag :type="scope.row.userRole===0?'':'danger'">{{scope.row.userRole===0?'普通用户':'管理员'}}</el-tag>
+                <el-tag :type="scope.row.userRole==='0'?'':'danger'">{{scope.row.userRole==='0'?'普通用户':'管理员'}}</el-tag>
             </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -172,10 +172,10 @@ export default {
                 pageNum: 1,
                 pageSize: 10,
                 nickName: undefined,
-                nickName: undefined,
+                userName: undefined,
                 uid: undefined,
-                gender: undefined,
-                userStatus: undefined,
+                sex: undefined,
+                status: undefined,
                 userRole: undefined,
                 email: undefined,
                 startTime: undefined,
@@ -184,7 +184,7 @@ export default {
             // 日期范围
             dateRange: [],
             dataList: null,
-            genderOptions: [{
+            sexOptions: [{
                 value: 0,
                 label: '男'
             }, {
@@ -271,10 +271,10 @@ export default {
                 pageNum: 1,
                 pageSize: 10,
                 nickName: undefined,
-                nickName: undefined,
+                userName: undefined,
                 uid: undefined,
-                gender: undefined,
-                userStatus: undefined,
+                sex: undefined,
+                status: undefined,
                 userRole: undefined,
                 email: undefined,
                 startTime: undefined,
