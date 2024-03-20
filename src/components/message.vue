@@ -86,6 +86,18 @@
             <a class="tmsg-comments-tip">全部评论 {{total}}</a>
             <div class="tmsg-commentshow">
                 <ul class="tmsg-commentlist">
+                    <div class="order">
+                        <el-dropdown @command="handleCommand">
+                            <span>
+                                <img v-if="queryParams.order==='DESC'" src="static/img/orderDesc.svg" title="倒序">
+                                <img v-else src="static/img/orderAsc.svg" title="正序">
+                            </span>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="DESC">倒序</el-dropdown-item>
+                                <el-dropdown-item command="ASC">正序</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </div>
                     <li class="tmsg-c-item" v-for="(item,index) in commentList" :key="'common'+index">
                         <article class="">
                             <header>
@@ -366,10 +378,21 @@ export default {
                 {'title':'猪头','url':'d_zhutou.png'}
             ],
             otherUserInfo:'',
-            loading: false
+            loading: false,
+            orderName: '正序'
         }
     },
     methods: { //事件处理器
+        handleCommand(order) {
+            this.queryParams.order = order;
+            if(order === 'ASC') {
+                this.orderName = '正序';
+            }else {
+                this.orderName = '倒序';
+            }
+            this.queryParams.pageNum = 1
+            this.showCommentList(true);
+        },
         handleShow(){
             this.loading = true;
         },
@@ -708,8 +731,21 @@ export default {
 </script>
 
 <style>
-.el-popover, .el-radio-button:first-child:last-child .el-radio-button__inner {
-  border-radius: 7px;
+.order {
+    text-align: right;
+}
+.order span {
+    cursor: pointer;
+}
+.order img {
+    display: flex;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    opacity: .65;
+}
+.el-popover{
+    border-radius: 7px;
 }
 .tmsgBox{
     position: relative;
@@ -953,7 +989,7 @@ export default {
     display: block;
     border-left: 4px solid #97dffd;
     padding: 0 10px;
-    margin: 40px 0;
+    margin: 40px 0 30px 0;
     font-size: 20px;
 }
 .tmsg-commentlist {
@@ -1014,6 +1050,11 @@ export default {
     cursor: pointer;
 }
 /* .tmsg-c-item article header img:hover{
+    transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    cursor: pointer;
+} */
+/* .tmsg-c-item-children article header img{
     width: 45px;
     height: 45px;
     border-radius: 50%;
@@ -1048,7 +1089,7 @@ export default {
 } */
 .tmsg-c-item article header .i-class{
     display: inline-block;
-    margin-left:5px;
+    margin-left: 5px;
     background-color: #c0e8af;
     color: #2a632b;
     padding: 1px 5px;
@@ -1069,7 +1110,7 @@ export default {
 } */
 .tmsg-c-item article header .m-class{
     display: inline-block;
-    margin-left:5px;
+    margin-left: 5px;
     background-color: #FBD54E;
     color: #B72025;
     padding: 1px 5px;
