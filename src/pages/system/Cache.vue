@@ -4,7 +4,7 @@
         <div class="app-container">
             <el-row :gutter="10">
                 <el-col :span="24">
-                    <el-card 
+                    <el-card
                     v-loading.fullscreen.lock="fullscreenLoading"
                     v-loading="mapLoading"
                     element-loading-text="数据加载中...">
@@ -138,7 +138,7 @@ export default {
                         name: "峰值",
                         type: "gauge",
                         min: 0,
-                        max: this.cache.info.used_memory_human.substr(-1)==='M'?5:1000,
+                        max: this.cache.info.used_memory_human.substr(-1)==='M'?Number(this.cache.info.used_memory_human.split('.')[0])+1:1000,
                         detail: {
                             formatter: this.cache.info.used_memory_human,
                         },
