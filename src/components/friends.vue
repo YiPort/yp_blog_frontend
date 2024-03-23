@@ -2,8 +2,8 @@
 <template>
 <div class="tFriendsBox">
     <el-row>
-        <el-col :span="12" class="tf-item" v-for="(item,index) in friendslink" :key="'f'+index">
-            <el-card style="padding-left: 80px; margin: 5px">
+        <el-col :lg="12" :xs="24" class="tf-item" v-for="(item,index) in friendslink" :key="'f'+index">
+            <el-card style="margin: 5px">
                 <a :href="item.address" target="_blank">
                     <img :src="item.logo?item.logo:'/static/img/empty.png'"  :onerror="$store.state.errorImg">
                     <h4>{{item.name}}</h4>
