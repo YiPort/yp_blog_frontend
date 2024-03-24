@@ -101,7 +101,7 @@
                     </el-form>
                     <div v-if="registerLo==undefined" class="lr-title">
                     <p style="left: 0;">
-                        <a class="tcolors" href="#/Help">忘记账号密码？</a>
+                        <a class="tcolors" href="javascript:void(0);" @click="$router.push({path:'/Help'});">忘记账号密码？</a>
                     </p>
                     <p>
                         没有账号？<a href="javascript:void(0);" @click="goRegister()" class="tcolors" >注册</a>
@@ -128,6 +128,7 @@
                     </div>
                     <el-form status-icon ref="dynamicValidateForm" :rules="reRules" :model="registerForm">
                     <el-form-item prop="userName">
+                        <el-tooltip style="cursor:pointer;" effect="light" content="用户名仅用于登录，注册后暂不支持修改" placement="right">
                         <el-input
                         type="text"
                         placeholder="请输入用户名"
@@ -135,6 +136,7 @@
                         clearable>
                         <i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-user" />
                         </el-input>
+                        </el-tooltip>
                     </el-form-item>
                     <el-form-item prop="password">
                         <el-input
@@ -171,7 +173,7 @@
                     </el-form>
                     <div class="lr-title">
                     <p style="left: 0;">
-                        <a class="tcolors" href="#/Help">注册遇到问题？</a>
+                        <a class="tcolors" href="javascript:void(0);" @click="$router.push({path:'/Help'});">注册遇到问题？</a>
                     </p>
                     <p>
                         有账号？去<a href="javascript:void(0);" @click="goLogin()" class="tcolors" >登录</a>
@@ -183,19 +185,18 @@
                     </div>
                 </div>
             </div>
-            <el-dialog title="邮箱登录" :visible.sync="loginByMail" center destroy-on-close :close-on-click-modal="false">
-                <el-form label-width="250px" status-icon ref="dynamicValidateForm1" :model="loginMailForm">
-                    <el-form-item prop="email" :rules="[
-                        { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+            <el-dialog width="500px" title="邮箱登录" :visible.sync="loginByMail" center destroy-on-close :close-on-click-modal="false">
+                <el-form :inline="true" class="edit-form" status-icon ref="dynamicValidateForm1" :model="loginMailForm">
+                    <el-form-item label="邮箱" prop="email" :rules="[
+                          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
                         { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
                         ]">
                         <el-input v-model="loginMailForm.email"
-                        style="width:50%"
                         placeholder="请输入邮箱"
                         clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-message" />
                         </el-input>
                     </el-form-item>
-                    <el-form-item prop="captcha">
+                    <el-form-item label="验证码" prop="captcha">
                         <el-input
                         v-model="loginMailForm.captcha"
                         :disabled="!sengCaptcha"
@@ -551,7 +552,7 @@ export default {
     border-radius: 7px;
 }
 .loginBox{
-    padding-bottom:0;
+    padding-bottom: 10px;
 }
 .mailBox{
     background: #fff;

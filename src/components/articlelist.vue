@@ -1,7 +1,7 @@
 <!-- 文章列表 -->
 <template>
     <el-row class="sharelistBox">
-        <el-col :span="24" class="s-item tcommonBox" v-for="(item,index) in articleList" :key="'article'+index">
+        <el-col :span="24" class="s-item articleBox" v-for="(item,index) in articleList" :key="'article'+index">
             <el-skeleton animated :loading="loading">
                 <template slot="template">
                 <div style="padding: 14px;">
@@ -172,13 +172,47 @@ import {articleList} from '../api/article'
 
 }
 /*文章列表*/
-    .sharelistBox{
-        transition: all 0.5s ease-out;
-        font-size: 15px;
-    }
-
-
-    /*.sharelistBox .viewmore a:hover,.s-item .viewdetail a:hover{
-        background: #48456C;
-    }*/
+.sharelistBox{
+    transition: all 0.5s ease-out;
+    font-size: 15px;
+}
+.articleBox {
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-all;
+    position: relative;
+    background: #fff;
+    padding:15px;
+    border-radius: 5px;
+    margin-bottom: 40px;
+    font-size: 15px;
+    -webkit-transition: all 0.2s linear;
+    transition: all 0.2s linear;
+}
+.articleBox:hover {
+      transform: translate(0, -2px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+.articleBox header {
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+.articleBox header h1 {
+    margin: 10px 0;
+    font-size: 25px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 30px;
+}
+.articleBox header h2 {
+    margin:10px 0;
+    line-height: 24px;
+    text-align: center;
+    color:#555;
+    font-size: 14px;
+}
+.articleBox header h2 .el-rate i{
+    font-size: 16px;
+}
 </style>

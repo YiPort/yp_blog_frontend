@@ -23,14 +23,13 @@
             </el-collapse>
         </div>
         </el-card>
-        <el-dialog title="找回账号" :visible.sync="accountDialog" center destroy-on-close :close-on-click-modal="false">
-        <el-form v-if="showForm" status-icon label-width="250px" ref="dynamicValidateForm" :model="accountForm">
+        <el-dialog width="500px" title="找回账号" :visible.sync="accountDialog" center destroy-on-close :close-on-click-modal="false">
+        <el-form :inline="true" class="edit-form" v-if="showForm" status-icon ref="dynamicValidateForm" :model="accountForm">
             <el-form-item label="邮箱" prop="email" :rules="[
                 { required: true, message: '请输入邮箱地址', trigger: 'blur' },
                 { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
                 ]">
                 <el-input v-model="accountForm.email"
-                style="width:50%"
                 placeholder="请输入账号绑定的邮箱"
                 clearable><i slot="prefix" style="color:#409EFF;" class="el-input__icon el-icon-message" />
                 </el-input>
@@ -57,8 +56,8 @@
         </div>
         </el-dialog>
 
-        <el-dialog title="修改密码" :visible.sync="passwordDialog" center destroy-on-close :close-on-click-modal="false">
-        <el-form label-width="250px" status-icon ref="dynamicValidateForm1" :rules="rules" :model="passwordForm">
+        <el-dialog width="520px" title="修改密码" :visible.sync="passwordDialog" center destroy-on-close :close-on-click-modal="false">
+        <el-form :inline="true" class="edit-form" label-width="110px" status-icon ref="dynamicValidateForm1" :rules="rules" :model="passwordForm">
             <el-form-item label="邮箱" prop="email">
                 <el-input
                 v-model="passwordForm.email"
@@ -72,7 +71,6 @@
                 <el-input
                 type="password"
                 v-model="passwordForm.password"
-                style="width:50%"
                 placeholder="请输入新密码"
                 show-password
                 autocomplete="new-password">

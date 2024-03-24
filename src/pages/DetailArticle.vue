@@ -542,4 +542,21 @@ import $ from 'jquery'
 .button1 {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
+@media screen and (max-width: 500px) {
+    .full-screen {
+        left: 0;
+    }
+    .question {
+        left: 0;
+    }
+    .comment {
+        left: 0;
+    }
+    .collect {
+        left: 0;
+    }
+    .treeFixed {
+        display: none;
+    }
+}
 </style>

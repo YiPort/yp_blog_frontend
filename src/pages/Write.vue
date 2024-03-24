@@ -5,16 +5,7 @@
         <div class="container">
             <!-- 回到顶部 -->
             <el-backtop :bottom="185" class="back-top" :visibility-height="2000">
-                <div
-                style="
-                {
-                    position: fixed;
-                    bottom: 180px;
-                    right: 40px;
-                    box-shadow: #333;
-                    z-index:9999;
-                }
-                ">up</div>
+                <div>up</div>
             </el-backtop>
             <div class="tcommonBox">
                 <el-divider>文章标题/摘要</el-divider>
@@ -771,5 +762,29 @@ li:hover{
     color:#D34B62;
     background: #F6F6F6;
 }
-
+.el-backtop {
+    right: 40px;
+    bottom: 185px;
+    box-shadow: #333;
+    z-index: 9999;
+}
+@media screen and (max-width: 500px) {
+    .draft {
+        right: 0;
+    }
+    .add-category {
+        right: 0;
+    }
+    .get-edithistory {
+        right: 0;
+    }
+    .el-backtop {
+        font-size: 14px !important;
+        right: 0 !important;
+        padding: 4px 4px !important;
+        opacity: 0.6 !important;
+        width: auto !important;
+        height: auto !important;
+    }
+}
 </style>

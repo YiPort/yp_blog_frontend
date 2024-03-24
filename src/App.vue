@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-      <keep-alive :include="['Aboutme', 'Message', 'FriendsLink', 'Reward']">
-          <router-view></router-view>
+        <keep-alive :include="['FriendsLink', 'Reward']">
+            <router-view></router-view>
       </keep-alive>
   </div>
 </template>
