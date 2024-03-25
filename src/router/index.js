@@ -116,6 +116,14 @@ export default new Router({
       name: 'User'
     }, //用户管理
     {
+      path: '/System/Article',
+      component: resolve => require(['../pages/system/Article.vue'], resolve),
+      meta: {
+        auth: true
+      },
+      name: 'Article'
+    }, //文章管理
+    {
       path: '/System/Ip',
       component: resolve => require(['../pages/system/IpCount.vue'], resolve),
       meta: {

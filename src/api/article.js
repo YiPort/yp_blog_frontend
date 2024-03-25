@@ -223,3 +223,27 @@ export function getArticleEditRecord(recordId) {
     params: recordId
   })
 }
+
+// 管理员查询文章
+export function selectPageArticle(param) {
+  return request({
+    url: API_PREFIX + '/article/selectPageArticle',
+    method: 'get',
+    headers: {
+      isToken: true
+    },
+    params: param
+  })
+}
+
+// 修改审核文章状态
+export function editArticleExamine(data) {
+  return request({
+    url: API_PREFIX + '/article/editArticleExamine',
+    method: 'put',
+    headers: {
+      isToken: true
+    },
+    data: data
+  })
+}
