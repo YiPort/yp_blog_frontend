@@ -25,7 +25,7 @@ export function getArticleIndex() {
       }
   })
 }
-
+// 搜索文章内容
 export function searchArticle(query) {
   return request({
     url: API_PREFIX + '/searchArticle',
@@ -34,6 +34,17 @@ export function searchArticle(query) {
       isToken: false
     },
     params: query
+  })
+}
+
+// 删除文章目录索引
+export function deleteArticleIndex(indexId) {
+  return request({
+    url: API_PREFIX + '/index/deleteArticleIndex/'+indexId,
+    method: 'delete',
+    headers: {
+      isToken: true
+    }
   })
 }
 

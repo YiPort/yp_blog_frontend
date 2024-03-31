@@ -99,7 +99,7 @@
         <el-table-column label="标题" align="center" prop="title"/>
         <el-table-column label="文章内容" align="center" prop="content" >
             <template slot-scope="scope">
-                <p style="color: #409EFF;cursor: pointer;" class="comment-table" 
+                <p style="color: #409EFF;cursor: pointer;" class="comment-table"
                 @click="showArticle(scope.row.content,scope.row.title)">
                 {{formatter(scope.row.content)}}</p>
             </template>
@@ -169,7 +169,7 @@
             </el-select>
             </el-form-item>
             <el-form-item label="驳回理由:" v-if="form.articleExamine==='2'">
-            <el-input 
+            <el-input
             v-model="form.notPassMessage"
             ></el-input>
             </el-form-item>
@@ -192,6 +192,7 @@
 <script>
 import header from '../../components/header.vue'
 import { selectPageArticle,editArticleExamine } from '../../api/article'
+import {deleteArticleIndex} from '../../api/search'
 
 export default {
     data() {
@@ -464,7 +465,7 @@ export default {
     },
     methods: {
         handUpdate() {
-            if(this.form.articleExamine === '2' && 
+            if(this.form.articleExamine === '2' &&
             (this.form.notPassMessage === null || this.form.notPassMessage.length === 0))
             {
                 this.$message.warning('请填写驳回理由');
@@ -474,6 +475,10 @@ export default {
                 this.$message.success('修改成功！');
                 this.getList();
                 this.dialogFormVisible = false;
+            })
+            //删除索引
+            deleteArticleIndex(this.form.id).then(res => {
+              this.dialogFormVisible = false;
             })
         },
         saveFile(text) {    // 将文章保存到本地
